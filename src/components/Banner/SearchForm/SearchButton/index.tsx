@@ -2,8 +2,8 @@ import { Container } from './styles'
 
 export function SearchButton() {
   return (
-    <Container>
-      <button>Pesquisar</button>
+    <Container className='searchButtonContainer'>
+      <button type='submit'>Pesquisar</button>
     </Container>
   )
 }

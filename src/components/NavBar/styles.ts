@@ -118,7 +118,7 @@ export const NavContainer = styled.nav<ContainerProps>`
         cursor: pointer;
         outline: none;
         box-shadow: none;
-        border-radius: 0 !important;
+        border-radius: 0.375rem !important;
         width: 100% !important;
         display: inline-block;
         text-align: center;

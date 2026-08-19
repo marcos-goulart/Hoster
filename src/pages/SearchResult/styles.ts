@@ -117,6 +117,73 @@ export const FilterAside = styled.aside`
     margin-bottom: 0.75rem;
   }
 
+  .filterToggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border: 0;
+    background-color: transparent;
+    color: ${(props) => props.theme.colors.gray900};
+    padding: 0;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    span {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    strong {
+      font-size: ${(props) => props.theme.fontSize.lg};
+    }
+
+    svg {
+      transition: transform 0.15s ease-in-out;
+    }
+
+    &.open svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  .priceDropdown {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: ${(props) => props.theme.colors.gray100};
+    border: 1px solid ${(props) => props.theme.colors.gray300};
+    animation: filter-drop 0.18s ease-out;
+
+    label {
+      display: grid;
+      gap: 0.35rem;
+      margin-bottom: 0;
+    }
+
+    input[type='number'] {
+      width: 100%;
+      border: 1px solid ${(props) => props.theme.colors.gray300};
+      padding: 0.5rem;
+      font-family: inherit;
+    }
+  }
+
+  @keyframes filter-drop {
+    from {
+      opacity: 0;
+      transform: translateY(-0.35rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   label {
     display: flex;
     gap: 0.5rem;
@@ -245,7 +312,7 @@ export const TagAlert = styled.div`
   }
 `
 
-export const ResultCard = styled(Link)<{ $isPromotion: boolean }>`
+export const ResultCard = styled(Link)<{ $isPromotion: boolean; $ratingColor: string }>`
   display: grid;
   margin-bottom: 1rem;
   background-color: ${(props) => props.theme.colors.white};
@@ -272,17 +339,6 @@ export const ResultCard = styled(Link)<{ $isPromotion: boolean }>`
       display: block;
       object-fit: cover;
     }
-  }
-
-  .priceBadge {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    color: ${(props) => props.theme.colors.white};
-    background-color: ${(props) =>
-      props.$isPromotion ? props.theme.colors.darkGreen : props.theme.colors.orange};
-    padding: 0.35rem 0.65rem;
-    font-weight: ${(props) => props.theme.fontWeight.bold};
   }
 
   .contentArea {
@@ -317,15 +373,85 @@ export const ResultCard = styled(Link)<{ $isPromotion: boolean }>`
     color: ${(props) => props.theme.colors.phColor};
   }
 
+  .ratingRow {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    margin-top: 0.25rem;
+  }
+
   .stars {
     display: flex;
     gap: 0.2rem;
     color: ${(props) => props.theme.colors.yellow};
-    margin-top: 0.25rem;
+  }
+
+  .ratingBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    padding: 0.2rem 0.35rem;
+    color: ${(props) => props.theme.colors.white};
+    background-color: ${(props) => props.$ratingColor};
+    border-radius: 0.2rem;
+    font-size: ${(props) => props.theme.fontSize.sm};
+    font-weight: ${(props) => props.theme.fontWeight.bold};
   }
 
   .description {
     margin-top: 0.85rem;
+  }
+
+  .priceSummary {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    margin-top: 1rem;
+
+    .priceRow {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    strong {
+      font-size: ${(props) => props.theme.fontSize['2xl']};
+      color: ${(props) => props.theme.colors.gray900};
+    }
+
+    .discountPrice {
+      color: ${(props) => props.theme.colors.darkGreen};
+    }
+
+    .oldDailyPrice {
+      color: ${(props) => props.theme.colors.gray600};
+      text-decoration: line-through;
+    }
+
+    small {
+      color: ${(props) => props.theme.colors.gray700};
+    }
+
+    > span:not(.discountTag) {
+      color: ${(props) => props.theme.colors.gray700};
+    }
+  }
+
+  .discountTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: fit-content;
+    border-radius: 0.25rem;
+    color: ${(props) => props.theme.colors.white};
+    background-color: ${(props) => props.theme.colors.darkGreen};
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0.15rem;
+    font-size: ${(props) => props.theme.fontSize.sm};
+    font-weight: ${(props) => props.theme.fontWeight.bold};
   }
 
   .footerRow {

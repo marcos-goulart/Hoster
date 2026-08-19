@@ -1,53 +1,38 @@
 import styled from 'styled-components'
+
 export const Container = styled.div`
-  padding-top: 1rem !important;
-  margin-bottom: 1rem !important;
-  align-items: flex-end !important;
-  flex: 0 0 auto;
-  max-width: 100%;
-  padding-right: calc(${(props) => props.theme.Gutters.gutterX} / 2);
-  padding-left: calc(${(props) => props.theme.Gutters.gutterX} / 2);
-  margin-top: ${(props) => props.theme.Gutters.gutterY};
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
 
   button {
-    display: inline-block;
-    width: 100% !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 2.75rem;
+    height: 100%;
     color: ${(props) => props.theme.colors.white};
     background-color: ${(props) => props.theme.colors.orange};
     border: 2px solid ${(props) => props.theme.colors.orange};
+    border-radius: 0.375rem;
     outline: none;
-    box-shadow: none;
     font-size: 1rem;
-    font-family: 'Ruda', sans-serif;
-    font-weight: 400;
-    line-height: 1.5;
+    font-family: inherit;
+    font-weight: 700;
+    line-height: 1.2;
     text-align: center;
-    text-decoration: none;
+    white-space: nowrap;
     cursor: pointer;
     user-select: none;
-    border-radius: 0 !important;
-    padding: 0.375rem 0 0.375rem 0;
+    padding: 0.5rem 1.25rem;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
       border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
-    :hover {
+    &:hover {
       background-color: ${(props) => props.theme.colors.orange2};
-      border: 2px solid ${(props) => props.theme.colors.orange2};
-    }
-  }
-
-  @media (min-width: ${(props) => props.theme.screenMedias.md}) {
-    flex: 0 0 auto;
-    width: 100%;
-  }
-
-  @media (min-width: ${(props) => props.theme.screenMedias.lg}) {
-    display: flex !important;
-    flex: 0 0 auto;
-    width: 16.6666666667%;
-
-    button {
-      padding: 0.375rem 0 0.375rem 0;
+      border-color: ${(props) => props.theme.colors.orange2};
     }
   }
 `
+

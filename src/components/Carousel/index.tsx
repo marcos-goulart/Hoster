@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import { Main } from './styles'
 
@@ -14,6 +14,7 @@ export function Carousel() {
   const trackRef = useRef<HTMLDivElement>(null)
   const pointerIdRef = useRef<number | null>(null)
   const dragStartXRef = useRef(0)
+  const navigationLockedRef = useRef(false)
 
   const [width, setWidth] = useState(0)
   const [index, setIndex] = useState(1)
@@ -53,6 +54,8 @@ export function Carousel() {
   }, [index, width, isTransitioning, dragOffset])
 
   function handleTransitionEnd() {
+    navigationLockedRef.current = false
+
     if (index === 0) {
       setIsTransitioning(false)
       setIndex(total)
@@ -72,15 +75,24 @@ export function Carousel() {
     }
   }, [isTransitioning])
 
+  const moveSlide = useCallback((direction: number) => {
+    if (navigationLockedRef.current || width === 0) return
+
+    navigationLockedRef.current = true
+    setIsTransitioning(true)
+    setDragOffset(0)
+    setIndex((prev) => prev + direction)
+  }, [width])
+
   useEffect(() => {
     if (isHovered || isDragging) return
 
     const interval = setInterval(() => {
-      setIndex((prev) => prev + 1)
+      moveSlide(1)
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [isHovered, isDragging])
+  }, [isHovered, isDragging, moveSlide])
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
     if (width === 0) return
@@ -113,7 +125,7 @@ export function Carousel() {
     setDragOffset(0)
 
     if (Math.abs(delta) < threshold) return
-    setIndex((prev) => (delta > 0 ? prev - 1 : prev + 1))
+    moveSlide(delta > 0 ? -1 : 1)
   }
 
   function handlePointerUp(event: PointerEvent<HTMLDivElement>) {
@@ -194,7 +206,7 @@ export function Carousel() {
           <div
             className='navArea left'
             onPointerDown={(event) => event.stopPropagation()}
-            onClick={() => setIndex((prev) => prev - 1)}
+            onClick={() => moveSlide(-1)}
           >
             {'<'}
           </div>
@@ -202,7 +214,7 @@ export function Carousel() {
           <div
             className='navArea right'
             onPointerDown={(event) => event.stopPropagation()}
-            onClick={() => setIndex((prev) => prev + 1)}
+            onClick={() => moveSlide(1)}
           >
             {'>'}
           </div>
@@ -213,7 +225,12 @@ export function Carousel() {
                 key={i}
                 type='button'
                 className={currentIndicator === i ? 'active' : ''}
-                onClick={() => setIndex(i + 1)}
+                onClick={() => {
+                  if (navigationLockedRef.current || width === 0) return
+                  navigationLockedRef.current = true
+                  setIsTransitioning(true)
+                  setIndex(i + 1)
+                }}
               />
             ))}
           </div>

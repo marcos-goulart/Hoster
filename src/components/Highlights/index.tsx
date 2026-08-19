@@ -9,7 +9,7 @@ interface HighlightsProps {
 export function Highlights({ hotels }: HighlightsProps) {
   return (
     <Main>
-      <div className='container'>
+      <div className="container">
         <h1>Hoteis e pousadas em destaque</h1>
         <HotelsContainer>
           {hotels.map((hotel) => (
@@ -17,7 +17,7 @@ export function Highlights({ hotels }: HighlightsProps) {
           ))}
         </HotelsContainer>
         <ViewAllWrapper>
-          <ViewAllButton to='/hoteis/destaques'>Visualizar Todos</ViewAllButton>
+          <ViewAllButton to="/hoteis/destaques">Visualizar Todos</ViewAllButton>
         </ViewAllWrapper>
       </div>
     </Main>

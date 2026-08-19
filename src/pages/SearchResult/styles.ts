@@ -57,7 +57,8 @@ export const SearchHero = styled.section`
   padding: 5rem 0;
   display: flex;
   align-items: center;
-  background-image: linear-gradient(rgba(20, 21, 24, 0.25), rgba(20, 21, 24, 0.25)), url(${resultBanner});
+  background-image:
+    linear-gradient(rgba(20, 21, 24, 0.25), rgba(20, 21, 24, 0.25)), url(${resultBanner});
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -148,6 +149,61 @@ export const ApplyButton = styled.button`
 
 export const ResultsColumn = styled.section`
   min-width: 0;
+
+  .verified-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .verified-tooltip-content {
+    position: absolute;
+    top: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 15rem;
+
+    background-color: ${(props) => props.theme.colors.bgColor};
+    color: #222;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid ${(props) => props.theme.colors.gray300};
+
+    box-shadow: 0 0.375rem 1.125rem rgba(0, 0, 0, 0.4);
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+    transition-delay: 0.5s;
+
+    z-index: 1000;
+  }
+
+  .verified-tooltip-content strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: ${(props) => props.theme.colors.darkGreen};
+  }
+
+  .verified-tooltip-content span {
+    display: block;
+    font-size: 0.7rem;
+    line-height: 1.25;
+    color: ${(props) => props.theme.colors.gray700};
+  }
+
+  .verified-tooltip:hover .verified-tooltip-content {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .verified-tooltip:not(:hover) .verified-tooltip-content {
+    transition-delay: 0s;
+  }
 `
 
 export const TagAlert = styled.div`
@@ -178,7 +234,9 @@ export const TagAlert = styled.div`
     color: inherit;
     cursor: pointer;
     opacity: 0.75;
-    transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+    transition:
+      opacity 0.15s ease-in-out,
+      transform 0.15s ease-in-out;
 
     &:hover {
       opacity: 1;
@@ -194,7 +252,9 @@ export const ResultCard = styled(Link)<{ $isPromotion: boolean }>`
   border: 1px solid ${(props) => props.theme.colors.gray300};
   color: inherit;
   text-decoration: none;
-  transition: box-shadow 0.15s ease-in-out, transform 0.15s ease-in-out;
+  transition:
+    box-shadow 0.15s ease-in-out,
+    transform 0.15s ease-in-out;
 
   &:hover {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
@@ -320,7 +380,9 @@ export const Pagination = styled.nav`
     cursor: pointer;
     font-family: inherit;
     padding: 0.5rem 1rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    transition:
+      color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out,
       opacity 0.15s ease-in-out;
 
     &:hover:not(:disabled) {

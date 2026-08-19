@@ -4,7 +4,7 @@ Aplicação web desenvolvida com **React + TypeScript + Vite** para um sistema d
 
 ## Scripts disponíveis
 
-No diretório do projeto, você pode executar:
+No diretório do projeto, você pode executar os seguintes comandos:
 
 - `npm run dev`
   Inicia o servidor de desenvolvimento do Vite.

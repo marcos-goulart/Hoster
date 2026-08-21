@@ -16,7 +16,7 @@ export function Navbar() {
   }
 
   return (
-    <NavContainer isMenuOpen={menuOpen}>
+    <NavContainer $isMenuOpen={menuOpen}>
       <div className='container'>
         <BrandLink to='/' onClick={handleCloseMenu}>
           Hotel Samurai

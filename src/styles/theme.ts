@@ -12,7 +12,7 @@ export const theme: DefaultTheme = {
   colors: {
     bgColor: '#f8f9fa',
     phColor: '#6c757d',
-    phColorHover: '#50565c',
+    phColorHover: '#45494cff',
     bgBrown1: '#757575',
     bgBrown2: '#f4f4f4',
     white: '#FFFFFF',

@@ -6,7 +6,7 @@ import { AppThemeProvider } from './styles/themeProvider'
 import { GlobalStyle } from './styles/global'
 import { Normalize } from 'styled-normalize'
 import { AuthProvider } from './context/AuthContext'
-import { PageLoadingProvider } from './context/PageLoadingContext'
+import { PageLoadingProvider } from './context/PageLoadingProvider'
 import { PageLoadingOverlay } from './components/PageLoadingOverlay'
 
 export default function App() {

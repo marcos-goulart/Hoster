@@ -3,7 +3,7 @@ import type { FormEvent, KeyboardEvent } from 'react'
 import { FaBuilding, FaCalendarAlt, FaPlane, FaTimes, FaUser } from 'react-icons/fa'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
-import { usePageLoading } from '../../../context/PageLoadingContext'
+import { usePageLoading } from '../../../hooks/usePageLoading'
 import type { SearchSuggestion } from '../../../interfaces/SearchSuggestion'
 import { getSearchSuggestions } from '../../../services/searchSuggestions'
 import { CalendarPicker } from './CalendarPicker'
@@ -86,11 +86,14 @@ function formatDateRange(
     return `${durLabel} em ${mesesFlexiveis.join(', ')}`
   }
 
-  return 'Escolha as datas'
+  return 'Selecione as datas'
 }
 
 function formatTravelers(adultos: number, criancas: number, quartos: number) {
   const totalTravelers = adultos + criancas
+  if (totalTravelers === 0) {
+    return 'Selecione os viajantes'
+  }
   const travelerLabel = totalTravelers === 1 ? 'viajante' : 'viajantes'
   const roomLabel = quartos === 1 ? 'quarto' : 'quartos'
 
@@ -111,10 +114,12 @@ export function SearchForm() {
   const [mesesFlexiveis, setMesesFlexiveis] = useState<string[]>(
     searchParams.get('mesesFlexiveis')
       ? searchParams.get('mesesFlexiveis')!.split(',')
-      : ['Agosto 2026'],
+      : [],
   )
   const [periodo, setPeriodo] = useState(searchParams.get('periodo') ?? '')
-  const [adultos, setAdultos] = useState(Number(searchParams.get('adultos') ?? 2))
+  const [adultos, setAdultos] = useState(
+    searchParams.get('adultos') ? Number(searchParams.get('adultos')) : 0,
+  )
   const [criancas, setCriancas] = useState(Number(searchParams.get('criancas') ?? 0))
   const [quartos, setQuartos] = useState(Number(searchParams.get('quartos') ?? 1))
   const [activePanel, setActivePanel] = useState<ActivePanel>(null)
@@ -174,7 +179,7 @@ export function SearchForm() {
           quartos,
         }),
       )
-    }, 1000)
+    })
   }
 
   const handleLocationKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -203,7 +208,7 @@ export function SearchForm() {
               type='text'
               id='localizacao'
               name='localizacao'
-              placeholder='Digite a localizacao'
+              placeholder='Digite a localização'
               value={localizacao}
               onChange={(event) => setLocalizacao(event.target.value)}
               onFocus={() => setActivePanel('destination')}
@@ -311,7 +316,7 @@ export function SearchForm() {
               <div className='counterRow'>
                 <span>Adultos</span>
                 <div>
-                  <button type='button' onClick={() => updateCounter(setAdultos, adultos - 1, 1)}>
+                  <button type='button' onClick={() => updateCounter(setAdultos, adultos - 1, 0)}>
                     -
                   </button>
                   <strong>{adultos}</strong>

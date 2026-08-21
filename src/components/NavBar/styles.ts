@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
 interface ContainerProps {
-  isMenuOpen: boolean
+  $isMenuOpen: boolean
 }
 
 export const NavContainer = styled.nav<ContainerProps>`
@@ -62,7 +62,7 @@ export const NavContainer = styled.nav<ContainerProps>`
   }
 
   .navbar-collapse {
-    display: ${({ isMenuOpen }) => (isMenuOpen ? 'block' : 'none')};
+    display: ${({ $isMenuOpen }) => ($isMenuOpen ? 'block' : 'none')};
     width: 100%;
     margin-top: 0.75rem;
 

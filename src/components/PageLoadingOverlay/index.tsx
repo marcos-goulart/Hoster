@@ -1,4 +1,4 @@
-import { usePageLoading } from '../../context/PageLoadingContext'
+import { usePageLoading } from '../../hooks/usePageLoading'
 import { Overlay } from './styles'
 
 export function PageLoadingOverlay() {

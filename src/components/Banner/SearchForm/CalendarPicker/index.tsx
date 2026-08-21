@@ -86,7 +86,7 @@ export function CalendarPicker({
   flexibilidade = 0,
   duracaoFlexivel = '1',
   incluirFimDeSemana = false,
-  mesesFlexiveis = ['Agosto 2026'],
+  mesesFlexiveis = [],
   onChangeDates,
   onChangeFlexibility,
   onChangeFlexibleSearch,
@@ -154,9 +154,6 @@ export function CalendarPicker({
     let newMonths: string[]
     if (mesesFlexiveis.includes(monthLabel)) {
       newMonths = mesesFlexiveis.filter((m) => m !== monthLabel)
-      if (newMonths.length === 0) {
-        newMonths = [monthLabel]
-      }
     } else {
       newMonths = [...mesesFlexiveis, monthLabel]
     }

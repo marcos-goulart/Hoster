@@ -4,7 +4,7 @@ import { Container } from './styles'
 export function HotelFooter() {
   return (
     <Container>
-      <h4>Hotél Samurai</h4>
+      <h4>Hoster Hotelarias</h4>
       <p>
         Somos uma empresa que nasceu no ano de 1998, cuja a missão é entregar aos nossos clientes e
         parceiros os melhores lugares para ter um lazer e um descanso excelente e merecido.

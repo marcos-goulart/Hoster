@@ -1,4 +1,4 @@
-# HOTEL-REACT-VITE
+# HOSTER
 
 Aplicação web desenvolvida com **React + TypeScript + Vite** para um sistema de hotelaria. O projeto utiliza `styled-components` para estilização, `react-router-dom` para navegação entre páginas e `json-server` para simular uma API REST durante o desenvolvimento.
 

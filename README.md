@@ -80,8 +80,8 @@ A aplicação é inicializada em `src/main.tsx` e encapsulada por providers em `
 ## Instalação
 
 ```bash
-git clone https://github.com/seu-usuario/hotel-react-vite.git
-cd hotel-react-vite
+git clone https://github.com/marcos-goulart/hoster.git
+cd hoster
 npm install
 ```
 

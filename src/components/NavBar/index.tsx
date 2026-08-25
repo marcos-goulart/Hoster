@@ -19,7 +19,7 @@ export function Navbar() {
     <NavContainer $isMenuOpen={menuOpen}>
       <div className='container'>
         <BrandLink to='/' onClick={handleCloseMenu}>
-          Hotel Samurai
+          Hoster
         </BrandLink>
         <button type='button' className='menu-toggle' onClick={handleToggleMenu}>
           <svg

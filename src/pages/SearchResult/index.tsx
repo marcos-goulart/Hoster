@@ -159,10 +159,79 @@ export default function SearchResultPage() {
   const [isPriceFilterOpen, setIsPriceFilterOpen] = useState(false)
   const [minPrice, setMinPrice] = useState('100')
   const [maxPrice, setMaxPrice] = useState('1000')
-  const hasPromotion = hotels.some((hotel) => hotel.promoted)
-  const totalPages = Math.max(1, Math.ceil(hotels.length / RESULTS_PER_PAGE))
+
+  const [selectedPromotions, setSelectedPromotions] = useState<string[]>([])
+  const [selectedAccommodations, setSelectedAccommodations] = useState<string[]>([])
+  const [selectedServices, setSelectedServices] = useState<string[]>([])
+
+  const togglePromotion = (value: string) => {
+    setSelectedPromotions((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    )
+    setCurrentPage(1)
+  }
+
+  const toggleAccommodation = (value: string) => {
+    setSelectedAccommodations((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    )
+    setCurrentPage(1)
+  }
+
+  const toggleService = (value: string) => {
+    setSelectedServices((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    )
+    setCurrentPage(1)
+  }
+
+  const filteredHotels = hotels.filter((hotel) => {
+    // 1. Promotions
+    if (selectedPromotions.includes('cancelamento') && !hotel.freeCancellation) {
+      return false
+    }
+    if (selectedPromotions.includes('reserva-imediato') && !hotel.immediateBooking) {
+      return false
+    }
+    if (selectedPromotions.includes('ofertas-especiais') && !hotel.specialOffer) {
+      return false
+    }
+
+    // 2. Price
+    const displayPrice = hotel.discountPrice ?? hotel.price
+    const min = parseFloat(minPrice) || 0
+    const max = parseFloat(maxPrice) || Infinity
+    if (displayPrice < min || displayPrice > max) {
+      return false
+    }
+
+    // 3. Accommodation type
+    if (selectedAccommodations.length > 0) {
+      const typeMap: Record<string, string> = {
+        hoteis: 'hotel',
+        pousadas: 'pousada',
+      }
+      const mappedTypes = selectedAccommodations.map((t) => typeMap[t] ?? t)
+      if (!hotel.accommodationType || !mappedTypes.includes(hotel.accommodationType)) {
+        return false
+      }
+    }
+
+    // 4. Services (Piscina, Wi-Fi, etc. - combine with AND)
+    if (selectedServices.length > 0) {
+      const hasAllServices = selectedServices.every((s) => hotel.services?.includes(s))
+      if (!hasAllServices) {
+        return false
+      }
+    }
+
+    return true
+  })
+
+  const hasPromotion = filteredHotels.some((hotel) => hotel.promoted)
+  const totalPages = Math.max(1, Math.ceil(filteredHotels.length / RESULTS_PER_PAGE))
   const startIndex = (currentPage - 1) * RESULTS_PER_PAGE
-  const displayedHotels = hotels.slice(startIndex, startIndex + RESULTS_PER_PAGE)
+  const displayedHotels = filteredHotels.slice(startIndex, startIndex + RESULTS_PER_PAGE)
   const nights = getNights(
     searchParams.get('entrada'),
     searchParams.get('saida'),
@@ -210,15 +279,30 @@ export default function SearchResultPage() {
               <div className="filterBlock">
                 <h2>Promocoes</h2>
                 <label>
-                  <input type="checkbox" value="cancelamento" />
+                  <input
+                    type="checkbox"
+                    value="cancelamento"
+                    checked={selectedPromotions.includes('cancelamento')}
+                    onChange={() => togglePromotion('cancelamento')}
+                  />
                   Cancelamento gratis
                 </label>
                 <label>
-                  <input type="checkbox" value="reserva-imediato" />
+                  <input
+                    type="checkbox"
+                    value="reserva-imediato"
+                    checked={selectedPromotions.includes('reserva-imediato')}
+                    onChange={() => togglePromotion('reserva-imediato')}
+                  />
                   Reserva de imediato
                 </label>
                 <label>
-                  <input type="checkbox" value="ofertas-especiais" />
+                  <input
+                    type="checkbox"
+                    value="ofertas-especiais"
+                    checked={selectedPromotions.includes('ofertas-especiais')}
+                    onChange={() => togglePromotion('ofertas-especiais')}
+                  />
                   Ofertas especiais
                 </label>
               </div>
@@ -244,7 +328,10 @@ export default function SearchResultPage() {
                         type="number"
                         min="0"
                         value={minPrice}
-                        onChange={(event) => setMinPrice(event.target.value)}
+                        onChange={(event) => {
+                          setMinPrice(event.target.value)
+                          setCurrentPage(1)
+                        }}
                       />
                     </label>
                     <label>
@@ -253,7 +340,10 @@ export default function SearchResultPage() {
                         type="number"
                         min="0"
                         value={maxPrice}
-                        onChange={(event) => setMaxPrice(event.target.value)}
+                        onChange={(event) => {
+                          setMaxPrice(event.target.value)
+                          setCurrentPage(1)
+                        }}
                       />
                     </label>
                     <input
@@ -262,7 +352,10 @@ export default function SearchResultPage() {
                       max="1000"
                       step="50"
                       value={maxPrice}
-                      onChange={(event) => setMaxPrice(event.target.value)}
+                      onChange={(event) => {
+                        setMaxPrice(event.target.value)
+                        setCurrentPage(1)
+                      }}
                     />
                   </div>
                 ) : null}
@@ -271,11 +364,21 @@ export default function SearchResultPage() {
               <div className="filterBlock">
                 <h2>Tipos de acomodacoes</h2>
                 <label>
-                  <input type="checkbox" value="hoteis" />
+                  <input
+                    type="checkbox"
+                    value="hoteis"
+                    checked={selectedAccommodations.includes('hoteis')}
+                    onChange={() => toggleAccommodation('hoteis')}
+                  />
                   Hoteis
                 </label>
                 <label>
-                  <input type="checkbox" value="pousadas" />
+                  <input
+                    type="checkbox"
+                    value="pousadas"
+                    checked={selectedAccommodations.includes('pousadas')}
+                    onChange={() => toggleAccommodation('pousadas')}
+                  />
                   Pousadas
                 </label>
               </div>
@@ -284,13 +387,18 @@ export default function SearchResultPage() {
                 <h2>Servicos</h2>
                 {Object.entries(serviceLabels).map(([service, label]) => (
                   <label key={service}>
-                    <input type="checkbox" value={service} />
+                    <input
+                      type="checkbox"
+                      value={service}
+                      checked={selectedServices.includes(service)}
+                      onChange={() => toggleService(service)}
+                    />
                     {label}
                   </label>
                 ))}
               </div>
 
-              <ApplyButton type="button" disabled>
+              <ApplyButton type="button" onClick={() => setCurrentPage(1)}>
                 Aplicar
               </ApplyButton>
             </FilterAside>
@@ -314,7 +422,7 @@ export default function SearchResultPage() {
 
               {isLoading ? (
                 <SearchResultSkeleton />
-              ) : hotels.length > 0 ? (
+              ) : filteredHotels.length > 0 ? (
                 <>
                   {displayedHotels.map((hotel) => (
                     (() => {
@@ -364,7 +472,7 @@ export default function SearchResultPage() {
                                 {hotel.discountPrice !== undefined ? (
                                   <span className="discountTag">
                                     <FaTags aria-hidden="true" />
-                                    Preco com desconto disponivel
+                                    Desconto disponivel
                                   </span>
                                 ) : null}
                                 <div className="priceRow">

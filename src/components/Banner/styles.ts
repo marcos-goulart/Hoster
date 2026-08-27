@@ -24,7 +24,7 @@ export const Main = styled.main`
     background-color: #fff;
     border: 0 !important;
     border-width: none;
-    border-radius: 0.2rem;
+    border-radius: 0.5rem;
     padding: 0.25rem !important;
     padding-top: 1.5rem !important;
     padding-bottom: 1.5rem !important;

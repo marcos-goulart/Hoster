@@ -1,10 +1,16 @@
 import { createGlobalStyle } from 'styled-components'
 
 export const GlobalStyle = createGlobalStyle`
+  ::-webkit-scrollbar{
+    display: none;
+  }
+
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 
   html, body, #root {

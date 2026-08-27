@@ -64,11 +64,11 @@ export const Main = styled.main`
             background-color: ${(props) => props.theme.colors.white};
             background-clip: border-box;
             border: 1px solid rgba(0, 0, 0, 0.125);
-            border-radius: 0.25rem;
+            border-radius: 0.6rem;
 
             img {
-              border-top-left-radius: calc(0.25rem - 1px);
-              border-top-right-radius: calc(0.25rem - 1px);
+              border-top-left-radius: calc(0.6rem - 1px);
+              border-top-right-radius: calc(0.6rem - 1px);
               width: 100%;
               aspect-ratio: 16 / 9;
               object-fit: cover;

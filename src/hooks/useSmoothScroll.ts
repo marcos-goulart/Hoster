@@ -5,6 +5,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+export let lenisInstance: Lenis | null = null
+
 export const useSmoothScroll = () => {
     useEffect(() => {
         const lenis = new Lenis({
@@ -13,6 +15,8 @@ export const useSmoothScroll = () => {
             touchMultiplier: 2,
             infinite: false,
         });
+
+        lenisInstance = lenis
 
         lenis.on('scroll', ScrollTrigger.update);
 
@@ -25,6 +29,7 @@ export const useSmoothScroll = () => {
         return () => {
           lenis.destroy()
           gsap.ticker.remove(lenis.raf)
+          lenisInstance = null
         }
 
     }, []);

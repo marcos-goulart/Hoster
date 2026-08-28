@@ -1,18 +1,33 @@
 import styled from 'styled-components'
-import banner from '../../img/banners/banner-home.jpeg'
 
 export const Main = styled.main`
+  position: relative;
   width: 100% !important;
-  height: 100%;
   min-height: 100vh !important;
   display: flex !important;
   align-items: center !important;
-  background-image: url(${banner});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+
+  .banner-bg-wrapper {
+    position: absolute;
+    top: -15%;
+    left: 0;
+    width: 100%;
+    height: 110%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
 
   .container {
+    position: relative;
+    z-index: 100;
     width: 100%;
     padding-right: 0.75rem;
     padding-left: 0.75rem;
@@ -23,7 +38,6 @@ export const Main = styled.main`
   .card {
     background-color: #fff;
     border: 0 !important;
-    border-width: none;
     border-radius: 0.5rem;
     padding: 0.25rem !important;
     padding-top: 1.5rem !important;
@@ -34,8 +48,8 @@ export const Main = styled.main`
     flex-direction: column;
     min-width: 0;
     word-wrap: break-word;
-    background-color: #fff;
     background-clip: border-box;
+    overflow: visible !important;
   }
 
   .card-body {
@@ -44,6 +58,7 @@ export const Main = styled.main`
     background-color: transparent;
     word-wrap: break-word;
     text-align: left;
+    overflow: visible !important;
   }
 
   @media (min-width: ${(props) => props.theme.screenMedias.sl}) {

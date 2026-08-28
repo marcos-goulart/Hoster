@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import {ScrollTrigger} from 'gsap/ScrollTrigger'
 
 import bannerHome from '../img/banners/banner-home.jpeg'
 import bannerResultado from '../img/banners/banner-resultado.jpeg'
@@ -46,6 +47,12 @@ export function PageLoadingProvider({ children }: { children: ReactNode }) {
     preloadBannerImage(bannerUrl).then(() => {
       if (isMounted) {
         setIsloading(false)
+
+        requestAnimationFrame(()=>{
+          setTimeout(()=>{
+            ScrollTrigger.refresh()
+          }, 100)
+        })
       }
     })
 

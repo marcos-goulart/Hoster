@@ -18,7 +18,7 @@ export function Navbar() {
   return (
     <NavContainer $isMenuOpen={menuOpen}>
       <div className='container'>
-        <BrandLink to='/' onClick={handleCloseMenu}>
+        <BrandLink to='/' onClick={handleCloseMenu} className='text-words-reveal'>
           Hoster
         </BrandLink>
         <button type='button' className='menu-toggle' onClick={handleToggleMenu}>

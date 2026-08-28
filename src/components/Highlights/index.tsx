@@ -10,14 +10,14 @@ export function Highlights({ hotels }: HighlightsProps) {
   return (
     <Main>
       <div className="container">
-        <h1>Hoteis e pousadas em destaque</h1>
+        <h1 className="text-reveal">Hoteis e pousadas em destaque</h1>
         <HotelsContainer>
           {hotels.map((hotel) => (
-            <HotelCard key={hotel.id} hotel={hotel} />
+            <HotelCard key={hotel.id} hotel={hotel} className='card-reveal'/>
           ))}
         </HotelsContainer>
-        <ViewAllWrapper>
-          <ViewAllButton to="/hoteis/destaques">Visualizar Todos</ViewAllButton>
+        <ViewAllWrapper className='card-reveal'>
+          <ViewAllButton to="/hoteis/destaques" className='card-reveal'>Visualizar Todos</ViewAllButton>
         </ViewAllWrapper>
       </div>
     </Main>

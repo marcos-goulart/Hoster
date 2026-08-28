@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const Form = styled.form`
   position: relative;
-  z-index: 5;
+  z-index: 100;
 
   .searchRow {
     display: grid;
@@ -37,7 +37,9 @@ export const Form = styled.form`
     border-radius: 0;
     outline: none;
     text-align: left;
-    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    transition:
+      border-color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out;
   }
 
   select:focus,
@@ -54,12 +56,12 @@ export const Form = styled.form`
     position: absolute;
     top: calc(100% + 0.65rem);
     left: 0;
-    z-index: 20;
+    z-index: 9995;
     width: min(34rem, calc(100vw - 2rem));
     padding: 1rem;
     background-color: ${(props) => props.theme.colors.white};
     border-radius: 0.75rem;
-    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.18);
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.25);
     animation: panel-rise 0.18s ease-out;
 
     &.datesPanel {
@@ -79,33 +81,33 @@ export const Form = styled.form`
     }
 
     .destinationWrapper {
-    position: relative;
-  }
-
-  /* Estilo da mensagem de erro */
-  .error-message {
-    position: absolute;
-    bottom: -1.4rem;
-    left: 0.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: ${(props) => props.theme.colors.red || '#e53e3e'};
-    font-size: 0.75rem;
-    font-weight: 500;
-    animation: fadeIn 0.2s ease-in-out;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-2px);
+      position: relative;
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+
+    /* Estilo da mensagem de erro */
+    .error-message {
+      position: absolute;
+      bottom: -1.4rem;
+      left: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: ${(props) => props.theme.colors.red || '#e53e3e'};
+      font-size: 0.75rem;
+      font-weight: 500;
+      animation: fadeIn 0.2s ease-in-out;
     }
-  }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-2px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   }
 
   @keyframes panel-rise {

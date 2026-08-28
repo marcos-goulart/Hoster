@@ -65,13 +65,23 @@ export const Main = styled.main`
             background-clip: border-box;
             border: 1px solid rgba(0, 0, 0, 0.125);
             border-radius: 0.6rem;
+            overflow: hidden; /* Garante cantos arredondados sem sobras */
 
-            img {
-              border-top-left-radius: calc(0.6rem - 1px);
-              border-top-right-radius: calc(0.6rem - 1px);
+            .imgWrapper {
+              position: relative;
               width: 100%;
               aspect-ratio: 16 / 9;
-              object-fit: cover;
+              overflow: hidden; /* Container isolado para o Parallax */
+              border-top-left-radius: calc(0.6rem - 1px);
+              border-top-right-radius: calc(0.6rem - 1px);
+
+              img.parallax-img {
+                width: 100%;
+                height: 120%; /* Sobra de altura para a imagem correr sem criar espaço branco */
+                object-fit: cover;
+                display: block;
+                will-change: transform;
+              }
             }
 
             .cardBody {
@@ -82,6 +92,7 @@ export const Main = styled.main`
 
               div {
                 margin-bottom: 0.5rem;
+                font-weight: 600;
               }
 
               p {
@@ -105,6 +116,7 @@ export const Main = styled.main`
       max-width: 540px;
     }
   }
+
   @media (min-width: ${(props) => props.theme.screenMedias.md}) {
     .container {
       max-width: 720px;
@@ -123,6 +135,7 @@ export const Main = styled.main`
       width: 33.3333333333%;
     }
   }
+
   @media (min-width: ${(props) => props.theme.screenMedias.lg}) {
     .container {
       max-width: 960px;
@@ -143,6 +156,7 @@ export const Main = styled.main`
       width: 33.3333333333% !important;
     }
   }
+
   @media (min-width: ${(props) => props.theme.screenMedias.xl}) {
     .container {
       max-width: 1140px;
@@ -154,6 +168,7 @@ export const Main = styled.main`
       }
     }
   }
+
   @media (min-width: ${(props) => props.theme.screenMedias.xxl}) {
     .container {
       max-width: 1320px;

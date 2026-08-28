@@ -31,14 +31,19 @@ export const Div = styled.div<{ $isPromotion?: boolean }>`
 
     .imgDiv {
       position: relative !important;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden; /* Corta as sobras da imagem durante o Parallax */
+      border-top-left-radius: calc(0.6rem - 1px);
+      border-top-right-radius: calc(0.6rem - 1px);
 
-      img {
-        border-top-left-radius: calc(0.6rem - 1px);
-        border-top-right-radius: calc(0.6rem - 1px);
+      /* Seletor direto da imagem com a classe de parallax */
+      img.parallax-img {
         width: 100%;
-        aspect-ratio: 16 / 9;
+        height: 120%; /* Altura maior para ter margem de movimento */
         object-fit: cover;
-        vertical-align: middle;
+        display: block;
+        will-change: transform;
       }
 
       .priceBadge {
@@ -49,6 +54,7 @@ export const Div = styled.div<{ $isPromotion?: boolean }>`
         bottom: 0.75rem !important;
         padding: 0.25rem 0.5rem !important;
         position: absolute !important;
+        z-index: 2; /* Mantém o badge fixo acima da imagem */
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
@@ -92,7 +98,6 @@ export const Div = styled.div<{ $isPromotion?: boolean }>`
       .description {
         margin-bottom: 0;
         flex: 1 1 auto;
-
       }
     }
   }

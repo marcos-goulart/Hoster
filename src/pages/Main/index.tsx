@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 import { Banner } from '../../components/Banner'
 import { Carousel } from '../../components/Carousel'
@@ -8,6 +8,7 @@ import { Highlights } from '../../components/Highlights'
 import { Promotions } from '../../components/Promotions'
 import { Reviews } from '../../components/Reviews'
 import { Navbar } from '../../components/NavBar'
+import { useHomeAnimations } from '../../hooks/useHomeAnimations'
 import type { Hotel } from '../../interfaces/Hotel'
 import { fallbackHotels } from '../../mocks/hotelRecords'
 import { getHotels } from '../../services/hotels'
@@ -15,7 +16,10 @@ import { getHotels } from '../../services/hotels'
 import { Container } from './styles'
 
 export default function Main() {
+  const containerRef = useRef<HTMLDivElement>(null)
   const [hotels, setHotels] = useState<Hotel[]>(fallbackHotels)
+
+  useHomeAnimations(containerRef)
 
   useEffect(() => {
     let isMounted = true
@@ -39,7 +43,7 @@ export default function Main() {
   const promotedHotels = hotels.filter((hotel) => hotel.promoted).slice(0, 3)
 
   return (
-    <Container>
+    <Container ref={containerRef}>
       <Navbar />
       <Banner />
       <Highlights hotels={featuredHotels} />

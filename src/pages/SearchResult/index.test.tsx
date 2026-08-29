@@ -62,9 +62,6 @@ describe('SearchResultPage Filters', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(hotelService.searchHotels).mockResolvedValue(mockHotels)
-
-    // Mock Image load for jsdom
-    // @ts-ignore
     window.Image = class {
       onload: () => void = () => {}
       onerror: () => void = () => {}
@@ -75,7 +72,7 @@ describe('SearchResultPage Filters', () => {
         this._src = val
         setTimeout(() => { if (this.onload) this.onload() }, 10)
       }
-    }
+    } as unknown as typeof Image
   })
 
   afterEach(() => {

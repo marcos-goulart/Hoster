@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { AppThemeProvider } from '../../styles/themeProvider'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'

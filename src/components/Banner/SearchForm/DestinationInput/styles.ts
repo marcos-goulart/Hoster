@@ -15,7 +15,10 @@ export const Container = styled.div<{ $hasError?: boolean }>`
 
     input {
       width: 100%;
-      min-height: 2.5rem;
+      height: 3rem;
+      min-height: 3rem;
+      max-height: 3rem;
+      box-sizing: border-box;
       border: 2px solid ${(props) => props.theme.colors.bgBrown2};
       background-color: ${(props) => props.theme.colors.bgBrown2};
 
@@ -27,9 +30,12 @@ export const Container = styled.div<{ $hasError?: boolean }>`
       padding: 0.5rem 2.5rem 0.5rem 0.75rem;
       font-family: inherit;
       font-size: ${(props) => props.theme.fontSize.base};
-      line-height: 1.4;
+      line-height: 1.2;
       border-radius: 0;
       outline: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
 
       &::placeholder {

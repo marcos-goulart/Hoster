@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 import {
+  ApplyButton,
   CalendarContainer,
   CheckboxLabel,
   DayCell,
@@ -35,6 +36,7 @@ export interface CalendarPickerProps {
   onChangeDates: (entrada: string, saida: string) => void
   onChangeFlexibility?: (days: number) => void
   onChangeFlexibleSearch?: (duracao: string, incluirFimDeSemana: boolean, meses: string[]) => void
+  onApply?: () => void
 }
 
 function parseDate(dateStr: string): Date | null {
@@ -90,6 +92,7 @@ export function CalendarPicker({
   onChangeDates,
   onChangeFlexibility,
   onChangeFlexibleSearch,
+  onApply,
 }: CalendarPickerProps) {
   const [activeTab, setActiveTab] = useState<'calendar' | 'flexible'>('calendar')
   const initialDate = parseDate(entrada) ?? new Date()
@@ -287,6 +290,9 @@ export function CalendarPicker({
               );
             })}
           </QuickActionsToolbar>
+          <ApplyButton type="button" onClick={onApply}>
+            Aplicar
+          </ApplyButton>
         </>
       ) : (
         <FlexibleTabContainer>
@@ -340,6 +346,9 @@ export function CalendarPicker({
                 )
               })}
             </MonthCardsGrid>
+            <ApplyButton type="button" onClick={onApply}>
+              Aplicar
+            </ApplyButton>
           </FlexibleSection>
         </FlexibleTabContainer>
       )}

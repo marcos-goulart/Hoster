@@ -1,6 +1,6 @@
 import type { PeriodSelectProps } from "../../../../interfaces/PeriodSelectProps";
 
-export function PeriodSelect({ value, onChange }: PeriodSelectProps) {
+export function PeriodSelect({ value, onChange, onFocus, onClick }: PeriodSelectProps) {
   return (
     <div className='field periodField'>
       <label htmlFor='periodo'>Periodo</label>
@@ -10,6 +10,8 @@ export function PeriodSelect({ value, onChange }: PeriodSelectProps) {
         aria-label='Selecione o periodo'
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        onFocus={onFocus}
+        onClick={onClick}
       >
         <option value=''>Selecione</option>
         <option value='madrugada'>Madrugada</option>

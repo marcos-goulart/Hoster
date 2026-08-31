@@ -10,8 +10,10 @@ export const Container = styled.div`
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: 2.75rem;
-    height: 100%;
+    height: 3rem;
+    min-height: 3rem;
+    max-height: 3rem;
+    box-sizing: border-box;
     color: ${(props) => props.theme.colors.white};
     background-color: ${(props) => props.theme.colors.orange};
     border: 2px solid ${(props) => props.theme.colors.orange};

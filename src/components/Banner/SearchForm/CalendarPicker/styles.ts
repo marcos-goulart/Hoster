@@ -357,3 +357,26 @@ export const MonthCard = styled.button`
   }
 `
 
+export const ApplyButton = styled.button`
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background-color: #0f172a;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.15s ease-in-out, transform 0.15s ease-in-out;
+
+  &:hover {
+    background-color: #1e293b;
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+`
+

@@ -12,6 +12,7 @@ export const NavContainer = styled.nav<ContainerProps>`
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0;
+  z-index: 9999;
 
   background-color: ${(props) => props.theme.colors.bgColor} !important;
 
@@ -128,8 +129,11 @@ export const NavContainer = styled.nav<ContainerProps>`
         border: 1px solid transparent;
         padding: 0.375rem 0.75rem;
 
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        transition:
+          color 0.15s ease-in-out,
+          background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out,
+          box-shadow 0.15s ease-in-out;
 
         &:hover {
           background-color: ${(props) => props.theme.colors.orange2};

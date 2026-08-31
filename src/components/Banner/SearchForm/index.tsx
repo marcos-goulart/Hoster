@@ -140,12 +140,26 @@ export function SearchForm() {
                   setIncluirFimDeSemana(inc)
                   setMesesFlexiveis(mes)
                 }}
+                onApply={() => {
+                  setActivePanel(null)
+                  setTimeout(() => {
+                    const periodElem = document.getElementById('periodo') as HTMLSelectElement | null
+                    if (periodElem) {
+                      periodElem.focus()
+                    }
+                  }, 50)
+                }}
               />
             </div>
           )}
         </div>
 
-        <PeriodSelect value={periodo} onChange={setPeriodo}/>
+        <PeriodSelect
+          value={periodo}
+          onChange={setPeriodo}
+          onFocus={() => setActivePanel(null)}
+          onClick={() => setActivePanel(null)}
+        />
 
         <TravelersPicker
           adultos={adultos}

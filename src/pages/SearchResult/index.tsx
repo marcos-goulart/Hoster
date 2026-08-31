@@ -87,7 +87,8 @@ function getNights(
     const startDate = new Date(`${entrada}T00:00:00`)
     const endDate = new Date(`${saida}T00:00:00`)
     const differenceInMs = endDate.getTime() - startDate.getTime()
-    const nights = Math.ceil(differenceInMs / 86_400_000)
+    const diffDays = Math.round(differenceInMs / 86_400_000)
+    const nights = diffDays + 1
 
     if (Number.isFinite(nights) && nights > 0) {
       return nights

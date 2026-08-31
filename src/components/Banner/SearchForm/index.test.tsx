@@ -139,7 +139,20 @@ describe('SearchForm', () => {
     // Deve exibir a mensagem de erro
     expect(screen.getByPlaceholderText('Por favor, insira um destino')).toBeInTheDocument()
 
-    // Não deve disparar a navegaçãoq
+    // Não deve disparar a navegação
     expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
+  it('deve fechar o painel ativo de datas ao focar ou clicar no campo de periodo', () => {
+    renderComponent()
+
+    const datesButton = screen.getByRole('button', { name: /selecione as datas/i })
+    fireEvent.click(datesButton)
+    expect(screen.getByText('Calendário')).toBeInTheDocument()
+
+    const periodSelect = screen.getByLabelText('Periodo')
+    fireEvent.focus(periodSelect)
+
+    expect(screen.queryByText('Calendário')).not.toBeInTheDocument()
   })
 })

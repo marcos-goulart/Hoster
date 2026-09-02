@@ -29,7 +29,7 @@ export const TabsHeader = styled.div`
 
     &.active {
       color: ${(props) => props.theme.colors.gray900};
-      
+
       &::after {
         content: '';
         position: absolute;
@@ -164,7 +164,55 @@ export const DayCell = styled.div<{
       return 'transparent'
     }};
     cursor: ${(props) => (props.$isDisabled ? 'not-allowed' : 'pointer')};
-    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+    transition:
+      background-color 0.15s ease-in-out,
+      color 0.15s ease-in-out;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+
+      /* Máscara com transição suave nas bordas para suavizar o raio do anel */
+      mask: radial-gradient(farthest-side, transparent calc(100% - 4.5px), #fff calc(100% - 4px));
+      -webkit-mask: radial-gradient(
+        farthest-side,
+        transparent calc(100% - 4.5px),
+        #fff calc(100% - 4px)
+      );
+
+      ${(props) =>
+        props.$isSelectedStart &&
+        `
+        opacity: 1;
+        /* Rampa estendida (25deg até 48deg) para suavizar a ponta do arco verde */
+        background: conic-gradient(
+          from 270deg,
+          transparent 25deg,
+          #22c55e 48deg,
+          #22c55e 132deg,
+          transparent 155deg
+        );
+      `}
+
+      ${(props) =>
+        props.$isSelectedEnd &&
+        `
+        opacity: 1;
+        /* Rampa estendida (25deg até 48deg) para suavizar a ponta do arco vermelho */
+        background: conic-gradient(
+          from 90deg,
+          transparent 25deg,
+          #ef4444 48deg,
+          #ef4444 132deg,
+          transparent 155deg
+        );
+      `}
+    }
 
     &:hover:not(:disabled) {
       background-color: ${(props) =>
@@ -369,7 +417,9 @@ export const ApplyButton = styled.button`
   font-weight: 700;
   cursor: pointer;
   margin-top: 1rem;
-  transition: background-color 0.15s ease-in-out, transform 0.15s ease-in-out;
+  transition:
+    background-color 0.15s ease-in-out,
+    transform 0.15s ease-in-out;
 
   &:hover {
     background-color: #1e293b;
@@ -379,4 +429,3 @@ export const ApplyButton = styled.button`
     transform: scale(0.99);
   }
 `
-

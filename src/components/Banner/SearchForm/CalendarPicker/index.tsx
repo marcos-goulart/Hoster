@@ -120,19 +120,74 @@ export function CalendarPicker({
     setBaseDate(new Date(month1Year, month1Month + 1, 1))
   }
 
-  const handleDayClick = (date: Date) => {
-    const clickedStr = formatDateISO(date)
+  const handleDayClick = (clickedDate: Date) => {
+    const clickedTime = clickedDate.getTime()
+    const clickedStr = formatDateISO(clickedDate)
 
-    if (!startDate || (startDate && endDate)) {
+    const startTime = startDate ? startDate.getTime() : null
+    const endTime = endDate ? endDate.getTime() : null
+
+    // CASO 1: Nenhuma data selecionada ainda -> Define Entrada
+    if (!startTime && !endTime) {
       onChangeDates(clickedStr, '')
       return
     }
 
-    if (startDate && !endDate) {
-      if (date >= startDate) {
-        onChangeDates(formatDateISO(startDate), clickedStr)
+    // CASO 2: Apenas UMA data selecionada (Entrada)
+    if (startTime && !endTime) {
+      // 2.1 Clicou na MESMA data -> Limpa tudo (deixa seleção vazia)
+      if (clickedTime === startTime) {
+        onChangeDates('', '')
+        return
+      }
+
+      // 2.2 Clicou em uma data POSTERIOR -> Define Saída
+      if (clickedTime > startTime) {
+        onChangeDates(formatDateISO(startDate!), clickedStr)
+        return
+      }
+
+      // 2.3 Clicou em uma data ANTERIOR -> Nova data vira Entrada e a antiga vira Saída
+      if (clickedTime < startTime) {
+        onChangeDates(clickedStr, formatDateISO(startDate!))
+        return
+      }
+    }
+
+    // CASO 3: AMBAS as datas selecionadas (Entrada e Saída)
+    if (startTime && endTime) {
+      // 3.1 Clicou exatamente na Entrada -> Remove a Entrada, mantendo a Saída como nova Entrada
+      if (clickedTime === startTime) {
+        onChangeDates(formatDateISO(endDate!), '')
+        return
+      }
+
+      // 3.2 Clicou exatamente na Saída -> Remove a Saída, mantendo a Entrada
+      if (clickedTime === endTime) {
+        onChangeDates(formatDateISO(startDate!), '')
+        return
+      }
+
+      // 3.3 Clicou antes da Entrada -> Nova data vira Entrada, mantendo a Saída
+      if (clickedTime < startTime) {
+        onChangeDates(clickedStr, formatDateISO(endDate!))
+        return
+      }
+
+      // 3.4 Clicou depois da Saída -> Mantém a Entrada, nova data vira Saída
+      if (clickedTime > endTime) {
+        onChangeDates(formatDateISO(startDate!), clickedStr)
+        return
+      }
+
+      // 3.5 Clicou DENTRO do intervalo -> Ajusta o limite mais próximo
+      const distanceToStart = Math.abs(clickedTime - startTime)
+      const distanceToEnd = Math.abs(clickedTime - endTime)
+
+      if (distanceToStart <= distanceToEnd) {
+        onChangeDates(clickedStr, formatDateISO(endDate!))
       } else {
-        onChangeDates(clickedStr, '')
+        onChangeDates(formatDateISO(startDate!), clickedStr)
       }
     }
   }

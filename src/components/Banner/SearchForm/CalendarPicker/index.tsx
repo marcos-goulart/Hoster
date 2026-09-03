@@ -23,6 +23,7 @@ import {
   TabsHeader,
   WeekDaysRow,
 } from './styles'
+import { AVAILABLE_MONTHS, DURATION_OPTIONS, FLEXIBILITY_OPTIONS } from './constants'
 
 const WEEK_DAYS = ['Dom.', 'Seg.', 'Ter.', 'Qua.', 'Qui.', 'Sex.', 'Sáb.']
 
@@ -65,22 +66,6 @@ function getDaysInMonth(year: number, month: number) {
 function getFirstDayOfWeek(year: number, month: number) {
   return new Date(year, month, 1).getDay()
 }
-
-const DURATION_OPTIONS = [
-  { id: '1', label: '1 diária' },
-  { id: '2-3', label: '2 a 3 diárias' },
-  { id: '4-5', label: '4 a 5 diárias' },
-  { id: '6-7', label: '6 a 7 diárias' },
-]
-
-const AVAILABLE_MONTHS = [
-  { month: 'Agosto', year: '2026' },
-  { month: 'Setembro', year: '2026' },
-  { month: 'Outubro', year: '2026' },
-  { month: 'Novembro', year: '2026' },
-  { month: 'Dezembro', year: '2026' },
-  { month: 'Janeiro', year: '2027' },
-]
 
 export function CalendarPicker({
   entrada,
@@ -191,14 +176,6 @@ export function CalendarPicker({
       }
     }
   }
-
-  const flexibilityOptions = [
-    { label: 'Datas exatas', value: 0 },
-    { label: '± 1 dia', value: 1 },
-    { label: '± 2 dias', value: 2 },
-    { label: '± 3 dias', value: 3 },
-    { label: '± 7 dias', value: 7 },
-  ]
 
   const handleSelectDuration = (durationId: string) => {
     onChangeFlexibleSearch?.(durationId, incluirFimDeSemana, mesesFlexiveis)
@@ -331,7 +308,7 @@ export function CalendarPicker({
           </MonthsWrapper>
 
           <QuickActionsToolbar>
-            {flexibilityOptions.map((opt) => {
+            {FLEXIBILITY_OPTIONS.map((opt) => {
               const isActive = flexibilidade === opt.value
               return (
                 <button

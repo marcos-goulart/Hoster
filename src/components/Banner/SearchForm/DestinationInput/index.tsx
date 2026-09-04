@@ -1,6 +1,25 @@
 import { FaBuilding, FaPlane, FaTimes } from "react-icons/fa";
 import { Container } from "./styles";
-import type { DestinationInputProps } from "../../../../interfaces/DestinationInputProps";
+import type { KeyboardEvent } from "react";
+
+interface DestinationInputProps{
+  value: string
+  onChange: (value:string)=>void
+  isOpen: boolean
+  onFocus: () => void
+  onKeyDown: (e: KeyboardEvent<HTMLInputElement>)=>void
+  suggestions: SearchSuggestion[]
+  onSelectSuggestion: (suggestion: SearchSuggestion) => void
+  hasError?: boolean
+}
+
+interface SearchSuggestion {
+  id: string
+  title: string
+  subtitle: string
+  type: 'city' | 'district' | 'airport'
+  value: string
+}
 
 const suggestionIcons = {
   city: <FaBuilding aria-hidden="true" />,

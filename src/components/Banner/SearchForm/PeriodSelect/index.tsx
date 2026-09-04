@@ -1,4 +1,9 @@
-import type { PeriodSelectProps } from "../../../../interfaces/PeriodSelectProps";
+interface PeriodSelectProps {
+  value: string
+  onChange: (value: string) => void
+  onFocus?: () => void
+  onClick?: () => void
+}
 
 export function PeriodSelect({ value, onChange, onFocus, onClick }: PeriodSelectProps) {
   return (

@@ -1,7 +1,19 @@
 import { FaUser } from "react-icons/fa"
 import { Container } from "./styles"
 import { formatTravelers } from "../../../../utils/formatTravelers"
-import type { TravelersPickerProps } from "../../../../interfaces/TravelersPickerProps"
+
+interface TravelersPickerProps {
+  adultos: number
+  criancas: number
+  quartos: number
+  isOpen: boolean
+  onToggle: () => void
+  onClose: () => void
+  onChangeAdultos: (val: number) => void
+  onChangeCriancas: (val: number) => void
+  onChangeQuartos: (val: number) => void
+}
+
 
 export function TravelersPicker({
   adultos,

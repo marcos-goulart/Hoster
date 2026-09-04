@@ -26,7 +26,6 @@ import {
 import { AVAILABLE_MONTHS, DURATION_OPTIONS, FLEXIBILITY_OPTIONS } from './constants'
 
 const WEEK_DAYS = ['Dom.', 'Seg.', 'Ter.', 'Qua.', 'Qui.', 'Sex.', 'Sáb.']
-
 export interface CalendarPickerProps {
   entrada: string
   saida: string

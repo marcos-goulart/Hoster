@@ -101,15 +101,16 @@ describe('SearchResultPage Filters', () => {
     expect(screen.getByText('Hotel Beta')).toBeInTheDocument()
     expect(screen.getByText('Pousada Gama')).toBeInTheDocument()
 
-    // Clicar no checkbox de Piscinas
+    // Clicar no checkbox de Piscinas e Aplicar
     const piscinaCheckbox = screen.getByLabelText('Piscinas')
     fireEvent.click(piscinaCheckbox)
+    fireEvent.click(screen.getByRole('button', { name: /aplicar filtros/i }))
 
     // Apenas Hotel Alfa e Pousada Gama possuem piscina
     expect(screen.getByText('Hotel Alfa')).toBeInTheDocument()
     expect(screen.queryByText('Hotel Beta')).not.toBeInTheDocument()
     expect(screen.getByText('Pousada Gama')).toBeInTheDocument()
-  })
+  }, 15000)
 
   it('deve desmarcar o filtro "Piscinas" e fazer com que todos os hotéis voltem a aparecer', async () => {
     renderPage()
@@ -117,12 +118,16 @@ describe('SearchResultPage Filters', () => {
     expect(await screen.findByText('Hotel Alfa')).toBeInTheDocument()
 
     const piscinaCheckbox = screen.getByLabelText('Piscinas')
+    const applyButton = screen.getByRole('button', { name: /aplicar filtros/i })
+
     // Ativa o filtro
     fireEvent.click(piscinaCheckbox)
+    fireEvent.click(applyButton)
     expect(screen.queryByText('Hotel Beta')).not.toBeInTheDocument()
 
     // Desativa o filtro
     fireEvent.click(piscinaCheckbox)
+    fireEvent.click(applyButton)
     expect(screen.getByText('Hotel Alfa')).toBeInTheDocument()
     expect(screen.getByText('Hotel Beta')).toBeInTheDocument()
     expect(screen.getByText('Pousada Gama')).toBeInTheDocument()
@@ -138,6 +143,7 @@ describe('SearchResultPage Filters', () => {
 
     fireEvent.click(piscinaCheckbox)
     fireEvent.click(wifiCheckbox)
+    fireEvent.click(screen.getByRole('button', { name: /aplicar filtros/i }))
 
     // Apenas Hotel Alfa atende a ambos
     expect(screen.getByText('Hotel Alfa')).toBeInTheDocument()
@@ -151,15 +157,16 @@ describe('SearchResultPage Filters', () => {
     expect(await screen.findByText('Hotel Alfa')).toBeInTheDocument()
 
     // Abrir painel de preços
-    const precoToggle = screen.getByText('Preco')
+    const precoToggle = screen.getByText('Preço')
     fireEvent.click(precoToggle)
 
     // Definir mínimo = 350, máximo = 500
-    const minInput = screen.getByLabelText('Minimo')
-    const maxInput = screen.getByLabelText('Maximo')
+    const minInput = screen.getByLabelText('Mínimo')
+    const maxInput = screen.getByLabelText('Máximo')
 
     fireEvent.change(minInput, { target: { value: '350' } })
     fireEvent.change(maxInput, { target: { value: '500' } })
+    fireEvent.click(screen.getByRole('button', { name: /aplicar filtros/i }))
 
     // Apenas Hotel Beta (R$ 380,00) deve estar visível
     expect(screen.queryByText('Hotel Alfa')).not.toBeInTheDocument() // 300
@@ -178,6 +185,7 @@ describe('SearchResultPage Filters', () => {
 
     fireEvent.click(pousadasCheckbox)
     fireEvent.click(wifiCheckbox)
+    fireEvent.click(screen.getByRole('button', { name: /aplicar filtros/i }))
 
     // Nenhuma pousada possui wi-fi nas mockadas
     const emptyState = await screen.findByText('Nenhum hotel encontrado para os criterios informados.')

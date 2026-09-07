@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ReactElement } from 'react'
 import {
-  FaChevronDown,
   FaCoffee,
   FaTimes,
   FaFutbol,
@@ -18,16 +17,16 @@ import { MdPool } from 'react-icons/md'
 import { useSearchParams } from 'react-router-dom'
 
 import { SearchForm } from '../../components/Banner/SearchForm'
+import { FilterComponent } from '../../components/FilterComponent'
 import { Footer } from '../../components/Footer'
 import { Navbar } from '../../components/NavBar'
+import { DEFAULT_FILTER_STATE, type FilterState } from '../../interfaces/FilterState'
 import type { Hotel } from '../../interfaces/Hotel'
 import { searchHotels, type HotelSearchCriteria } from '../../services/hotels'
 
 import {
-  ApplyButton,
   Container,
   EmptyState,
-  FilterAside,
   Pagination,
   ResultCard,
   ResultsColumn,
@@ -157,70 +156,49 @@ export default function SearchResultPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [isPromotionAlertVisible, setIsPromotionAlertVisible] = useState(true)
-  const [isPriceFilterOpen, setIsPriceFilterOpen] = useState(false)
-  const [minPrice, setMinPrice] = useState('100')
-  const [maxPrice, setMaxPrice] = useState('1000')
 
-  const [selectedPromotions, setSelectedPromotions] = useState<string[]>([])
-  const [selectedAccommodations, setSelectedAccommodations] = useState<string[]>([])
-  const [selectedServices, setSelectedServices] = useState<string[]>([])
+  const [appliedFilters, setAppliedFilters] = useState<FilterState>(DEFAULT_FILTER_STATE)
 
-  const togglePromotion = (value: string) => {
-    setSelectedPromotions((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    )
-    setCurrentPage(1)
-  }
-
-  const toggleAccommodation = (value: string) => {
-    setSelectedAccommodations((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    )
-    setCurrentPage(1)
-  }
-
-  const toggleService = (value: string) => {
-    setSelectedServices((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    )
+  const handleApplyFilters = (newFilters: FilterState) => {
+    setAppliedFilters(newFilters)
     setCurrentPage(1)
   }
 
   const filteredHotels = hotels.filter((hotel) => {
     // 1. Promotions
-    if (selectedPromotions.includes('cancelamento') && !hotel.freeCancellation) {
+    if (appliedFilters.promotions.includes('cancelamento') && !hotel.freeCancellation) {
       return false
     }
-    if (selectedPromotions.includes('reserva-imediato') && !hotel.immediateBooking) {
+    if (appliedFilters.promotions.includes('reserva-imediato') && !hotel.immediateBooking) {
       return false
     }
-    if (selectedPromotions.includes('ofertas-especiais') && !hotel.specialOffer) {
+    if (appliedFilters.promotions.includes('ofertas-especiais') && !hotel.specialOffer) {
       return false
     }
 
     // 2. Price
     const displayPrice = hotel.discountPrice ?? hotel.price
-    const min = parseFloat(minPrice) || 0
-    const max = parseFloat(maxPrice) || Infinity
+    const min = parseFloat(appliedFilters.minPrice) || 0
+    const max = parseFloat(appliedFilters.maxPrice) || Infinity
     if (displayPrice < min || displayPrice > max) {
       return false
     }
 
     // 3. Accommodation type
-    if (selectedAccommodations.length > 0) {
+    if (appliedFilters.accommodations.length > 0) {
       const typeMap: Record<string, string> = {
         hoteis: 'hotel',
         pousadas: 'pousada',
       }
-      const mappedTypes = selectedAccommodations.map((t) => typeMap[t] ?? t)
+      const mappedTypes = appliedFilters.accommodations.map((t) => typeMap[t] ?? t)
       if (!hotel.accommodationType || !mappedTypes.includes(hotel.accommodationType)) {
         return false
       }
     }
 
     // 4. Services (Piscina, Wi-Fi, etc. - combine with AND)
-    if (selectedServices.length > 0) {
-      const hasAllServices = selectedServices.every((s) => hotel.services?.includes(s))
+    if (appliedFilters.services.length > 0) {
+      const hasAllServices = appliedFilters.services.every((s) => hotel.services?.includes(s))
       if (!hasAllServices) {
         return false
       }
@@ -276,133 +254,11 @@ export default function SearchResultPage() {
       <main>
         <div className="container">
           <ResultsLayout>
-            <FilterAside>
-              <div className="filterBlock">
-                <h2>Promocoes</h2>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="cancelamento"
-                    checked={selectedPromotions.includes('cancelamento')}
-                    onChange={() => togglePromotion('cancelamento')}
-                  />
-                  Cancelamento gratis
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="reserva-imediato"
-                    checked={selectedPromotions.includes('reserva-imediato')}
-                    onChange={() => togglePromotion('reserva-imediato')}
-                  />
-                  Reserva de imediato
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="ofertas-especiais"
-                    checked={selectedPromotions.includes('ofertas-especiais')}
-                    onChange={() => togglePromotion('ofertas-especiais')}
-                  />
-                  Ofertas especiais
-                </label>
-              </div>
-
-              <div className="filterBlock">
-                <button
-                  type="button"
-                  className={`filterToggle ${isPriceFilterOpen ? 'open' : ''}`}
-                  onClick={() => setIsPriceFilterOpen((isOpen) => !isOpen)}
-                >
-                  <span>
-                    <strong>Preco</strong>
-                    R$ {minPrice},00 a R$ {maxPrice},00
-                  </span>
-                  <FaChevronDown aria-hidden="true" />
-                </button>
-
-                {isPriceFilterOpen ? (
-                  <div className="priceDropdown">
-                    <label>
-                      Minimo
-                      <input
-                        type="number"
-                        min="0"
-                        value={minPrice}
-                        onChange={(event) => {
-                          setMinPrice(event.target.value)
-                          setCurrentPage(1)
-                        }}
-                      />
-                    </label>
-                    <label>
-                      Maximo
-                      <input
-                        type="number"
-                        min="0"
-                        value={maxPrice}
-                        onChange={(event) => {
-                          setMaxPrice(event.target.value)
-                          setCurrentPage(1)
-                        }}
-                      />
-                    </label>
-                    <input
-                      type="range"
-                      min="100"
-                      max="1000"
-                      step="50"
-                      value={maxPrice}
-                      onChange={(event) => {
-                        setMaxPrice(event.target.value)
-                        setCurrentPage(1)
-                      }}
-                    />
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="filterBlock">
-                <h2>Tipos de acomodacoes</h2>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="hoteis"
-                    checked={selectedAccommodations.includes('hoteis')}
-                    onChange={() => toggleAccommodation('hoteis')}
-                  />
-                  Hoteis
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    value="pousadas"
-                    checked={selectedAccommodations.includes('pousadas')}
-                    onChange={() => toggleAccommodation('pousadas')}
-                  />
-                  Pousadas
-                </label>
-              </div>
-
-              <div className="filterBlock">
-                <h2>Servicos</h2>
-                {Object.entries(serviceLabels).map(([service, label]) => (
-                  <label key={service}>
-                    <input
-                      type="checkbox"
-                      value={service}
-                      checked={selectedServices.includes(service)}
-                      onChange={() => toggleService(service)}
-                    />
-                    {label}
-                  </label>
-                ))}
-              </div>
-
-              <ApplyButton type="button" onClick={() => setCurrentPage(1)}>
-                Aplicar
-              </ApplyButton>
-            </FilterAside>
+            <FilterComponent
+              appliedFilters={appliedFilters}
+              onApplyFilters={handleApplyFilters}
+              totalResults={filteredHotels.length}
+            />
 
             <ResultsColumn>
               {hasPromotion && isPromotionAlertVisible ? (

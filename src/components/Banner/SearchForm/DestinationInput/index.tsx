@@ -1,4 +1,5 @@
-import { FaBuilding, FaPlane, FaTimes } from "react-icons/fa";
+import { FaBuilding, FaPlane, FaTimes } from 'react-icons/fa'
+import type { SearchSuggestion } from '../../../../interfaces/SearchSuggestion'
 import { Container } from "./styles";
 import type { KeyboardEvent } from "react";
 
@@ -13,17 +14,10 @@ interface DestinationInputProps{
   hasError?: boolean
 }
 
-interface SearchSuggestion {
-  id: string
-  title: string
-  subtitle: string
-  type: 'city' | 'district' | 'airport'
-  value: string
-}
-
 const suggestionIcons = {
   city: <FaBuilding aria-hidden="true" />,
   district: <FaBuilding aria-hidden="true" />,
+  neighborhood: <FaBuilding aria-hidden="true" />,
   airport: <FaPlane aria-hidden="true" />
 }
 

@@ -105,7 +105,9 @@ export const ViewAllButton = styled(SectionLinkButton)`
   text-decoration: none;
   text-align: center;
   padding: 0.375rem 1.5rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out;
 
   &:hover {

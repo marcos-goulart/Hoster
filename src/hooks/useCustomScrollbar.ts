@@ -72,7 +72,10 @@ export function useCustomScrollbar() {
       const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
 
       const scrollDelta = (deltaY / maxMove) * scrollableHeight
-      const targetScroll = Math.min(Math.max(startScrollY.current + scrollDelta, 0), scrollableHeight)
+      const targetScroll = Math.min(
+        Math.max(startScrollY.current + scrollDelta, 0),
+        scrollableHeight,
+      )
 
       window.scrollTo(0, targetScroll)
     }

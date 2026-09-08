@@ -51,7 +51,9 @@ export const Thumb = styled.div`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
   user-select: none;
   -webkit-user-select: none;
-  transition: width 0.2s ease, background-color 0.2s ease;
+  transition:
+    width 0.2s ease,
+    background-color 0.2s ease;
 
   &:active {
     cursor: grabbing;

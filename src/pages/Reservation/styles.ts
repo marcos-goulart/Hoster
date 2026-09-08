@@ -352,7 +352,9 @@ export const FormGrid = styled.div`
     font-family: inherit;
     font-size: 1rem;
     border-radius: 0;
-    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    transition:
+      border-color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out;
 
     &:focus {
       outline: none;
@@ -387,7 +389,9 @@ export const ActionButton = styled.button`
   font-family: inherit;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.15s ease-in-out, opacity 0.15s ease-in-out;
+  transition:
+    background-color 0.15s ease-in-out,
+    opacity 0.15s ease-in-out;
 
   &:hover:not(:disabled) {
     background-color: ${(props) => props.theme.colors.orange2};

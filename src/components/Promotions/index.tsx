@@ -11,15 +11,15 @@ export function Promotions({ hotels }: PromotionsProps) {
     <Main>
       <div className="container">
         <div className="title">
-          <h1 className='text-reveal'>Nossos hoteis e pousadas em promocões</h1>
+          <h1 className="text-reveal">Nossos hoteis e pousadas em promocões</h1>
         </div>
         <PromotionsContainer>
           {hotels.map((hotel) => (
-            <HotelCard key={hotel.id} hotel={hotel} hasDiscount className='card-reveal' />
+            <HotelCard key={hotel.id} hotel={hotel} hasDiscount className="card-reveal" />
           ))}
         </PromotionsContainer>
         <ViewAllWrapper>
-          <ViewAllButton to='/hoteis/promocoes' className='card-reveal text-reveal'>
+          <ViewAllButton to="/hoteis/promocoes" className="card-reveal text-reveal">
             Visualizar Todos
           </ViewAllButton>
         </ViewAllWrapper>

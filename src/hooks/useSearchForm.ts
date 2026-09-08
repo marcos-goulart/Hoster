@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent} from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { usePageLoading } from './usePageLoading'
 import { getSearchSuggestions } from '../services/searchSuggestions'
@@ -16,12 +16,16 @@ export function useSearchForm() {
   const [saida, setSaida] = useState(searchParams.get('saida') ?? '')
   const [flexibilidade, setFlexibilidade] = useState(Number(searchParams.get('flexibilidade') ?? 0))
   const [duracaoFlexivel, setDuracaoFlexivel] = useState(searchParams.get('duracaoFlexivel') ?? '1')
-  const [incluirFimDeSemana, setIncluirFimDeSemana] = useState(searchParams.get('incluirFimDeSemana') === 'true')
+  const [incluirFimDeSemana, setIncluirFimDeSemana] = useState(
+    searchParams.get('incluirFimDeSemana') === 'true',
+  )
   const [mesesFlexiveis, setMesesFlexiveis] = useState<string[]>(
     searchParams.get('mesesFlexiveis') ? searchParams.get('mesesFlexiveis')!.split(',') : [],
   )
   const [periodo, setPeriodo] = useState(searchParams.get('periodo') ?? '')
-  const [adultos, setAdultos] = useState(searchParams.get('adultos') ? Number(searchParams.get('adultos')) : 0)
+  const [adultos, setAdultos] = useState(
+    searchParams.get('adultos') ? Number(searchParams.get('adultos')) : 0,
+  )
   const [criancas, setCriancas] = useState(Number(searchParams.get('criancas') ?? 0))
   const [quartos, setQuartos] = useState(Number(searchParams.get('quartos') ?? 1))
   const [activePanel, setActivePanel] = useState<ActivePanel>(null)
@@ -36,7 +40,9 @@ export function useSearchForm() {
       if (isMounted) setSuggestions(suggestionList)
     }
     void loadSuggestions()
-    return () => { isMounted = false }
+    return () => {
+      isMounted = false
+    }
   }, [localizacao])
 
   useEffect(() => {
@@ -57,25 +63,52 @@ export function useSearchForm() {
     triggerLoading(() => {
       navigate(
         buildSearchUrl({
-          localizacao, entrada, saida, periodo, flexibilidade,
-          duracaoFlexivel, incluirFimDeSemana, mesesFlexiveis,
-          adultos, criancas, quartos,
-        })
+          localizacao,
+          entrada,
+          saida,
+          periodo,
+          flexibilidade,
+          duracaoFlexivel,
+          incluirFimDeSemana,
+          mesesFlexiveis,
+          adultos,
+          criancas,
+          quartos,
+        }),
       )
     })
   }
 
   return {
     state: {
-      localizacao, entrada, saida, flexibilidade, duracaoFlexivel,
-      incluirFimDeSemana, mesesFlexiveis, periodo, adultos, criancas,
-      quartos, activePanel, suggestions
+      localizacao,
+      entrada,
+      saida,
+      flexibilidade,
+      duracaoFlexivel,
+      incluirFimDeSemana,
+      mesesFlexiveis,
+      periodo,
+      adultos,
+      criancas,
+      quartos,
+      activePanel,
+      suggestions,
     },
     actions: {
-      setLocalizacao, setEntrada, setSaida, setFlexibilidade,
-      setDuracaoFlexivel, setIncluirFimDeSemana, setMesesFlexiveis,
-      setPeriodo, setAdultos, setCriancas, setQuartos, setActivePanel,
-      handleSubmit
-    }
+      setLocalizacao,
+      setEntrada,
+      setSaida,
+      setFlexibilidade,
+      setDuracaoFlexivel,
+      setIncluirFimDeSemana,
+      setMesesFlexiveis,
+      setPeriodo,
+      setAdultos,
+      setCriancas,
+      setQuartos,
+      setActivePanel,
+      handleSubmit,
+    },
   }
 }

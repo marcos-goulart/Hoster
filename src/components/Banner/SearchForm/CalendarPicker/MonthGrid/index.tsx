@@ -1,11 +1,5 @@
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-import {
-  DayCell,
-  DaysGrid,
-  MonthHeader,
-  MonthSection,
-  WeekDaysRow,
-} from './styles'
+import { DayCell, DaysGrid, MonthHeader, MonthSection, WeekDaysRow } from './styles'
 import { WEEK_DAYS } from '../constants'
 import {
   formatDateISO,
@@ -94,8 +88,7 @@ export function MonthGrid({
 
           const isStart = startDate ? formatDateISO(startDate) === dateStr : false
           const isEnd = endDate ? formatDateISO(endDate) === dateStr : false
-          const isInRange =
-            startDate && endDate && currentDate > startDate && currentDate < endDate
+          const isInRange = startDate && endDate && currentDate > startDate && currentDate < endDate
           const isPast = currentDate < today
           const isToday = currentDate.getTime() === today.getTime()
 
@@ -108,11 +101,7 @@ export function MonthGrid({
               $isDisabled={isPast}
               $isToday={isToday}
             >
-              <button
-                type="button"
-                disabled={isPast}
-                onClick={() => onDayClick(currentDate)}
-              >
+              <button type="button" disabled={isPast} onClick={() => onDayClick(currentDate)}>
                 {dayNum}
               </button>
             </DayCell>

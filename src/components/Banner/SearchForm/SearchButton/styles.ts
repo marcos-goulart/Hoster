@@ -28,8 +28,11 @@ export const Container = styled.div`
     cursor: pointer;
     user-select: none;
     padding: 0.5rem 1.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-      border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition:
+      color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out,
+      box-shadow 0.15s ease-in-out;
 
     &:hover {
       background-color: ${(props) => props.theme.colors.orange2};
@@ -37,4 +40,3 @@ export const Container = styled.div`
     }
   }
 `
-

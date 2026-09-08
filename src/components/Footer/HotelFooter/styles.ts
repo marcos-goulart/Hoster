@@ -35,7 +35,9 @@ export const Container = styled.div`
         svg {
           width: 1.2rem;
           height: 1.2rem;
-          transition: transform 0.3s ease, color 0.3s ease;
+          transition:
+            transform 0.3s ease,
+            color 0.3s ease;
         }
 
         :hover {

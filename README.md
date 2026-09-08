@@ -1,6 +1,6 @@
 # HOSTER 🏨
 
-Aplicação web moderna e responsiva para busca e reserva de hotéis, desenvolvida com **React + TypeScript + Vite**. 
+Aplicação web moderna e responsiva para busca e reserva de hotéis, desenvolvida com **React + TypeScript + Vite**.
 
 O projeto conta com um sistema avançado de busca com calendário interativo duplo, busca por datas flexíveis, filtragem inteligente por localização/estado, modal de carregamento global, testes automatizados com **Vitest + React Testing Library**, estilização com `styled-components` e suporte a `json-server` para simulação de API REST.
 
@@ -90,13 +90,13 @@ No diretório do projeto, você pode executar:
 
 As rotas da aplicação estão definidas em `src/routes.tsx`:
 
-| Rota | Componente | Descrição |
-|---|---|---|
-| `/` | `MainPage` | Página inicial com banner de busca, promoções e destaques |
-| `/login` | `LoginPage` | Tela de login do usuário |
-| `/resultado` | `SearchResultPage` | Resultados da busca com filtros avançados e paginação |
-| `/pre-reserva/:hotelId` | `ReservationPage` | Tela de pré-reserva e detalhes do hotel |
-| `/hoteis/:category` | `AllHotelsPage` | Listagem por categoria (destaques, promoções, etc.) |
+| Rota                    | Componente         | Descrição                                                 |
+| ----------------------- | ------------------ | --------------------------------------------------------- |
+| `/`                     | `MainPage`         | Página inicial com banner de busca, promoções e destaques |
+| `/login`                | `LoginPage`        | Tela de login do usuário                                  |
+| `/resultado`            | `SearchResultPage` | Resultados da busca com filtros avançados e paginação     |
+| `/pre-reserva/:hotelId` | `ReservationPage`  | Tela de pré-reserva e detalhes do hotel                   |
+| `/hoteis/:category`     | `AllHotelsPage`    | Listagem por categoria (destaques, promoções, etc.)       |
 
 ---
 
@@ -115,17 +115,20 @@ VITE_API_BASE_URL=http://localhost:5000
 ## 📦 Instalação e Execução Local
 
 1. **Clonar o repositório**:
+
    ```bash
    git clone https://github.com/marcos-goulart/hoster.git
    cd hoster
    ```
 
 2. **Instalar as dependências**:
+
    ```bash
    npm install
    ```
 
 3. **Iniciar o servidor Mock API** (em um terminal separado):
+
    ```bash
    npm run json-server
    ```

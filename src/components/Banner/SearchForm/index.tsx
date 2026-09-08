@@ -26,12 +26,16 @@ export function SearchForm() {
   const [saida, setSaida] = useState(searchParams.get('saida') ?? '')
   const [flexibilidade, setFlexibilidade] = useState(Number(searchParams.get('flexibilidade') ?? 0))
   const [duracaoFlexivel, setDuracaoFlexivel] = useState(searchParams.get('duracaoFlexivel') ?? '1')
-  const [incluirFimDeSemana, setIncluirFimDeSemana] = useState(searchParams.get('incluirFimDeSemana') === 'true')
+  const [incluirFimDeSemana, setIncluirFimDeSemana] = useState(
+    searchParams.get('incluirFimDeSemana') === 'true',
+  )
   const [mesesFlexiveis, setMesesFlexiveis] = useState<string[]>(
     searchParams.get('mesesFlexiveis') ? searchParams.get('mesesFlexiveis')!.split(',') : [],
   )
   const [periodo, setPeriodo] = useState(searchParams.get('periodo') ?? '')
-  const [adultos, setAdultos] = useState(searchParams.get('adultos') ? Number(searchParams.get('adultos')) : 0)
+  const [adultos, setAdultos] = useState(
+    searchParams.get('adultos') ? Number(searchParams.get('adultos')) : 0,
+  )
   const [criancas, setCriancas] = useState(Number(searchParams.get('criancas') ?? 0))
   const [quartos, setQuartos] = useState(Number(searchParams.get('quartos') ?? 1))
 
@@ -46,7 +50,9 @@ export function SearchForm() {
       if (isMounted) setSuggestions(suggestionList)
     }
     void loadSuggestions()
-    return () => { isMounted = false }
+    return () => {
+      isMounted = false
+    }
   }, [localizacao])
 
   useEffect(() => {
@@ -74,18 +80,26 @@ export function SearchForm() {
     triggerLoading(() => {
       navigate(
         buildSearchUrl({
-          localizacao, entrada, saida, periodo, flexibilidade,
-          duracaoFlexivel, incluirFimDeSemana, mesesFlexiveis,
-          adultos, criancas, quartos,
-        })
+          localizacao,
+          entrada,
+          saida,
+          periodo,
+          flexibilidade,
+          duracaoFlexivel,
+          incluirFimDeSemana,
+          mesesFlexiveis,
+          adultos,
+          criancas,
+          quartos,
+        }),
       )
     })
   }
 
   return (
-    <Form className='search-form-container' onSubmit={handleSubmit}>
-      <div className='searchRow'>
-        <div className='destinationWrapper'>
+    <Form className="search-form-container" onSubmit={handleSubmit}>
+      <div className="searchRow">
+        <div className="destinationWrapper">
           <DestinationInput
             value={localizacao}
             hasError={error}
@@ -110,19 +124,19 @@ export function SearchForm() {
           />
         </div>
 
-        <div className='field dateField'>
+        <div className="field dateField">
           <label>Datas</label>
           <button
-            type='button'
-            className='fieldButton'
+            type="button"
+            className="fieldButton"
             onClick={() => setActivePanel((prev) => (prev === 'dates' ? null : 'dates'))}
           >
-            <FaCalendarAlt aria-hidden='true' />
+            <FaCalendarAlt aria-hidden="true" />
             {formatDateRange(entrada, saida, flexibilidade, duracaoFlexivel, mesesFlexiveis)}
           </button>
 
           {activePanel === 'dates' && (
-            <div className='floatingPanel datesPanel'>
+            <div className="floatingPanel datesPanel">
               <CalendarPicker
                 entrada={entrada}
                 saida={saida}
@@ -143,7 +157,9 @@ export function SearchForm() {
                 onApply={() => {
                   setActivePanel(null)
                   setTimeout(() => {
-                    const periodElem = document.getElementById('periodo') as HTMLSelectElement | null
+                    const periodElem = document.getElementById(
+                      'periodo',
+                    ) as HTMLSelectElement | null
                     if (periodElem) {
                       periodElem.focus()
                     }

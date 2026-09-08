@@ -20,7 +20,9 @@ export function Differentials() {
                   </div>
                   <div className="cardBody">
                     <div className="text-reveal">Camera de Seguranca</div>
-                    <p className="text-reveal">Uma das coisas que nos preocupamos quando viajamos e a seguranca.</p>
+                    <p className="text-reveal">
+                      Uma das coisas que nos preocupamos quando viajamos e a seguranca.
+                    </p>
                     <p className="text-reveal">
                       Por isso sempre estamos investindo pesado em seguranca, justamente para voce
                       ficar tranquilo enquanto estiver conosco.
@@ -52,7 +54,9 @@ export function Differentials() {
                   </div>
                   <div className="cardBody">
                     <div className="text-reveal">Piscina de natacao</div>
-                    <p className="text-reveal">No calor que tem feito nesses dias, voce nao pode ficar sem se refrescar.</p>
+                    <p className="text-reveal">
+                      No calor que tem feito nesses dias, voce nao pode ficar sem se refrescar.
+                    </p>
                     <p className="text-reveal">
                       Mesmo tendo praias e cachoeiras proximas dos nossos hoteis e pousadas,
                       pensando no seu bem-estar, oferecemos lindas piscinas.

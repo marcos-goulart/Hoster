@@ -1,4 +1,4 @@
-import { serviceIcons, serviceLabels } from './constants'
+import { serviceIcons, serviceLabels } from '../../constants/services'
 import { ServicesList } from './styles'
 
 interface ServicesFilterBlockProps {

@@ -11,14 +11,14 @@ export function Footer() {
 
   return (
     <FooterContainer>
-      <div className='container'>
-        <div className='row'>
+      <div className="container">
+        <div className="row">
           <HotelFooter />
           {isLogged && <MyAccountFooter />}
           <AdditionalInformationFooter />
         </div>
       </div>
-      <div className='copy'>
+      <div className="copy">
         <p>&copy; Todos os direitos reservados</p>
       </div>
     </FooterContainer>

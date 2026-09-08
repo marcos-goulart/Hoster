@@ -1,5 +1,5 @@
-import { useCustomScrollbar } from "../../hooks/useCustomScrollbar";
-import { Rail, Thumb, Track } from "./styles";
+import { useCustomScrollbar } from '../../hooks/useCustomScrollbar'
+import { Rail, Thumb, Track } from './styles'
 
 export function CustomScrollbar() {
   const { thumbRef, trackRef, isVisible } = useCustomScrollbar()

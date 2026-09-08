@@ -19,33 +19,33 @@ describe('SearchForm', () => {
   const originalImage = window.Image
 
   beforeEach(() => {
-  mockNavigate.mockClear()
+    mockNavigate.mockClear()
 
-  // Define um Mock Object que respeita a tipagem global de Image sem quebrar o JSDOM
-  const MockImage = function (this: HTMLImageElement) {
-    let _src = ''
+    // Define um Mock Object que respeita a tipagem global de Image sem quebrar o JSDOM
+    const MockImage = function (this: HTMLImageElement) {
+      let _src = ''
 
-    Object.defineProperty(this, 'src', {
-      get() {
-        return _src
-      },
-      set(val: string) {
-        _src = val
-        setTimeout(() => {
-          if (this.onload) this.onload(new Event('load'))
-        }, 10)
-      },
-      configurable: true,
-      enumerable: true,
-    })
+      Object.defineProperty(this, 'src', {
+        get() {
+          return _src
+        },
+        set(val: string) {
+          _src = val
+          setTimeout(() => {
+            if (this.onload) this.onload(new Event('load'))
+          }, 10)
+        },
+        configurable: true,
+        enumerable: true,
+      })
 
-    this.onload = () => {}
-    this.onerror = () => {}
-  }
+      this.onload = () => {}
+      this.onerror = () => {}
+    }
 
-  // Atribuição tipada sem avisos de ESLint e sem quebrar o construtor do JSDOM
-  window.Image = MockImage as unknown as typeof Image
-})
+    // Atribuição tipada sem avisos de ESLint e sem quebrar o construtor do JSDOM
+    window.Image = MockImage as unknown as typeof Image
+  })
 
   afterEach(() => {
     window.Image = originalImage
@@ -59,7 +59,7 @@ describe('SearchForm', () => {
             <SearchForm />
           </PageLoadingProvider>
         </BrowserRouter>
-      </AppThemeProvider>
+      </AppThemeProvider>,
     )
   }
 

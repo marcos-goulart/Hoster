@@ -22,6 +22,7 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
+      'prettier/prettier': ['error', { endOfline: 'auto' }],
       'no-tabs': ['error', { allowIndentationTabs: false }],
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
 
@@ -30,9 +31,9 @@ export default defineConfig([
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
 
-      'no-console': ['warn', {allow: ['warn', 'error']}],
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
 
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true}],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
 ])

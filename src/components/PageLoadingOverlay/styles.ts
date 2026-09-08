@@ -20,7 +20,9 @@ export const Overlay = styled.div<{ $isVisible: boolean }>`
   background-color: rgba(15, 23, 42, 0.45);
   opacity: ${(props) => (props.$isVisible ? 1 : 0)};
   pointer-events: ${(props) => (props.$isVisible ? 'all' : 'none')};
-  transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
+  transition:
+    opacity 0.25s ease-in-out,
+    visibility 0.25s ease-in-out;
   visibility: ${(props) => (props.$isVisible ? 'visible' : 'hidden')};
 
   .loadingWindow {

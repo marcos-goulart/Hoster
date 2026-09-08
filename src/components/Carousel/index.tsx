@@ -75,14 +75,17 @@ export function Carousel() {
     }
   }, [isTransitioning])
 
-  const moveSlide = useCallback((direction: number) => {
-    if (navigationLockedRef.current || width === 0) return
+  const moveSlide = useCallback(
+    (direction: number) => {
+      if (navigationLockedRef.current || width === 0) return
 
-    navigationLockedRef.current = true
-    setIsTransitioning(true)
-    setDragOffset(0)
-    setIndex((prev) => prev + direction)
-  }, [width])
+      navigationLockedRef.current = true
+      setIsTransitioning(true)
+      setDragOffset(0)
+      setIndex((prev) => prev + direction)
+    },
+    [width],
+  )
 
   useEffect(() => {
     if (isHovered || isDragging) return
@@ -150,8 +153,8 @@ export function Carousel() {
 
   return (
     <Main>
-      <div className='container'>
-        <div className='title'>
+      <div className="container">
+        <div className="title">
           <h1>Conheca nossos quartos aconchegantes</h1>
         </div>
 
@@ -161,10 +164,10 @@ export function Carousel() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <div className='carouselViewport'>
+          <div className="carouselViewport">
             <div
               ref={trackRef}
-              className='carouselTrack'
+              className="carouselTrack"
               onTransitionEnd={handleTransitionEnd}
               style={{ width: `${slides.length * 100}%` }}
             >
@@ -179,7 +182,7 @@ export function Carousel() {
                     style={{ width: `${width}px` }}
                   >
                     <div
-                      className='imageMotion'
+                      className="imageMotion"
                       style={{
                         transform: `translate3d(${parallaxX}px, 0, 0)`,
                         transition:
@@ -188,14 +191,14 @@ export function Carousel() {
                             : 'transform 700ms cubic-bezier(0.22,1,0.36,1)',
                       }}
                     >
-                      <img src={img} alt='Quarto do hotel' draggable={false} />
+                      <img src={img} alt="Quarto do hotel" draggable={false} />
                     </div>
                   </div>
                 )
               })}
             </div>
             <div
-              className='gestureLayer'
+              className="gestureLayer"
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
@@ -204,7 +207,7 @@ export function Carousel() {
           </div>
 
           <div
-            className='navArea left'
+            className="navArea left"
             onPointerDown={(event) => event.stopPropagation()}
             onClick={() => moveSlide(-1)}
           >
@@ -212,18 +215,18 @@ export function Carousel() {
           </div>
 
           <div
-            className='navArea right'
+            className="navArea right"
             onPointerDown={(event) => event.stopPropagation()}
             onClick={() => moveSlide(1)}
           >
             {'>'}
           </div>
 
-          <div className='indicators' onPointerDown={(event) => event.stopPropagation()}>
+          <div className="indicators" onPointerDown={(event) => event.stopPropagation()}>
             {images.map((_, i) => (
               <button
                 key={i}
-                type='button'
+                type="button"
                 className={currentIndicator === i ? 'active' : ''}
                 onClick={() => {
                   if (navigationLockedRef.current || width === 0) return

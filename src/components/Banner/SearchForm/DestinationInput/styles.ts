@@ -36,7 +36,9 @@ export const Container = styled.div<{ $hasError?: boolean }>`
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+      transition:
+        border-color 0.15s ease-in-out,
+        background-color 0.15s ease-in-out;
 
       &::placeholder {
         color: ${(props) => props.theme.colors.gray600};
@@ -49,16 +51,16 @@ export const Container = styled.div<{ $hasError?: boolean }>`
       }
 
       ${(props) =>
-            props.$hasError &&
-            css`
-              border-color: #e53e3e;
-              background-color: #fff5f5;
+        props.$hasError &&
+        css`
+          border-color: #e53e3e;
+          background-color: #fff5f5;
 
-              &::placeholder {
-                color: #e53e3e;
-                font-weight: 600;
-              }
-            `}
+          &::placeholder {
+            color: #e53e3e;
+            font-weight: 600;
+          }
+        `}
     }
   }
 
@@ -76,12 +78,14 @@ export const Container = styled.div<{ $hasError?: boolean }>`
     align-items: center;
     justify-content: center;
     font-size: 0.9rem;
-    transition: color 0.15s ease-in-out, transform 0.15s ease-in-out;
+    transition:
+      color 0.15s ease-in-out,
+      transform 0.15s ease-in-out;
 
     &::placeholder {
-    color: ${(props) => props.theme.colors.bgBrown1};
-    opacity: 1;
-  }
+      color: ${(props) => props.theme.colors.bgBrown1};
+      opacity: 1;
+    }
 
     &:hover {
       color: ${(props) => props.theme.colors.gray900};

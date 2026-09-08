@@ -11,7 +11,8 @@ export const MobileAccordionHeader = styled.button<{ $isOpen: boolean; $activeCo
   width: 100%;
   padding: 0.85rem 1.25rem;
   background-color: ${(props) => props.theme.colors.white};
-  border: 1px solid ${(props) => (props.$isOpen ? props.theme.colors.orange : props.theme.colors.gray300)};
+  border: 1px solid
+    ${(props) => (props.$isOpen ? props.theme.colors.orange : props.theme.colors.gray300)};
   border-radius: 0.5rem;
   color: ${(props) => props.theme.colors.gray900};
   font-family: inherit;
@@ -204,7 +205,9 @@ export const ApplyFilterButton = styled.button<{ $isDirty?: boolean }>`
   padding: 0.625rem 1rem;
   color: ${(props) => props.theme.colors.white};
   background-color: ${(props) =>
-    props.$isDirty ? props.theme.colors.orange : props.theme.colors.orange2 || props.theme.colors.orange};
+    props.$isDirty
+      ? props.theme.colors.orange
+      : props.theme.colors.orange2 || props.theme.colors.orange};
   border: 1px solid transparent;
   border-radius: 0.375rem;
   font-family: inherit;

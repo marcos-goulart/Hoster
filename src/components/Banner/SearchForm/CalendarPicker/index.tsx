@@ -38,14 +38,8 @@ export function CalendarPicker({
 }: CalendarPickerProps) {
   const [activeTab, setActiveTab] = useState<'calendar' | 'flexible'>('calendar')
 
-  const {
-    baseDate,
-    startDate,
-    endDate,
-    handlePrevMonth,
-    handleNextMonth,
-    handleDayClick,
-  } = useDateRangeSelection(entrada, saida, onChangeDates)
+  const { baseDate, startDate, endDate, handlePrevMonth, handleNextMonth, handleDayClick } =
+    useDateRangeSelection(entrada, saida, onChangeDates)
 
   const month1Year = baseDate.getFullYear()
   const month1Month = baseDate.getMonth()

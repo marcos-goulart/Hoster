@@ -10,23 +10,23 @@ export function HotelFooter() {
         parceiros os melhores lugares para ter um lazer e um descanso excelente e merecido.
       </p>
       <p>
-        <a href='#' title='Facebook'>
-          <i className='facebook'>
+        <a href="#" title="Facebook">
+          <i className="facebook">
             <FaFacebookF />
           </i>
         </a>
-        <a href='#' title='Twitter'>
-          <i className='x'>
+        <a href="#" title="Twitter">
+          <i className="x">
             <FaXTwitter />
           </i>
         </a>
-        <a href='#' title='Instagram'>
-          <i className='instagram'>
+        <a href="#" title="Instagram">
+          <i className="instagram">
             <FaInstagram />
           </i>
         </a>
-        <a href='#' title='Youtube'>
-          <i className='youtube'>
+        <a href="#" title="Youtube">
+          <i className="youtube">
             <FaYoutube />
           </i>
         </a>

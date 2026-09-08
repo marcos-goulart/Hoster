@@ -1,12 +1,5 @@
 import type { ReactElement } from 'react'
-import {
-  FaCoffee,
-  FaFutbol,
-  FaParking,
-  FaUmbrellaBeach,
-  FaUtensils,
-  FaWifi,
-} from 'react-icons/fa'
+import { FaCoffee, FaFutbol, FaParking, FaUmbrellaBeach, FaUtensils, FaWifi } from 'react-icons/fa'
 import { MdPool } from 'react-icons/md'
 
 export const serviceLabels: Record<string, string> = {

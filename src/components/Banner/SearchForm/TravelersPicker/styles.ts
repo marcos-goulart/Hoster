@@ -27,7 +27,9 @@ export const Container = styled.div`
     outline: none;
     text-align: left;
     cursor: pointer;
-    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    transition:
+      border-color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out;
 
     &:focus {
       border-color: ${(props) => props.theme.colors.blue};

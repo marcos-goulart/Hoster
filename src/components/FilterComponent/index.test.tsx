@@ -14,7 +14,7 @@ describe('FilterComponent', () => {
           onApplyFilters={onApplyFilters}
           totalResults={12}
         />
-      </AppThemeProvider>
+      </AppThemeProvider>,
     )
   }
 

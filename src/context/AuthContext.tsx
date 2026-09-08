@@ -1,4 +1,3 @@
- 
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { AuthContext } from './AuthContextInstance'
@@ -7,7 +6,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLogged, setIsLogged] = useState(() => {
     return !!localStorage.getItem('token')
   })
-
 
   const login = () => {
     localStorage.setItem('token', 'mock-token')
@@ -21,7 +19,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return <AuthContext.Provider value={{ isLogged, login, logout }}>{children}</AuthContext.Provider>
 }
-
 
 export { AuthContext }
 // when with bakend below

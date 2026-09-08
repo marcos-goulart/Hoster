@@ -127,7 +127,9 @@ function getTargetStateFromQuery(locationTerm: string): string | null {
 
 function getSearchableText(hotel: Hotel) {
   return normalizeSearchValue(
-    [hotel.name, hotel.location, hotel.description, ...(hotel.searchTags ?? [])].filter(Boolean).join(' '),
+    [hotel.name, hotel.location, hotel.description, ...(hotel.searchTags ?? [])]
+      .filter(Boolean)
+      .join(' '),
   )
 }
 
@@ -209,7 +211,10 @@ export async function searchHotels(criteria: HotelSearchCriteria): Promise<Hotel
         }
       }
 
-      if (hasPeriodCriteria && !hotel.availablePeriods?.includes(normalizeSearchValue(criteria.periodo))) {
+      if (
+        hasPeriodCriteria &&
+        !hotel.availablePeriods?.includes(normalizeSearchValue(criteria.periodo))
+      ) {
         return false
       }
 
@@ -235,4 +240,3 @@ export async function searchHotels(criteria: HotelSearchCriteria): Promise<Hotel
     })
     .map(({ hotel }) => hotel)
 }
-

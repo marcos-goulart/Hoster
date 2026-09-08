@@ -22,7 +22,7 @@ describe('HotelCard', () => {
     name: 'Hotel California',
     location: 'Porto Seguro/BA',
     description: 'Hotel próximo de lindas praias e muito aconchegante.',
-    price: 699.90,
+    price: 699.9,
     image: 'hotel-1.jpg',
   }
 
@@ -32,7 +32,7 @@ describe('HotelCard', () => {
         <BrowserRouter>
           <HotelCard hotel={hotel} hasDiscount={hasDiscount} />
         </BrowserRouter>
-      </AppThemeProvider>
+      </AppThemeProvider>,
     )
   }
 
@@ -41,8 +41,10 @@ describe('HotelCard', () => {
 
     expect(screen.getByText('Hotel California')).toBeInTheDocument()
     expect(screen.getByText('Porto Seguro/BA')).toBeInTheDocument()
-    expect(screen.getByText('Hotel próximo de lindas praias e muito aconchegante.')).toBeInTheDocument()
-    
+    expect(
+      screen.getByText('Hotel próximo de lindas praias e muito aconchegante.'),
+    ).toBeInTheDocument()
+
     const image = screen.getByRole('img', { name: 'Hotel California' }) as HTMLImageElement
     expect(image).toBeInTheDocument()
     expect(image.getAttribute('src')).toBe('hotel-1.jpg')
@@ -61,8 +63,8 @@ describe('HotelCard', () => {
   it('deve renderizar o preço antigo e novo promocional corretamente', () => {
     const promotionalHotel: Hotel = {
       ...mockHotel,
-      price: 800.00,
-      discountPrice: 650.00,
+      price: 800.0,
+      discountPrice: 650.0,
     }
 
     renderCard(promotionalHotel)
@@ -86,7 +88,7 @@ describe('Listagem de Hotéis e Estado Vazio', () => {
             <Route path="/hoteis/:category" element={<AllHotelsPage />} />
           </Routes>
         </MemoryRouter>
-      </AppThemeProvider>
+      </AppThemeProvider>,
     )
   }
 
@@ -116,7 +118,9 @@ describe('Listagem de Hotéis e Estado Vazio', () => {
 
     renderAllHotelsPage('destaques')
 
-    const emptyStateMessage = await screen.findByText('Nenhum hotel foi encontrado para esta categoria no momento.')
+    const emptyStateMessage = await screen.findByText(
+      'Nenhum hotel foi encontrado para esta categoria no momento.',
+    )
     expect(emptyStateMessage).toBeInTheDocument()
   })
 })

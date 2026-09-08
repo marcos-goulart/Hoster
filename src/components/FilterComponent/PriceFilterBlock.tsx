@@ -19,11 +19,7 @@ export function PriceFilterBlock({
 }: PriceFilterBlockProps) {
   return (
     <div className="filterBlock">
-      <button
-        type="button"
-        className={`filterToggle ${isOpen ? 'open' : ''}`}
-        onClick={onToggle}
-      >
+      <button type="button" className={`filterToggle ${isOpen ? 'open' : ''}`} onClick={onToggle}>
         <span>
           <strong>Preço</strong>
           R$ {minPrice},00 a R$ {maxPrice},00

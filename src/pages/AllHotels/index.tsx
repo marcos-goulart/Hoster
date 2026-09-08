@@ -85,16 +85,16 @@ export default function AllHotelsPage() {
               </SectionHeader>
 
               {isLoading ? (
-                <SkeletonGrid aria-hidden='true'>
+                <SkeletonGrid aria-hidden="true">
                   {skeletonCards.map((cardId) => (
                     <SkeletonCard key={cardId}>
-                      <div className='image' />
-                      <div className='content'>
-                        <div className='line title' />
-                        <div className='line subtitle' />
-                        <div className='line body' />
-                        <div className='line body short' />
-                        <div className='button' />
+                      <div className="image" />
+                      <div className="content">
+                        <div className="line title" />
+                        <div className="line subtitle" />
+                        <div className="line body" />
+                        <div className="line body short" />
+                        <div className="button" />
                       </div>
                     </SkeletonCard>
                   ))}

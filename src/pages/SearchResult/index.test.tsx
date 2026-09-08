@@ -67,10 +67,14 @@ describe('SearchResultPage Filters', () => {
       onerror: () => void = () => {}
       _src: string = ''
       complete: boolean = false
-      get src() { return this._src }
+      get src() {
+        return this._src
+      }
       set src(val: string) {
         this._src = val
-        setTimeout(() => { if (this.onload) this.onload() }, 10)
+        setTimeout(() => {
+          if (this.onload) this.onload()
+        }, 10)
       }
     } as unknown as typeof Image
   })
@@ -89,7 +93,7 @@ describe('SearchResultPage Filters', () => {
             </Routes>
           </PageLoadingProvider>
         </MemoryRouter>
-      </AppThemeProvider>
+      </AppThemeProvider>,
     )
   }
 
@@ -188,7 +192,9 @@ describe('SearchResultPage Filters', () => {
     fireEvent.click(screen.getByRole('button', { name: /aplicar filtros/i }))
 
     // Nenhuma pousada possui wi-fi nas mockadas
-    const emptyState = await screen.findByText('Nenhum hotel encontrado para os criterios informados.')
+    const emptyState = await screen.findByText(
+      'Nenhum hotel encontrado para os criterios informados.',
+    )
     expect(emptyState).toBeInTheDocument()
   })
 })

@@ -88,64 +88,69 @@ export default function ReservationPage() {
     <Container>
       <Navbar />
       <MainContent>
-        <div className='container'>
+        <div className="container">
           <TitleBlock>
             <h1>Pre-reserva</h1>
-            <div className='line' />
+            <div className="line" />
           </TitleBlock>
 
           {isLoading ? (
-            <div className='contentGrid' aria-hidden='true'>
+            <div className="contentGrid" aria-hidden="true">
               <ReservationSkeletonSummary>
-                <div className='image' />
-                <div className='summaryContent'>
-                  <div className='line title' />
-                  <div className='line location' />
-                  <div className='stars'>
+                <div className="image" />
+                <div className="summaryContent">
+                  <div className="line title" />
+                  <div className="line location" />
+                  <div className="stars">
                     {Array.from({ length: 5 }).map((_, index) => (
-                      <div key={`reservation-skeleton-star-${index}`} className='star' />
+                      <div key={`reservation-skeleton-star-${index}`} className="star" />
                     ))}
                   </div>
-                  <div className='line price' />
-                  <div className='badge' />
-                  <div className='line description' />
-                  <div className='line description short' />
+                  <div className="line price" />
+                  <div className="badge" />
+                  <div className="line description" />
+                  <div className="line description short" />
                 </div>
               </ReservationSkeletonSummary>
 
               <ReservationSkeletonForm>
-                <div className='fieldGrid'>
+                <div className="fieldGrid">
                   {reservationFields.map((field) => (
-                    <div key={`reservation-skeleton-field-${field.id}`} className={`field ${field.className}`}>
-                      <div className='label' />
-                      <div className='input' />
+                    <div
+                      key={`reservation-skeleton-field-${field.id}`}
+                      className={`field ${field.className}`}
+                    >
+                      <div className="label" />
+                      <div className="input" />
                     </div>
                   ))}
                 </div>
 
-                <div className='actions'>
-                  <div className='button' />
+                <div className="actions">
+                  <div className="button" />
                 </div>
               </ReservationSkeletonForm>
             </div>
           ) : !hotel ? (
-            <EmptyState>Hotel nao encontrado. Volte para a Home e escolha outra hospedagem.</EmptyState>
+            <EmptyState>
+              Hotel nao encontrado. Volte para a Home e escolha outra hospedagem.
+            </EmptyState>
           ) : (
-            <div className='contentGrid'>
+            <div className="contentGrid">
               <SummaryCard $isAvailable={isAvailable}>
                 <img src={hotel.image} alt={hotel.name} />
-                <div className='summaryContent'>
+                <div className="summaryContent">
                   <h2>{hotel.name}</h2>
-                  <p className='location'>{hotel.location}</p>
-                  <div className='stars' aria-label='Hotel com cinco estrelas'>
+                  <p className="location">{hotel.location}</p>
+                  <div className="stars" aria-label="Hotel com cinco estrelas">
                     {Array.from({ length: 5 }).map((_, index) => (
                       <FaStar key={`${hotel.id}-star-${index}`} />
                     ))}
                   </div>
-                  <p className='price'>
+                  <p className="price">
                     {hotel.discountPrice !== undefined ? (
                       <>
-                        <span className='oldPrice'>
+                        <span className="oldPrice">
                           {hotel.price.toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
@@ -170,14 +175,15 @@ export default function ReservationPage() {
                   <StatusBadge $isAvailable={isAvailable}>
                     {isAvailable ? 'Disponivel!' : 'Indisponivel!'}
                   </StatusBadge>
-                  {hotel.description ? <p className='description'>{hotel.description}</p> : null}
+                  {hotel.description ? <p className="description">{hotel.description}</p> : null}
                 </div>
               </SummaryCard>
 
               <FormCard>
                 {!isAvailable ? (
                   <Notice>
-                    No momento esta hospedagem nao possui disponibilidade para seguir com a pre-reserva.
+                    No momento esta hospedagem nao possui disponibilidade para seguir com a
+                    pre-reserva.
                   </Notice>
                 ) : null}
 
@@ -191,8 +197,8 @@ export default function ReservationPage() {
                     ))}
                   </FormGrid>
 
-                  <div className='actions'>
-                    <ActionButton type='button' disabled={isDisabled}>
+                  <div className="actions">
+                    <ActionButton type="button" disabled={isDisabled}>
                       Proximo
                     </ActionButton>
                   </div>

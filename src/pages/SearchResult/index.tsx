@@ -66,10 +66,14 @@ function getCriteriaFromParams(searchParams: URLSearchParams): HotelSearchCriter
     saida: searchParams.get('saida') ?? undefined,
     periodo: searchParams.get('periodo') ?? undefined,
     nome: searchParams.get('nome') ?? undefined,
-    flexibilidade: searchParams.get('flexibilidade') ? Number(searchParams.get('flexibilidade')) : undefined,
+    flexibilidade: searchParams.get('flexibilidade')
+      ? Number(searchParams.get('flexibilidade'))
+      : undefined,
     duracaoFlexivel: searchParams.get('duracaoFlexivel') ?? undefined,
     incluirFimDeSemana: searchParams.get('incluirFimDeSemana') === 'true',
-    mesesFlexiveis: searchParams.get('mesesFlexiveis') ? searchParams.get('mesesFlexiveis')!.split(',') : undefined,
+    mesesFlexiveis: searchParams.get('mesesFlexiveis')
+      ? searchParams.get('mesesFlexiveis')!.split(',')
+      : undefined,
   }
 }
 
@@ -77,11 +81,7 @@ function getDisplayPrice(hotel: Hotel) {
   return hotel.discountPrice ?? hotel.price
 }
 
-function getNights(
-  entrada: string | null,
-  saida: string | null,
-  duracaoFlexivel?: string | null,
-) {
+function getNights(entrada: string | null, saida: string | null, duracaoFlexivel?: string | null) {
   if (entrada && saida) {
     const startDate = new Date(`${entrada}T00:00:00`)
     const endDate = new Date(`${saida}T00:00:00`)
@@ -281,7 +281,7 @@ export default function SearchResultPage() {
                 <SearchResultSkeleton />
               ) : filteredHotels.length > 0 ? (
                 <>
-                  {displayedHotels.map((hotel) => (
+                  {displayedHotels.map((hotel) =>
                     (() => {
                       const rating = 10
                       const dailyPrice = getDisplayPrice(hotel)
@@ -316,10 +316,15 @@ export default function SearchResultPage() {
                               <div className="ratingRow" aria-label={`Nota ${rating} de 10`}>
                                 <div className="stars">
                                   {Array.from({ length: 5 }).map((_, index) => (
-                                    <FaStar key={`${hotel.id}-result-star-${index}`} aria-hidden="true" />
+                                    <FaStar
+                                      key={`${hotel.id}-result-star-${index}`}
+                                      aria-hidden="true"
+                                    />
                                   ))}
                                 </div>
-                                <span className="ratingBadge">{rating.toFixed(1).replace('.', ',')}</span>
+                                <span className="ratingBadge">
+                                  {rating.toFixed(1).replace('.', ',')}
+                                </span>
                               </div>
                               <p className="description">
                                 {hotel.description ??
@@ -333,7 +338,11 @@ export default function SearchResultPage() {
                                   </span>
                                 ) : null}
                                 <div className="priceRow">
-                                  <strong className={hotel.discountPrice !== undefined ? 'discountPrice' : ''}>
+                                  <strong
+                                    className={
+                                      hotel.discountPrice !== undefined ? 'discountPrice' : ''
+                                    }
+                                  >
                                     {dailyPrice.toLocaleString('pt-BR', {
                                       style: 'currency',
                                       currency: 'BRL',
@@ -350,7 +359,8 @@ export default function SearchResultPage() {
                                   <small>por diaria</small>
                                 </div>
                                 <span>
-                                  Total: {totalPrice.toLocaleString('pt-BR', {
+                                  Total:{' '}
+                                  {totalPrice.toLocaleString('pt-BR', {
                                     style: 'currency',
                                     currency: 'BRL',
                                   })}{' '}
@@ -372,8 +382,8 @@ export default function SearchResultPage() {
                           </div>
                         </ResultCard>
                       )
-                    })()
-                  ))}
+                    })(),
+                  )}
 
                   {totalPages > 1 ? (
                     <Pagination aria-label="Paginacao de resultados">

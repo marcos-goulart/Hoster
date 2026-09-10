@@ -2,7 +2,9 @@ import { createContext } from 'react'
 import type { AuthContextType } from '../interfaces/AuthContextType'
 
 export const AuthContext = createContext<AuthContextType>({
+  user: null,
   isLogged: false,
-  login: () => {},
-  logout: () => {},
+  loading: true,
+  signInWithGoogle: async () => {},
+  logout: async () => {},
 })

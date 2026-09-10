@@ -1,5 +1,8 @@
+import type { User } from 'firebase/auth'
 export interface AuthContextType {
+  user: User | null
   isLogged: boolean
-  login: () => void
-  logout: () => void
+  loading: boolean
+  signInWithGoogle: () => Promise<void>
+  logout: () => Promise<void>
 }

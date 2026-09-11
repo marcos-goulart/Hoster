@@ -5,6 +5,10 @@ interface ContainerProps {
   $isMenuOpen: boolean
 }
 
+interface ButtonProps {
+  to?: string
+}
+
 export const NavContainer = styled.nav<ContainerProps>`
   position: relative;
   display: flex;
@@ -141,11 +145,13 @@ export const NavContainer = styled.nav<ContainerProps>`
       }
     }
   }
+
   @media (min-width: ${(props) => props.theme.screenMedias.sl}) {
     .container {
       max-width: 540px;
     }
   }
+
   @media (min-width: ${(props) => props.theme.screenMedias.md}) {
     .container {
       max-width: 720px;
@@ -189,7 +195,8 @@ export const NavContainer = styled.nav<ContainerProps>`
           .login-button-item {
             margin-right: 0;
 
-            a {
+            a,
+            button {
               padding-left: 3rem;
               padding-right: 3rem;
             }
@@ -227,10 +234,39 @@ export const NavContainer = styled.nav<ContainerProps>`
     }
   }
 `
+
 export const BrandLink = styled(Link).attrs({
   className: 'brandLink',
 })``
 
 export const NavLinkItem = styled(Link)``
 
-export const Button = styled(Link)``
+export const Button = styled(Link)<ButtonProps>``
+
+export const UserMenu = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  span {
+    font-size: ${(props) => props.theme.fontSize.base};
+    font-weight: ${(props) => props.theme.fontWeight.bold};
+    color: ${(props) => props.theme.colors.black2};
+  }
+
+  .btn-logout {
+    background: transparent;
+    border: 1px solid ${(props) => props.theme.colors.gray300};
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.85rem;
+    font-size: ${(props) => props.theme.fontSize.sm};
+    color: ${(props) => props.theme.colors.gray700};
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      background-color: ${(props) => props.theme.colors.gray200};
+      color: ${(props) => props.theme.colors.black1};
+    }
+  }
+`

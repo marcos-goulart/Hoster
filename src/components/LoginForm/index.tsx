@@ -1,7 +1,11 @@
 import { useState } from 'react'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '../../hooks/useAuth'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { GoogleIcon } from './googleIcon'
+import { loginSchema, type LoginFormData } from '../../schemas/authSchemas'
+import { translateFirebaseError } from '../../utils/firebaseErrors'
 import { Divider, FormWrapper, PasswordInputWrapper, SocialButton, SubmitButton } from './styles'
 
 interface LoginFormProps {
@@ -10,34 +14,47 @@ interface LoginFormProps {
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
   const { signInWithGoogle, loginWithEmail } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
+  const [firebaseError, setFirebaseError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  })
 
   const handleGoogleLogin = async () => {
     try {
+      setIsLoading(true)
       await signInWithGoogle()
       if (onSuccess) onSuccess()
     } catch (err) {
-      console.error('Falha no login com Google:', err)
+      setFirebaseError(translateFirebaseError(err))
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  const onSubmit = async (data: LoginFormData) => {
+    setFirebaseError('')
+    setIsLoading(true)
+
     try {
-      await loginWithEmail(email, password)
+      await loginWithEmail(data.email, data.password)
       if (onSuccess) onSuccess()
-    } catch {
-      setError('E-mail ou senha inválidos.')
+    } catch (err) {
+      setFirebaseError(translateFirebaseError(err))
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <FormWrapper onSubmit={handleSubmit}>
-      <SocialButton type="button" onClick={handleGoogleLogin}>
+    <FormWrapper onSubmit={handleSubmit(onSubmit)}>
+      <SocialButton type="button" onClick={handleGoogleLogin} disabled={isLoading}>
         <GoogleIcon />
         Continuar com o Google
       </SocialButton>
@@ -46,7 +63,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         <span>ou entre com e-mail</span>
       </Divider>
 
-      {error && <p style={{ color: '#dc2626', fontSize: '0.85rem' }}>{error}</p>}
+      {firebaseError && <p className="firebase-error">{firebaseError}</p>}
 
       <div className="inputGroup">
         <label htmlFor="login-email">E-mail</label>
@@ -54,10 +71,10 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           id="login-email"
           type="email"
           placeholder="seu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          {...register('email')}
+          disabled={isLoading}
         />
+        {errors.email && <span className="field-error">{errors.email.message}</span>}
       </div>
 
       <div className="inputGroup">
@@ -67,9 +84,8 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             id="login-password"
             type={showPassword ? 'text' : 'password'}
             placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            {...register('password')}
+            disabled={isLoading}
           />
           <button
             type="button"
@@ -79,9 +95,12 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </PasswordInputWrapper>
+        {errors.password && <span className="field-error">{errors.password.message}</span>}
       </div>
 
-      <SubmitButton type="submit">Entrar</SubmitButton>
+      <SubmitButton type="submit" disabled={isLoading}>
+        {isLoading ? 'Entrando...' : 'Entrar'}
+      </SubmitButton>
     </FormWrapper>
   )
 }

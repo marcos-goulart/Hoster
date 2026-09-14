@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { LoginForm } from './LoginForm'
-import { RegisterForm } from './RegisterForm'
+import { LoginForm } from '../../components/LoginForm'
+import { RegisterForm } from '../../components/RegisterForm'
 import { AuthCard, LoginContainer, TabHeader } from './styles'
 
 export default function LoginPage() {

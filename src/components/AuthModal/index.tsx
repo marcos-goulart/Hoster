@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { IoClose } from 'react-icons/io5'
-import { LoginForm } from '../../pages/Login/LoginForm'
-import { RegisterForm } from '../../pages/Login/RegisterForm'
+import { LoginForm } from '../LoginForm'
+import { RegisterForm } from '../RegisterForm'
 import { CloseButton, ModalContent, Overlay, TabHeader } from './styles'
 
 interface AuthModalProps {

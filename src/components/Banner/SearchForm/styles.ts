@@ -16,41 +16,43 @@ export const Form = styled.form`
 
   label {
     display: inline-block;
-    margin-bottom: 0.5rem;
-    font-weight: ${(props) => props.theme.fontWeight.bold};
+    margin-bottom: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: ${(props) => props.theme.colors.primaryMedium};
   }
 
   select,
   .fieldButton {
     width: 100%;
-    height: 3rem;
-    min-height: 3rem;
-    max-height: 3rem;
+    height: 2.8rem;
+    min-height: 2.8rem;
+    max-height: 2.8rem;
     box-sizing: border-box;
-    border: 2px solid ${(props) => props.theme.colors.bgBrown2};
-    background-color: ${(props) => props.theme.colors.bgBrown2};
-    color: ${(props) => props.theme.colors.bgBrown1};
+    border: 1px solid ${(props) => props.theme.colors.borderColor};
+    background-color: ${(props) => props.theme.colors.bgMain};
+    color: ${(props) => props.theme.colors.textMain};
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
+    padding: 0.65rem 0.8rem;
     font-family: inherit;
-    font-size: ${(props) => props.theme.fontSize.base};
+    font-size: 0.9rem;
     line-height: 1.2;
-    border-radius: 0;
+    border-radius: 6px;
     outline: none;
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition:
-      border-color 0.15s ease-in-out,
-      background-color 0.15s ease-in-out;
+    transition: all 0.2s ease;
   }
 
   select:focus,
   .fieldButton:focus {
-    border-color: ${(props) => props.theme.colors.blue};
+    border-color: ${(props) => props.theme.colors.accentWarm};
     background-color: ${(props) => props.theme.colors.white};
   }
 

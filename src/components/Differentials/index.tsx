@@ -5,7 +5,7 @@ import { Main } from './styles'
 
 export function Differentials() {
   return (
-    <Main>
+    <Main id="diferenciais">
       <div className="container">
         <div className="title">
           <h1 className="text-reveal">Vejam alguns dos nossos diferenciais</h1>

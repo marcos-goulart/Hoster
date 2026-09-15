@@ -47,8 +47,8 @@ export const FormWrapper = styled.form`
 
       &:focus {
         outline: none;
-        border-color: ${(props) => props.theme.colors.orange};
-        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+        border-color: ${(props) => props.theme.colors.accentWarm};
+        box-shadow: 0 0 0 3px rgba(140, 90, 60, 0.15);
       }
     }
   }
@@ -86,7 +86,7 @@ export const PasswordInputWrapper = styled.div`
 
   input {
     width: 100%;
-    padding-right: 2.5rem !important; /* Espaço para o ícone não sobrepor o texto */
+    padding-right: 2.5rem !important;
   }
 
   button {
@@ -94,7 +94,7 @@ export const PasswordInputWrapper = styled.div`
     right: 0.75rem;
     background: transparent;
     border: none;
-    color: ${(props) => props.theme.colors.gray600};
+    color: ${(props) => props.theme.colors.textMuted};
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -104,7 +104,7 @@ export const PasswordInputWrapper = styled.div`
     transition: color 0.15s ease-in-out;
 
     &:hover {
-      color: ${(props) => props.theme.colors.gray900};
+      color: ${(props) => props.theme.colors.primaryDark};
     }
 
     &:focus {
@@ -120,41 +120,41 @@ export const SocialButton = styled.button`
   gap: 0.75rem;
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: ${(props) => props.theme.colors.white};
-  border: 1px solid ${(props) => props.theme.colors.gray300};
-  border-radius: 0.375rem;
+  background-color: ${(props) => props.theme.colors.bgCard};
+  border: 1px solid ${(props) => props.theme.colors.borderColor};
+  border-radius: 6px;
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
-  color: ${(props) => props.theme.colors.gray700};
+  color: ${(props) => props.theme.colors.textMain};
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s ease-in-out;
 
   svg {
     font-size: 1.2rem;
   }
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.gray100};
-    border-color: ${(props) => props.theme.colors.gray400};
-    color: ${(props) => props.theme.colors.gray900};
+    background-color: ${(props) => props.theme.colors.bgMain};
+    border-color: ${(props) => props.theme.colors.accentWarm};
+    color: ${(props) => props.theme.colors.primaryDark};
   }
 `
 
 export const SubmitButton = styled.button`
   width: 100%;
   padding: 0.85rem 1rem;
-  background-color: ${(props) => props.theme.colors.orange};
+  background-color: ${(props) => props.theme.colors.accentWarm};
   color: ${(props) => props.theme.colors.white};
   border: none;
-  border-radius: 0.375rem;
+  border-radius: 6px;
   font-family: inherit;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s ease-in-out;
+  transition: background-color 0.2s ease-in-out;
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.orange2 || props.theme.colors.orange};
+    background-color: ${(props) => props.theme.colors.accentHover};
   }
 `

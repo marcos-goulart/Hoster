@@ -3,7 +3,22 @@ import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(ScrollTrigger)
+if (typeof window !== 'undefined') {
+  if (typeof window.matchMedia !== 'function') {
+    window.matchMedia = (query: string) =>
+      ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      }) as unknown as MediaQueryList
+  }
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 export let lenisInstance: Lenis | null = null
 
@@ -20,15 +35,16 @@ export const useSmoothScroll = () => {
 
     lenis.on('scroll', ScrollTrigger.update)
 
-    gsap.ticker.add((time) => {
+    const updateRaf = (time: number) => {
       lenis.raf(time * 1000)
-    })
+    }
 
-    gsap.ticker.lagSmoothing(0)
+    gsap.ticker.add(updateRaf)
+    gsap.ticker.lagSmoothing(500, 33)
 
     return () => {
       lenis.destroy()
-      gsap.ticker.remove(lenis.raf)
+      gsap.ticker.remove(updateRaf)
       lenisInstance = null
     }
   }, [])

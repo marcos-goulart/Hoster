@@ -10,16 +10,16 @@ export const MobileAccordionHeader = styled.button<{ $isOpen: boolean; $activeCo
   justify-content: space-between;
   width: 100%;
   padding: 0.85rem 1.25rem;
-  background-color: ${(props) => props.theme.colors.white};
+  background-color: ${(props) => props.theme.colors.bgCard};
   border: 1px solid
-    ${(props) => (props.$isOpen ? props.theme.colors.orange : props.theme.colors.gray300)};
-  border-radius: 0.5rem;
-  color: ${(props) => props.theme.colors.gray900};
+    ${(props) => (props.$isOpen ? props.theme.colors.accentWarm : props.theme.colors.borderColor)};
+  border-radius: 8px;
+  color: ${(props) => props.theme.colors.primaryDark};
   font-family: inherit;
   font-size: ${(props) => props.theme.fontSize.base};
-  font-weight: ${(props) => props.theme.fontWeight.bold};
+  font-weight: ${(props) => props.theme.fontWeight.semibold};
   cursor: pointer;
-  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.05);
+  box-shadow: ${(props) => props.theme.shadows.soft};
   transition: all 0.2s ease-in-out;
   margin-bottom: 1rem;
 
@@ -30,7 +30,7 @@ export const MobileAccordionHeader = styled.button<{ $isOpen: boolean; $activeCo
   }
 
   .filterIcon {
-    color: ${(props) => props.theme.colors.orange};
+    color: ${(props) => props.theme.colors.accentWarm};
     font-size: 1.1rem;
   }
 
@@ -42,20 +42,20 @@ export const MobileAccordionHeader = styled.button<{ $isOpen: boolean; $activeCo
     height: 1.35rem;
     padding: 0 0.4rem;
     border-radius: 999px;
-    background-color: ${(props) => props.theme.colors.orange};
+    background-color: ${(props) => props.theme.colors.accentWarm};
     color: ${(props) => props.theme.colors.white};
     font-size: 0.75rem;
     font-weight: 700;
   }
 
   .chevronIcon {
-    color: ${(props) => props.theme.colors.gray600};
+    color: ${(props) => props.theme.colors.textMuted};
     transition: transform 0.2s ease-in-out;
     transform: ${(props) => (props.$isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   }
 
   &:hover {
-    border-color: ${(props) => props.theme.colors.orange};
+    border-color: ${(props) => props.theme.colors.accentWarm};
   }
 
   @media (min-width: ${(props) => props.theme.screenMedias.lg}) {
@@ -64,22 +64,22 @@ export const MobileAccordionHeader = styled.button<{ $isOpen: boolean; $activeCo
 `
 
 export const FilterContent = styled.aside<{ $isMobileOpen: boolean }>`
-  background-color: ${(props) => props.theme.colors.white};
-  border: 1px solid ${(props) => props.theme.colors.gray300};
-  padding: 1.25rem;
-  border-radius: 0.25rem;
+  background-color: ${(props) => props.theme.colors.bgCard};
+  border: 1px solid ${(props) => props.theme.colors.borderColor};
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: ${(props) => props.theme.shadows.soft};
   display: block;
 
   @media (max-width: 991px) {
     display: ${(props) => (props.$isMobileOpen ? 'block' : 'none')};
     margin-bottom: 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
   }
 
   .filterBlock {
     padding: 1.25rem 0;
-    border-bottom: 1px solid ${(props) => props.theme.colors.gray300};
+    border-bottom: 1px solid ${(props) => props.theme.colors.borderColor};
 
     &:first-child {
       padding-top: 0;
@@ -87,16 +87,18 @@ export const FilterContent = styled.aside<{ $isMobileOpen: boolean }>`
   }
 
   h3 {
-    font-size: ${(props) => props.theme.fontSize.lg};
-    font-weight: ${(props) => props.theme.fontWeight.bold};
-    margin-bottom: 0.75rem;
-    color: ${(props) => props.theme.colors.gray900};
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: ${(props) => props.theme.colors.primaryDark};
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 
     svg {
-      color: ${(props) => props.theme.colors.orange};
+      color: ${(props) => props.theme.colors.accentWarm};
     }
   }
 
@@ -108,7 +110,7 @@ export const FilterContent = styled.aside<{ $isMobileOpen: boolean }>`
     gap: 0.75rem;
     border: 0;
     background-color: transparent;
-    color: ${(props) => props.theme.colors.gray900};
+    color: ${(props) => props.theme.colors.primaryDark};
     padding: 0;
     font-family: inherit;
     text-align: left;
@@ -120,7 +122,7 @@ export const FilterContent = styled.aside<{ $isMobileOpen: boolean }>`
     }
 
     strong {
-      font-size: ${(props) => props.theme.fontSize.lg};
+      font-size: 0.95rem;
     }
 
     svg {
@@ -137,8 +139,9 @@ export const FilterContent = styled.aside<{ $isMobileOpen: boolean }>`
     gap: 0.75rem;
     margin-top: 1rem;
     padding: 1rem;
-    background-color: ${(props) => props.theme.colors.gray100};
-    border: 1px solid ${(props) => props.theme.colors.gray300};
+    background-color: ${(props) => props.theme.colors.bgMain};
+    border: 1px solid ${(props) => props.theme.colors.borderColor};
+    border-radius: 6px;
 
     label {
       display: grid;
@@ -148,9 +151,16 @@ export const FilterContent = styled.aside<{ $isMobileOpen: boolean }>`
 
     input[type='number'] {
       width: 100%;
-      border: 1px solid ${(props) => props.theme.colors.gray300};
+      border: 1px solid ${(props) => props.theme.colors.borderColor};
+      border-radius: 4px;
       padding: 0.5rem;
       font-family: inherit;
+      background: #ffffff;
+      outline: none;
+
+      &:focus {
+        border-color: ${(props) => props.theme.colors.accentWarm};
+      }
     }
   }
 
@@ -158,20 +168,20 @@ export const FilterContent = styled.aside<{ $isMobileOpen: boolean }>`
     display: flex;
     gap: 0.6rem;
     align-items: center;
-    color: ${(props) => props.theme.colors.gray700};
+    color: ${(props) => props.theme.colors.textMain};
     margin-bottom: 0.6rem;
     cursor: pointer;
-    font-size: ${(props) => props.theme.fontSize.base};
+    font-size: 0.85rem;
 
     input[type='checkbox'] {
       width: 1.1rem;
       height: 1.1rem;
-      accent-color: ${(props) => props.theme.colors.orange};
+      accent-color: ${(props) => props.theme.colors.accentWarm};
       cursor: pointer;
     }
 
     &:hover {
-      color: ${(props) => props.theme.colors.gray900};
+      color: ${(props) => props.theme.colors.primaryDark};
     }
   }
 `
@@ -192,7 +202,7 @@ export const ActionsArea = styled.div`
   gap: 0.65rem;
   margin-top: 1.25rem;
   padding-top: 1rem;
-  border-top: 1px solid ${(props) => props.theme.colors.gray300};
+  border-top: 1px solid ${(props) => props.theme.colors.borderColor};
 `
 
 export const ApplyFilterButton = styled.button<{ $isDirty?: boolean }>`
@@ -204,26 +214,18 @@ export const ApplyFilterButton = styled.button<{ $isDirty?: boolean }>`
   gap: 0.5rem;
   padding: 0.625rem 1rem;
   color: ${(props) => props.theme.colors.white};
-  background-color: ${(props) =>
-    props.$isDirty
-      ? props.theme.colors.orange
-      : props.theme.colors.orange2 || props.theme.colors.orange};
+  background-color: ${(props) => props.theme.colors.accentWarm};
   border: 1px solid transparent;
-  border-radius: 0.375rem;
+  border-radius: 6px;
   font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: ${(props) => (props.$isDirty ? '0 4px 12px rgba(249, 115, 22, 0.3)' : 'none')};
-  transition: all 0.15s ease-in-out;
+  box-shadow: ${(props) => (props.$isDirty ? '0 4px 12px rgba(140, 90, 60, 0.3)' : 'none')};
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.orange2};
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
+    background-color: ${(props) => props.theme.colors.accentHover};
   }
 `
 
@@ -235,19 +237,19 @@ export const ClearFilterButton = styled.button`
   justify-content: center;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
-  color: ${(props) => props.theme.colors.gray700};
+  color: ${(props) => props.theme.colors.textMuted};
   background-color: transparent;
-  border: 1px solid ${(props) => props.theme.colors.gray300};
-  border-radius: 0.375rem;
+  border: 1px solid ${(props) => props.theme.colors.borderColor};
+  border-radius: 6px;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.gray100};
-    color: ${(props) => props.theme.colors.gray900};
-    border-color: ${(props) => props.theme.colors.gray400};
+    background-color: ${(props) => props.theme.colors.bgMain};
+    color: ${(props) => props.theme.colors.primaryDark};
+    border-color: ${(props) => props.theme.colors.accentWarm};
   }
 `

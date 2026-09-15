@@ -136,7 +136,7 @@ export const DayCell = styled.div<{
   justify-content: center;
   height: 2.5rem;
   position: relative;
-  background-color: ${(props) => (props.$isInRange ? '#e0f2fe' : 'transparent')};
+  background-color: ${(props) => (props.$isInRange ? '#F0EAE1' : 'transparent')};
   border-top-left-radius: ${(props) => (props.$isSelectedStart ? '50%' : '0')};
   border-bottom-left-radius: ${(props) => (props.$isSelectedStart ? '50%' : '0')};
   border-top-right-radius: ${(props) => (props.$isSelectedEnd ? '50%' : '0')};
@@ -156,11 +156,11 @@ export const DayCell = styled.div<{
       props.$isSelectedStart || props.$isSelectedEnd || props.$isToday ? '700' : '500'};
     color: ${(props) => {
       if (props.$isSelectedStart || props.$isSelectedEnd) return '#ffffff'
-      if (props.$isDisabled) return '#cbd5e1'
-      return '#0f172a'
+      if (props.$isDisabled) return props.theme.colors.gray400
+      return props.theme.colors.primaryDark
     }};
     background-color: ${(props) => {
-      if (props.$isSelectedStart || props.$isSelectedEnd) return '#0f172a'
+      if (props.$isSelectedStart || props.$isSelectedEnd) return props.theme.colors.accentWarm
       return 'transparent'
     }};
     cursor: ${(props) => (props.$isDisabled ? 'not-allowed' : 'pointer')};
@@ -177,7 +177,6 @@ export const DayCell = styled.div<{
       opacity: 0;
       transition: opacity 0.2s ease-in-out;
 
-      /* Máscara com transição suave nas bordas para suavizar o raio do anel */
       mask: radial-gradient(farthest-side, transparent calc(100% - 4.5px), #fff calc(100% - 4px));
       -webkit-mask: radial-gradient(
         farthest-side,
@@ -189,12 +188,11 @@ export const DayCell = styled.div<{
         props.$isSelectedStart &&
         `
         opacity: 1;
-        /* Rampa estendida (25deg até 48deg) para suavizar a ponta do arco verde */
         background: conic-gradient(
           from 270deg,
           transparent 25deg,
-          #22c55e 48deg,
-          #22c55e 132deg,
+          #2D7D46 48deg,
+          #2D7D46 132deg,
           transparent 155deg
         );
       `}
@@ -203,7 +201,6 @@ export const DayCell = styled.div<{
         props.$isSelectedEnd &&
         `
         opacity: 1;
-        /* Rampa estendida (25deg até 48deg) para suavizar a ponta do arco vermelho */
         background: conic-gradient(
           from 90deg,
           transparent 25deg,
@@ -216,7 +213,9 @@ export const DayCell = styled.div<{
 
     &:hover:not(:disabled) {
       background-color: ${(props) =>
-        props.$isSelectedStart || props.$isSelectedEnd ? '#0f172a' : '#cbd5e1'};
+        props.$isSelectedStart || props.$isSelectedEnd
+          ? props.theme.colors.accentHover
+          : props.theme.colors.borderColor};
     }
   }
 `
@@ -227,7 +226,7 @@ export const QuickActionsToolbar = styled.div`
   align-items: center;
   gap: 0.5rem;
   padding-top: 1rem;
-  border-top: 1px solid ${(props) => props.theme.colors.gray300};
+  border-top: 1px solid ${(props) => props.theme.colors.borderColor};
 
   button {
     padding: 0.4rem 0.85rem;
@@ -238,20 +237,20 @@ export const QuickActionsToolbar = styled.div`
     transition: all 0.15s ease-in-out;
 
     &.active {
-      border: 2px solid #0f172a;
+      border: 2px solid ${(props) => props.theme.colors.accentWarm};
       background-color: #ffffff;
-      color: #0f172a;
+      color: ${(props) => props.theme.colors.accentWarm};
       font-weight: 700;
     }
 
     &:not(.active) {
-      border: 1px solid ${(props) => props.theme.colors.gray400};
+      border: 1px solid ${(props) => props.theme.colors.borderColor};
       background-color: #ffffff;
-      color: ${(props) => props.theme.colors.gray800};
+      color: ${(props) => props.theme.colors.textMain};
       font-weight: 500;
 
       &:hover {
-        border-color: #0f172a;
+        border-color: ${(props) => props.theme.colors.accentWarm};
       }
     }
   }
@@ -275,13 +274,13 @@ export const FlexibleSection = styled.div`
 export const FlexibleSectionTitle = styled.h3`
   font-size: 1.05rem;
   font-weight: 700;
-  color: #0f172a;
+  color: ${(props) => props.theme.colors.primaryDark};
   margin: 0;
 `
 
 export const FlexibleSubtitle = styled.p`
   font-size: 0.85rem;
-  color: #64748b;
+  color: ${(props) => props.theme.colors.textMuted};
   margin: -0.25rem 0 0.25rem;
 `
 
@@ -302,19 +301,19 @@ export const DurationPill = styled.button`
   transition: all 0.15s ease-in-out;
 
   &.active {
-    border: 2px solid #0f172a;
-    color: #0f172a;
+    border: 2px solid ${(props) => props.theme.colors.accentWarm};
+    color: ${(props) => props.theme.colors.accentWarm};
     font-weight: 700;
-    box-shadow: 0 0 0 1px #0f172a;
+    box-shadow: 0 0 0 1px ${(props) => props.theme.colors.accentWarm};
   }
 
   &:not(.active) {
-    border: 1px solid #cbd5e1;
-    color: #334155;
+    border: 1px solid ${(props) => props.theme.colors.borderColor};
+    color: ${(props) => props.theme.colors.textMain};
     font-weight: 500;
 
     &:hover {
-      border-color: #0f172a;
+      border-color: ${(props) => props.theme.colors.accentWarm};
     }
   }
 `
@@ -325,14 +324,14 @@ export const CheckboxLabel = styled.label`
   gap: 0.5rem;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #0f172a;
+  color: ${(props) => props.theme.colors.primaryDark};
   cursor: pointer;
   margin-top: 0.25rem;
 
   input[type='checkbox'] {
     width: 1.15rem;
     height: 1.15rem;
-    accent-color: #0f172a;
+    accent-color: ${(props) => props.theme.colors.accentWarm};
     cursor: pointer;
   }
 `
@@ -341,7 +340,7 @@ export const Divider = styled.hr`
   width: 100%;
   border: 0;
   height: 1px;
-  background-color: #e2e8f0;
+  background-color: ${(props) => props.theme.colors.borderColor};
   margin: 0.5rem 0;
 `
 
@@ -371,24 +370,24 @@ export const MonthCard = styled.button`
 
   svg {
     font-size: 1.35rem;
-    color: #0f172a;
+    color: ${(props) => props.theme.colors.primaryDark};
   }
 
   strong {
     font-size: 0.8rem;
-    color: #0f172a;
+    color: ${(props) => props.theme.colors.primaryDark};
     line-height: 1.1;
   }
 
   small {
     font-size: 0.725rem;
-    color: #64748b;
+    color: ${(props) => props.theme.colors.textMuted};
   }
 
   &.active {
-    border: 2px solid #0f172a;
-    background-color: #f8fafc;
-    box-shadow: 0 0 0 1px #0f172a;
+    border: 2px solid ${(props) => props.theme.colors.accentWarm};
+    background-color: ${(props) => props.theme.colors.bgMain};
+    box-shadow: 0 0 0 1px ${(props) => props.theme.colors.accentWarm};
 
     strong {
       font-weight: 700;
@@ -396,11 +395,11 @@ export const MonthCard = styled.button`
   }
 
   &:not(.active) {
-    border: 1px solid #cbd5e1;
+    border: 1px solid ${(props) => props.theme.colors.borderColor};
 
     &:hover {
-      border-color: #0f172a;
-      background-color: #f8fafc;
+      border-color: ${(props) => props.theme.colors.accentWarm};
+      background-color: ${(props) => props.theme.colors.bgMain};
     }
   }
 `
@@ -410,19 +409,17 @@ export const ApplyButton = styled.button`
   padding: 0.65rem 1rem;
   border: 0;
   border-radius: 0.5rem;
-  background-color: #0f172a;
+  background-color: ${(props) => props.theme.colors.accentWarm};
   color: #ffffff;
   font-size: 0.95rem;
   font-family: inherit;
   font-weight: 700;
   cursor: pointer;
   margin-top: 1rem;
-  transition:
-    background-color 0.15s ease-in-out,
-    transform 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
 
   &:hover {
-    background-color: #1e293b;
+    background-color: ${(props) => props.theme.colors.accentHover};
   }
 
   &:active {

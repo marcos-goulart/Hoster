@@ -31,10 +31,10 @@ export const ModalContent = styled.div`
   position: relative;
   width: 100%;
   max-width: 26rem;
-  background-color: ${(props) => props.theme.colors.white};
-  border: 1px solid ${(props) => props.theme.colors.gray300};
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  background-color: ${(props) => props.theme.colors.bgCard};
+  border: 1px solid ${(props) => props.theme.colors.borderColor};
+  border-radius: 12px;
+  box-shadow: ${(props) => props.theme.shadows.soft};
   overflow: hidden;
   animation: ${fadeIn} 0.25s ease-out forwards;
 `
@@ -46,7 +46,7 @@ export const CloseButton = styled.button`
   background: transparent;
   border: none;
   font-size: 1.25rem;
-  color: ${(props) => props.theme.colors.gray600};
+  color: ${(props) => props.theme.colors.textMuted};
   cursor: pointer;
   z-index: 10;
   display: flex;
@@ -58,14 +58,14 @@ export const CloseButton = styled.button`
   transition: all 0.15s ease-in-out;
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.gray100};
-    color: ${(props) => props.theme.colors.gray900};
+    background-color: ${(props) => props.theme.colors.bgMain};
+    color: ${(props) => props.theme.colors.primaryDark};
   }
 `
 
 export const TabHeader = styled.div`
   display: flex;
-  border-bottom: 1px solid ${(props) => props.theme.colors.gray300};
+  border-bottom: 1px solid ${(props) => props.theme.colors.borderColor};
   padding-right: 2.5rem;
 
   button {
@@ -76,12 +76,12 @@ export const TabHeader = styled.div`
     font-family: inherit;
     font-size: ${(props) => props.theme.fontSize.base};
     font-weight: ${(props) => props.theme.fontWeight.bold};
-    color: ${(props) => props.theme.colors.gray600};
+    color: ${(props) => props.theme.colors.textMuted};
     cursor: pointer;
 
     &.active {
-      color: ${(props) => props.theme.colors.orange};
-      border-bottom: 2px solid ${(props) => props.theme.colors.orange};
+      color: ${(props) => props.theme.colors.accentWarm};
+      border-bottom: 2px solid ${(props) => props.theme.colors.accentWarm};
     }
   }
 `

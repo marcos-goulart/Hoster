@@ -7,50 +7,70 @@ export function useCustomScrollbar() {
   const trackRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(true)
 
+  const isVisibleRef = useRef(true)
   const isDragging = useRef(false)
   const startY = useRef(0)
   const startScrollY = useRef(0)
   const hideTimeout = useRef<number | null>(null)
+  const rafId = useRef<number | null>(null)
 
   useEffect(() => {
+    let cachedScrollableHeight = 0
+    let cachedMaxMove = 0
+
+    const updateDimensions = () => {
+      if (!thumbRef.current || !trackRef.current) return
+      cachedScrollableHeight = Math.max(
+        document.documentElement.scrollHeight - window.innerHeight,
+        0,
+      )
+      const trackHeight = trackRef.current.clientHeight
+      const thumbHeight = thumbRef.current.clientHeight
+      cachedMaxMove = Math.max(trackHeight - thumbHeight, 0)
+    }
+
+    const updateThumbPosition = () => {
+      if (!thumbRef.current || cachedScrollableHeight <= 0) return
+      const progress = Math.min(Math.max(window.scrollY / cachedScrollableHeight, 0), 1)
+      gsap.set(thumbRef.current, { y: progress * cachedMaxMove })
+    }
+
     const handleScroll = () => {
-      setIsVisible(true)
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true
+        setIsVisible(true)
+      }
 
       if (hideTimeout.current) clearTimeout(hideTimeout.current)
 
       if (!isDragging.current) {
         hideTimeout.current = window.setTimeout(() => {
+          isVisibleRef.current = false
           setIsVisible(false)
         }, 1200)
       }
 
-      if (!thumbRef.current || !trackRef.current) return
-      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
-      if (scrollableHeight <= 0) return
-
-      const progress = Math.min(Math.max(window.scrollY / scrollableHeight, 0), 1)
-      const trackHeight = trackRef.current.clientHeight
-      const thumbHeight = thumbRef.current.clientHeight
-      const maxMove = trackHeight - thumbHeight
-
-      gsap.set(thumbRef.current, { y: progress * maxMove })
+      if (rafId.current) cancelAnimationFrame(rafId.current)
+      rafId.current = requestAnimationFrame(updateThumbPosition)
     }
 
     const onPointerDown = (e: PointerEvent) => {
       e.preventDefault()
       e.stopPropagation()
 
+      updateDimensions()
+
       isDragging.current = true
       startY.current = e.clientY
       startScrollY.current = window.scrollY
 
-      if (lenisInstance) {
-        lenisInstance.stop()
-      }
-
-      const target = e.currentTarget as HTMLElement
-      if (target.setPointerCapture) {
-        target.setPointerCapture(e.pointerId)
+      const thumbEl = thumbRef.current
+      if (thumbEl && thumbEl.setPointerCapture) {
+        try {
+          thumbEl.setPointerCapture(e.pointerId)
+        } catch {
+          // Ignora se não suportado
+        }
       }
 
       document.body.style.userSelect = 'none'
@@ -61,35 +81,38 @@ export function useCustomScrollbar() {
     }
 
     const onPointerMove = (e: PointerEvent) => {
-      if (!isDragging.current || !trackRef.current || !thumbRef.current) return
+      if (!isDragging.current) return
 
       e.preventDefault()
 
       const deltaY = e.clientY - startY.current
-      const trackHeight = trackRef.current.clientHeight
-      const thumbHeight = thumbRef.current.clientHeight
-      const maxMove = trackHeight - thumbHeight
-      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
+      if (cachedMaxMove <= 0) return
 
-      const scrollDelta = (deltaY / maxMove) * scrollableHeight
+      const scrollDelta = (deltaY / cachedMaxMove) * cachedScrollableHeight
       const targetScroll = Math.min(
         Math.max(startScrollY.current + scrollDelta, 0),
-        scrollableHeight,
+        cachedScrollableHeight,
       )
 
-      window.scrollTo(0, targetScroll)
+      if (lenisInstance) {
+        lenisInstance.scrollTo(targetScroll, { immediate: true, force: true })
+      } else {
+        window.scrollTo(0, targetScroll)
+      }
+
+      updateThumbPosition()
     }
 
     const onPointerUp = (e: PointerEvent) => {
       if (!isDragging.current) return
       isDragging.current = false
 
-      const target = e.currentTarget as HTMLElement
-      if (target && target.releasePointerCapture) {
+      const thumbEl = thumbRef.current
+      if (thumbEl && thumbEl.releasePointerCapture) {
         try {
-          target.releasePointerCapture(e.pointerId)
+          thumbEl.releasePointerCapture(e.pointerId)
         } catch {
-          // Ignora liberação se manipulada pelo navegador
+          // Ignora se manipulado pelo navegador
         }
       }
 
@@ -99,19 +122,10 @@ export function useCustomScrollbar() {
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
 
-      const finalScroll = window.scrollY
-
-      if (lenisInstance) {
-        lenisInstance.scrollTo(finalScroll, { immediate: true, force: true })
-
-        requestAnimationFrame(() => {
-          if (lenisInstance) {
-            lenisInstance.start()
-          }
-        })
-      }
-
-      hideTimeout.current = window.setTimeout(() => setIsVisible(false), 1200)
+      hideTimeout.current = window.setTimeout(() => {
+        isVisibleRef.current = false
+        setIsVisible(false)
+      }, 1200)
     }
 
     const onTrackClick = (e: MouseEvent) => {
@@ -141,16 +155,22 @@ export function useCustomScrollbar() {
     if (thumb) thumb.addEventListener('pointerdown', onPointerDown)
     if (track) track.addEventListener('click', onTrackClick)
 
+    updateDimensions()
+    updateThumbPosition()
+
     window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('resize', handleScroll)
-    handleScroll()
+    window.addEventListener('resize', () => {
+      updateDimensions()
+      handleScroll()
+    })
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', handleScroll)
+      window.removeEventListener('resize', updateDimensions)
       if (thumb) thumb.removeEventListener('pointerdown', onPointerDown)
       if (track) track.removeEventListener('click', onTrackClick)
       if (hideTimeout.current) clearTimeout(hideTimeout.current)
+      if (rafId.current) cancelAnimationFrame(rafId.current)
     }
   }, [])
 

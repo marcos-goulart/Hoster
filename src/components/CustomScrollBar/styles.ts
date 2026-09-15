@@ -8,7 +8,7 @@ export const Track = styled.div<{ $visible: boolean }>`
   width: 16px;
   height: calc(100vh - 320px);
   z-index: 99999;
-  display: flex;
+  display: none;
   justify-content: center;
   opacity: ${(props) => (props.$visible ? 1 : 0)};
   transition: opacity 0.4s ease;
@@ -16,6 +16,11 @@ export const Track = styled.div<{ $visible: boolean }>`
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: none;
+
+  @media (min-width: ${(props) => props.theme.screenMedias.lg}) {
+    display: flex;
+  }
 
   &:hover {
     opacity: 1 !important;
@@ -41,7 +46,7 @@ export const Rail = styled.div`
 export const Thumb = styled.div`
   width: 6px;
   height: 50px;
-  background-color: ${(props) => props.theme.colors.orange};
+  background-color: ${(props) => props.theme.colors.bgBrown1} !important;
   border-radius: 99px;
   position: absolute;
   top: 0;
@@ -51,6 +56,7 @@ export const Thumb = styled.div`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
   user-select: none;
   -webkit-user-select: none;
+  touch-action: none;
   transition:
     width 0.2s ease,
     background-color 0.2s ease;

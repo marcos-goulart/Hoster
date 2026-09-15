@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 export const Div = styled.div<{ $isPromotion?: boolean }>`
-  margin-bottom: 3rem !important;
+  margin-bottom: 2rem !important;
   display: flex;
   flex: 0 0 auto;
   width: 100%;
@@ -11,9 +11,8 @@ export const Div = styled.div<{ $isPromotion?: boolean }>`
   margin-top: ${(props) => props.theme.Gutters.gutterY};
 
   .card {
-    border-width: 0 !important;
-    border: 0 !important;
-    box-shadow: 0 0.25rem 0.9375rem rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid ${(props) => props.theme.colors.borderColor} !important;
+    box-shadow: ${(props) => props.theme.shadows.soft};
     position: relative;
     display: flex;
     flex-direction: column;
@@ -21,53 +20,63 @@ export const Div = styled.div<{ $isPromotion?: boolean }>`
     height: 100%;
     min-width: 0;
     word-wrap: break-word;
-    background-color: #fff;
+    background-color: ${(props) => props.theme.colors.bgCard};
     background-clip: border-box;
-    border: 1px solid rgba(0, 0, 0, 0.125);
-    border-radius: 0.6rem;
+    border-radius: 12px;
     color: inherit;
     cursor: pointer;
     text-decoration: none;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: ${(props) => props.theme.shadows.hover};
+    }
 
     .imgDiv {
       position: relative !important;
       width: 100%;
       aspect-ratio: 16 / 9;
-      overflow: hidden; /* Corta as sobras da imagem durante o Parallax */
-      border-top-left-radius: calc(0.6rem - 1px);
-      border-top-right-radius: calc(0.6rem - 1px);
+      overflow: hidden;
 
-      /* Seletor direto da imagem com a classe de parallax */
       img.parallax-img {
         width: 100%;
-        height: 120%; /* Altura maior para ter margem de movimento */
+        height: 120%;
         object-fit: cover;
         display: block;
         will-change: transform;
+        transition: transform 0.5s ease;
       }
 
       .priceBadge {
         color: ${(props) => props.theme.colors.white};
-        background-color: ${(props) =>
-          props.$isPromotion ? props.theme.colors.darkGreen : props.theme.colors.orange};
-        right: 0.75rem !important;
-        bottom: 0.75rem !important;
-        padding: 0.25rem 0.5rem !important;
+        background: rgba(44, 30, 22, 0.9);
+        backdrop-filter: blur(4px);
+        right: 1rem !important;
+        bottom: 1rem !important;
+        padding: 0.4rem 0.85rem !important;
         position: absolute !important;
-        z-index: 2; /* Mantém o badge fixo acima da imagem */
+        z-index: 2;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        border-radius: 0.3rem !important;
+        gap: 0.35rem;
+        border-radius: 6px !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 
         .priceOld {
-          opacity: 0.85;
+          color: ${(props) => props.theme.colors.gray300};
           text-decoration: line-through;
-          font-size: 0.9rem;
+          font-size: 0.75rem;
+          margin-right: 0.2rem;
+          font-weight: 400;
+          opacity: 0.9;
         }
 
         .priceNew {
+          color: ${(props) => props.theme.colors.white};
           font-weight: 700;
+          font-size: 0.9rem;
         }
       }
     }
@@ -75,37 +84,31 @@ export const Div = styled.div<{ $isPromotion?: boolean }>`
     .cardBody {
       display: flex;
       flex-direction: column;
-      padding: 1rem !important;
+      padding: 1.5rem !important;
       flex: 1 1 auto;
 
       h5 {
-        margin-bottom: 0.25rem !important;
-        font-size: 1.25rem;
+        margin-bottom: 0.3rem !important;
+        font-family: ${(props) => props.theme.fontFamily.heading};
+        font-size: 1.3rem;
         font-weight: 600;
-        line-height: 1.2;
-        margin-top: 0;
-      }
-
-      p {
-        color: ${(props) => props.theme.colors.phColor} !important;
-        margin-top: 0;
+        line-height: 1.3;
+        color: ${(props) => props.theme.colors.primaryDark};
       }
 
       .location {
-        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: ${(props) => props.theme.colors.textMuted} !important;
+        margin-bottom: 0.8rem;
       }
 
       .description {
+        font-size: 0.9rem;
+        color: ${(props) => props.theme.colors.textMain} !important;
         margin-bottom: 0;
         flex: 1 1 auto;
       }
     }
-  }
-
-  transition: transform 0.15s ease-in-out;
-
-  &:hover {
-    transform: scale(1.05);
   }
 
   @media (min-width: ${(props) => props.theme.screenMedias.md}) {

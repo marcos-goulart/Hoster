@@ -6,5 +6,7 @@ export const AuthContext = createContext<AuthContextType>({
   isLogged: false,
   loading: true,
   signInWithGoogle: async () => {},
+  loginWithEmail: async () => {},
+  registerWithEmail: async () => {},
   logout: async () => {},
 })

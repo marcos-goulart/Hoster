@@ -5,6 +5,17 @@ declare module 'styled-components' {
     borderRadius?: string
 
     colors: {
+      bgMain: string
+      bgCard: string
+      primaryDark: string
+      primaryMedium: string
+      accentGold: string
+      accentWarm: string
+      accentHover: string
+      accentGreen: string
+      textMain: string
+      textMuted: string
+      borderColor: string
       phColor: string
       phColorHover: string
       bgColor: string
@@ -37,6 +48,10 @@ declare module 'styled-components' {
       gray900: string
       primary: string
     }
+    shadows: {
+      soft: string
+      hover: string
+    }
     fontFamily: {
       heading: string
       sans: string
@@ -56,15 +71,15 @@ declare module 'styled-components' {
       '5xl': string
     }
     fontWeight: {
-      hairline: integer
-      thin: integer
-      light: integer
-      normal: integer
-      medium: integer
-      semibold: integer
-      bold: integer
-      extrabold: integer
-      black: integer
+      hairline: number
+      thin: number
+      light: number
+      normal: number
+      medium: number
+      semibold: number
+      bold: number
+      extrabold: number
+      black: number
     }
     screenMedias: {
       sl: string

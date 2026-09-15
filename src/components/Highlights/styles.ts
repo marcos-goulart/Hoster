@@ -2,25 +2,39 @@ import styled from 'styled-components'
 import { SectionLinkButton } from '../SectionLinkButton'
 
 export const Main = styled.main`
-  padding-bottom: 3rem !important;
+  padding-bottom: 3.5rem !important;
+  padding-top: 3.5rem !important;
   width: 100% !important;
 
   .container {
-    padding-bottom: 0.5rem !important;
-    padding-top: 3rem !important;
+    max-width: 1320px;
     width: 100%;
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
     margin-right: auto;
     margin-left: auto;
 
     h1 {
       text-align: center !important;
-      font-weight: 700 !important;
-      font-size: calc(1.275rem + 0.3vw) !important;
-      margin-bottom: 3rem !important;
+      font-family: ${(props) => props.theme.fontFamily.heading};
+      font-weight: ${(props) => props.theme.fontWeight.semibold} !important;
+      font-size: 1.75rem !important;
+      color: ${(props) => props.theme.colors.primaryDark};
+      margin-bottom: 2.5rem !important;
       margin-top: 0;
-      line-height: 1.2;
+      line-height: 1.3;
+      position: relative;
+      display: block;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 50px;
+        height: 3px;
+        background-color: ${(props) => props.theme.colors.accentWarm};
+        margin: 0.6rem auto 0;
+        border-radius: 2px;
+      }
     }
   }
 
@@ -37,27 +51,14 @@ export const Main = styled.main`
   }
 
   @media (min-width: ${(props) => props.theme.screenMedias.lg}) {
-    padding-bottom: 3rem !important;
-    padding-top: 1.5rem !important;
-
     .container {
-      padding-bottom: 0 !important;
-      padding-top: 3rem !important;
       max-width: 960px;
-
-      h1 {
-        text-align: left !important;
-      }
     }
   }
 
   @media (min-width: ${(props) => props.theme.screenMedias.xl}) {
     .container {
-      max-width: 1140px;
-
-      h1 {
-        font-size: 1.5rem !important;
-      }
+      max-width: 1320px;
     }
   }
 
@@ -75,31 +76,31 @@ export const HotelsContainer = styled.div`
   margin-top: calc(${(props) => props.theme.Gutters.gutterY} * -1);
   margin-right: calc(${(props) => props.theme.Gutters.gutterX} / -2);
   margin-left: calc(${(props) => props.theme.Gutters.gutterX} / -2);
-  margin-bottom: 1.5rem !important;
+  margin-bottom: 2rem !important;
   text-align: left;
 `
 
 export const ViewAllWrapper = styled.div`
   display: flex;
   justify-content: center;
+  margin-top: 2rem;
 `
 
 export const ViewAllButton = styled(SectionLinkButton)`
-  color: ${(props) => props.theme.colors.orange};
+  color: ${(props) => props.theme.colors.accentWarm};
   background-color: transparent;
-  border: 1px solid ${(props) => props.theme.colors.orange};
-  border-radius: 0.25rem;
+  border: 1px solid ${(props) => props.theme.colors.accentWarm};
+  border-radius: 6px;
   text-decoration: none;
   text-align: center;
-  padding: 0.375rem 1.5rem;
-  transition:
-    color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out;
+  padding: 0.7rem 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
 
   &:hover {
     color: ${(props) => props.theme.colors.white};
-    background-color: ${(props) => props.theme.colors.orange};
-    border-color: ${(props) => props.theme.colors.orange};
+    background-color: ${(props) => props.theme.colors.accentWarm};
+    border-color: ${(props) => props.theme.colors.accentWarm};
   }
 `

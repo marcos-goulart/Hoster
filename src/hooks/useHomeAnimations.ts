@@ -86,15 +86,15 @@ export function useHomeAnimations(containerRef: RefObject<HTMLDivElement | null>
       parallaxImages.forEach((img) => {
         gsap.fromTo(
           img,
-          { yPercent: -5 },
+          { yPercent: -6 },
           {
-            yPercent: 5,
+            yPercent: 6,
             ease: 'none',
             scrollTrigger: {
               trigger: img.parentElement || img,
-              start: 'top bottom',
+              start: 'top top',
               end: 'bottom top',
-              scrub: true,
+              scrub: 0.3,
             },
           },
         )

@@ -53,4 +53,35 @@ describe('Navbar', () => {
     expect(loginLink).toBeInTheDocument()
     expect(loginLink.getAttribute('href')).toBe('/login')
   })
+
+  it('deve exibir Acomodações, Promoções e Diferenciais na home (/)', () => {
+    window.history.pushState({}, 'Home', '/')
+    render(
+      <AppThemeProvider>
+        <BrowserRouter>
+          <Navbar />
+        </BrowserRouter>
+      </AppThemeProvider>,
+    )
+
+    expect(screen.getByText('Acomodações')).toBeInTheDocument()
+    expect(screen.getByText('Promoções')).toBeInTheDocument()
+    expect(screen.getByText('Diferenciais')).toBeInTheDocument()
+  })
+
+  it('não deve exibir Acomodações, Promoções e Diferenciais em páginas que não sejam a home', () => {
+    window.history.pushState({}, 'Search Result', '/resultado')
+    render(
+      <AppThemeProvider>
+        <BrowserRouter>
+          <Navbar />
+        </BrowserRouter>
+      </AppThemeProvider>,
+    )
+
+    expect(screen.queryByText('Acomodações')).not.toBeInTheDocument()
+    expect(screen.queryByText('Promoções')).not.toBeInTheDocument()
+    expect(screen.queryByText('Diferenciais')).not.toBeInTheDocument()
+    expect(screen.getByText('Home')).toBeInTheDocument()
+  })
 })

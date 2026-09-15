@@ -64,25 +64,38 @@ export const TitleBlock = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
 
   h1 {
-    font-size: ${(props) => props.theme.fontSize['2xl']};
-    font-weight: ${(props) => props.theme.fontWeight.bold};
+    font-family: ${(props) => props.theme.fontFamily.heading};
+    font-size: 1.75rem;
+    font-weight: ${(props) => props.theme.fontWeight.semibold};
+    color: ${(props) => props.theme.colors.primaryDark};
     margin-bottom: 0.5rem;
+    position: relative;
+    display: block;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: ${(props) => props.theme.colors.accentWarm};
+      margin: 0.6rem auto 0;
+      border-radius: 2px;
+    }
   }
 
   .line {
-    width: 5rem;
-    height: 0.25rem;
-    background-color: ${(props) => props.theme.colors.orange};
+    display: none;
   }
 `
 
 const cardSurface = css`
-  background-color: ${(props) => props.theme.colors.white};
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
-  border-radius: 0.25rem;
+  background-color: ${(props) => props.theme.colors.bgCard};
+  box-shadow: ${(props) => props.theme.shadows.soft};
+  border: 1px solid ${(props) => props.theme.colors.borderColor};
+  border-radius: 12px;
 `
 
 const shimmer = keyframes`
@@ -132,20 +145,24 @@ export const SummaryCard = styled.article<{ $isAvailable: boolean }>`
   }
 
   h2 {
-    font-size: ${(props) => props.theme.fontSize.xl};
+    font-family: ${(props) => props.theme.fontFamily.heading};
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: ${(props) => props.theme.colors.primaryDark};
     margin-bottom: 0.25rem;
   }
 
   .location {
-    color: ${(props) => props.theme.colors.phColor};
+    color: ${(props) => props.theme.colors.textMuted};
+    font-size: 0.85rem;
     margin-bottom: 0.75rem;
   }
 
   .stars {
     display: flex;
     gap: 0.25rem;
-    color: ${(props) => props.theme.colors.yellow};
-    margin-bottom: 1rem;
+    color: ${(props) => props.theme.colors.accentGold};
+    margin-bottom: 0.8rem;
   }
 
   .price {
@@ -154,18 +171,22 @@ export const SummaryCard = styled.article<{ $isAvailable: boolean }>`
     gap: 0.75rem;
     align-items: center;
     margin-bottom: 1rem;
-    font-weight: ${(props) => props.theme.fontWeight.bold};
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: ${(props) => props.theme.colors.primaryDark};
 
     .oldPrice {
-      color: ${(props) => props.theme.colors.phColor};
+      color: ${(props) => props.theme.colors.gray500};
       text-decoration: line-through;
-      font-weight: ${(props) => props.theme.fontWeight.normal};
+      font-size: 0.85rem;
+      font-weight: 400;
     }
   }
 
   .description {
-    color: ${(props) => props.theme.colors.gray700};
-    margin-top: 1rem;
+    color: ${(props) => props.theme.colors.textMuted};
+    font-size: 0.85rem;
+    margin-top: 0.8rem;
   }
 `
 
@@ -174,11 +195,13 @@ export const StatusBadge = styled.div<{ $isAvailable: boolean }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 0.75rem 1rem;
-  font-weight: ${(props) => props.theme.fontWeight.bold};
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 6px;
   color: ${(props) => props.theme.colors.white};
   background-color: ${(props) =>
-    props.$isAvailable ? props.theme.colors.darkGreen : props.theme.colors.red};
+    props.$isAvailable ? props.theme.colors.accentGreen : props.theme.colors.red};
 `
 
 export const ReservationSkeletonSummary = styled.article`
@@ -248,7 +271,7 @@ export const ReservationSkeletonSummary = styled.article`
 
 export const ReservationSkeletonForm = styled.section`
   ${cardSurface};
-  padding: 1.5rem;
+  padding: 2rem;
 
   .fieldGrid {
     display: flex;
@@ -269,7 +292,7 @@ export const ReservationSkeletonForm = styled.section`
   .input,
   .button {
     ${skeletonBlock};
-    border-radius: 0.25rem;
+    border-radius: 6px;
   }
 
   .label {
@@ -306,13 +329,13 @@ export const ReservationSkeletonForm = styled.section`
 
 export const FormCard = styled.section`
   ${cardSurface};
-  padding: 1.5rem;
+  padding: 2rem;
   text-align: left;
 
   .actions {
     display: flex;
     justify-content: flex-end;
-    margin-top: 0.5rem;
+    margin-top: 1.5rem;
   }
 `
 
@@ -321,7 +344,8 @@ export const Notice = styled.div`
   padding: 0.875rem 1rem;
   border-left: 4px solid ${(props) => props.theme.colors.red};
   background-color: rgba(224, 49, 49, 0.08);
-  color: ${(props) => props.theme.colors.gray800};
+  border-radius: 6px;
+  color: ${(props) => props.theme.colors.textMain};
 `
 
 export const FormGrid = styled.div`
@@ -329,44 +353,44 @@ export const FormGrid = styled.div`
   flex-wrap: wrap;
   margin-right: calc(${(props) => props.theme.Gutters.gutterX} / -2);
   margin-left: calc(${(props) => props.theme.Gutters.gutterX} / -2);
-  row-gap: 0.25rem;
+  row-gap: 0.5rem;
 
   .field {
     width: 100%;
     padding-right: calc(${(props) => props.theme.Gutters.gutterX} / 2);
     padding-left: calc(${(props) => props.theme.Gutters.gutterX} / 2);
+    margin-bottom: 0.5rem;
   }
 
   label {
     display: inline-block;
-    margin-bottom: 0.5rem;
-    font-weight: ${(props) => props.theme.fontWeight.bold};
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: ${(props) => props.theme.colors.primaryDark};
   }
 
   input {
     width: 100%;
-    border: 2px solid ${(props) => props.theme.colors.bgBrown2};
-    background-color: ${(props) => props.theme.colors.bgBrown2};
-    color: ${(props) => props.theme.colors.bgBrown1};
-    padding: 0.625rem 0.75rem;
+    border: 1px solid ${(props) => props.theme.colors.borderColor};
+    background-color: ${(props) => props.theme.colors.bgMain};
+    color: ${(props) => props.theme.colors.textMain};
+    padding: 0.65rem 0.8rem;
     font-family: inherit;
-    font-size: 1rem;
-    border-radius: 0;
-    transition:
-      border-color 0.15s ease-in-out,
-      background-color 0.15s ease-in-out;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.2s ease;
 
     &:focus {
-      outline: none;
-      border-color: ${(props) => props.theme.colors.blue};
+      border-color: ${(props) => props.theme.colors.accentWarm};
       background-color: ${(props) => props.theme.colors.white};
     }
 
     &:disabled {
       cursor: not-allowed;
-      color: ${(props) => props.theme.colors.gray600};
-      background-color: ${(props) => props.theme.colors.gray200};
-      border-color: ${(props) => props.theme.colors.gray200};
+      color: ${(props) => props.theme.colors.textMuted};
+      background-color: ${(props) => props.theme.colors.borderColor};
     }
   }
 
@@ -383,18 +407,18 @@ export const FormGrid = styled.div`
 
 export const ActionButton = styled.button`
   color: ${(props) => props.theme.colors.white};
-  background-color: ${(props) => props.theme.colors.orange};
+  background-color: ${(props) => props.theme.colors.accentWarm};
   border: 1px solid transparent;
-  padding: 0.625rem 1.75rem;
+  border-radius: 6px;
+  padding: 0.8rem 2.5rem;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition:
-    background-color 0.15s ease-in-out,
-    opacity 0.15s ease-in-out;
+  transition: all 0.3s ease;
 
   &:hover:not(:disabled) {
-    background-color: ${(props) => props.theme.colors.orange2};
+    background-color: ${(props) => props.theme.colors.accentHover};
   }
 
   &:disabled {

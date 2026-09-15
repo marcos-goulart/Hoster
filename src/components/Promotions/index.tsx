@@ -8,7 +8,7 @@ interface PromotionsProps {
 
 export function Promotions({ hotels }: PromotionsProps) {
   return (
-    <Main>
+    <Main id="promocoes">
       <div className="container">
         <div className="title">
           <h1 className="text-reveal">Nossos hoteis e pousadas em promocões</h1>

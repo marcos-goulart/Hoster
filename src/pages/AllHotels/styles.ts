@@ -55,23 +55,30 @@ export const SectionHeader = styled.header`
   text-align: center;
 
   h1 {
-    font-size: ${(props) => props.theme.fontSize['2xl']};
-    font-weight: ${(props) => props.theme.fontWeight.bold};
-    margin-bottom: 0.75rem;
+    font-family: ${(props) => props.theme.fontFamily.heading};
+    font-size: 1.75rem;
+    font-weight: ${(props) => props.theme.fontWeight.semibold};
+    color: ${(props) => props.theme.colors.primaryDark};
+    margin-bottom: 0.5rem;
+    position: relative;
+    display: inline-block;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: ${(props) => props.theme.colors.accentWarm};
+      margin: 0.6rem auto 0;
+      border-radius: 2px;
+    }
   }
 
   p {
-    color: ${(props) => props.theme.colors.phColor};
+    color: ${(props) => props.theme.colors.textMuted};
     max-width: 42rem;
-    margin: 0 auto;
-  }
-
-  @media (min-width: ${(props) => props.theme.screenMedias.lg}) {
-    text-align: left;
-
-    p {
-      margin: 0;
-    }
+    margin: 0.5rem auto 0;
+    font-size: 0.95rem;
   }
 `
 

@@ -20,12 +20,26 @@ export const Main = styled.main`
   }
 
   .title {
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
 
     h1 {
       text-align: center;
-      font-weight: 700;
-      font-size: calc(1.275rem + 0.3vw);
+      font-family: ${(props) => props.theme.fontFamily.heading};
+      font-weight: ${(props) => props.theme.fontWeight.semibold};
+      font-size: 1.75rem;
+      color: ${(props) => props.theme.colors.primaryDark};
+      position: relative;
+      display: block;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 50px;
+        height: 3px;
+        background-color: ${(props) => props.theme.colors.accentWarm};
+        margin: 0.6rem auto 0;
+        border-radius: 2px;
+      }
     }
   }
 

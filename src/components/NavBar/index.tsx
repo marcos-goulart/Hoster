@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { BrandLink, Button, NavContainer, NavLinkItem, UserMenu } from './styles'
 import { useAuth } from '../../hooks/useAuth'
 import { AuthModal } from '../AuthModal/index'
+
+import { lenisInstance } from '../../hooks/useSmoothScroll'
 
 export function Navbar() {
   const { isLogged, logout, user } = useAuth()
@@ -10,6 +12,7 @@ export function Navbar() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
 
   const location = useLocation()
+  const navigate = useNavigate()
   const isHomePage = location.pathname === '/'
 
   const handleToggleMenu = () => {
@@ -23,6 +26,23 @@ export function Navbar() {
   const handleOpenAuthModal = () => {
     handleCloseMenu()
     setIsAuthModalOpen(true)
+  }
+
+  const handleNavClick = (sectionId: string) => (e: React.MouseEvent) => {
+    e.preventDefault()
+    handleCloseMenu()
+    if (isHomePage) {
+      const el = document.getElementById(sectionId)
+      if (el) {
+        if (lenisInstance) {
+          lenisInstance.scrollTo(el, { duration: 1.2 })
+        } else {
+          el.scrollIntoView({ behavior: 'smooth' })
+        }
+      }
+    } else {
+      navigate('/', { state: { scrollTo: sectionId } })
+    }
   }
 
   return (
@@ -57,15 +77,35 @@ export function Navbar() {
                     Home
                   </NavLinkItem>
                 </li>
-              ) : null}
+              ) : (
+                <>
+                  <li className="nav-item">
+                    <a href="#destaques" onClick={handleNavClick('destaques')}>
+                      Acomodações
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="#promocoes" onClick={handleNavClick('promocoes')}>
+                      Promoções
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="#diferenciais" onClick={handleNavClick('diferenciais')}>
+                      Diferenciais
+                    </a>
+                  </li>
+                </>
+              )}
 
               <li className="nav-item login-button-item">
                 {!isLogged ? (
                   <Button
-                    as="button"
                     className="btn-orange"
-                    onClick={handleOpenAuthModal}
-                    type="button"
+                    to="/login"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handleOpenAuthModal()
+                    }}
                   >
                     Login
                   </Button>

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { Banner } from '../../components/Banner'
 import { Carousel } from '../../components/Carousel'
@@ -15,11 +16,30 @@ import { getHotels } from '../../services/hotels'
 
 import { Container } from './styles'
 
+import { lenisInstance } from '../../hooks/useSmoothScroll'
+
 export default function Main() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [hotels, setHotels] = useState<Hotel[]>(fallbackHotels)
+  const location = useLocation()
 
   useHomeAnimations(containerRef)
+
+  useEffect(() => {
+    const scrollTo = (location.state as { scrollTo?: string } | null)?.scrollTo
+    if (scrollTo) {
+      const el = document.getElementById(scrollTo)
+      if (el) {
+        setTimeout(() => {
+          if (lenisInstance) {
+            lenisInstance.scrollTo(el, { duration: 1.2 })
+          } else {
+            el.scrollIntoView({ behavior: 'smooth' })
+          }
+        }, 150)
+      }
+    }
+  }, [location])
 
   useEffect(() => {
     let isMounted = true

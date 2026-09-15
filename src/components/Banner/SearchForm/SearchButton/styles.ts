@@ -15,28 +15,24 @@ export const Container = styled.div`
     max-height: 3rem;
     box-sizing: border-box;
     color: ${(props) => props.theme.colors.white};
-    background-color: ${(props) => props.theme.colors.orange};
-    border: 2px solid ${(props) => props.theme.colors.orange};
-    border-radius: 0.375rem;
+    background-color: ${(props) => props.theme.colors.accentWarm};
+    border: 1px solid ${(props) => props.theme.colors.accentWarm};
+    border-radius: 6px;
     outline: none;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-family: inherit;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.2;
     text-align: center;
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
-    padding: 0.5rem 1.25rem;
-    transition:
-      color 0.15s ease-in-out,
-      background-color 0.15s ease-in-out,
-      border-color 0.15s ease-in-out,
-      box-shadow 0.15s ease-in-out;
+    padding: 0.85rem 2rem;
+    transition: all 0.3s ease;
 
     &:hover {
-      background-color: ${(props) => props.theme.colors.orange2};
-      border-color: ${(props) => props.theme.colors.orange2};
+      background-color: ${(props) => props.theme.colors.accentHover};
+      border-color: ${(props) => props.theme.colors.accentHover};
     }
   }
 `

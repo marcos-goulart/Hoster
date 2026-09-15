@@ -10,15 +10,17 @@ interface ButtonProps {
 }
 
 export const NavContainer = styled.nav<ContainerProps>`
-  position: relative;
+  position: sticky;
+  top: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 0;
+  padding: 1rem 0;
   z-index: 9999;
-
-  background-color: ${(props) => props.theme.colors.bgColor} !important;
+  background-color: rgba(250, 250, 247, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid ${(props) => props.theme.colors.borderColor};
 
   .container {
     display: flex;
@@ -26,9 +28,7 @@ export const NavContainer = styled.nav<ContainerProps>`
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0.25rem 0.75rem !important;
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
+    padding: 0 5% !important;
     margin-right: auto;
     margin-left: auto;
 
@@ -37,11 +37,13 @@ export const NavContainer = styled.nav<ContainerProps>`
       padding-top: 0.3125rem;
       padding-bottom: 0.3125rem;
       margin-right: 1rem;
-      font-size: ${(props) => props.theme.fontSize.xl};
-      font-weight: ${(props) => props.theme.fontWeight.bold} !important;
-      color: inherit;
+      font-family: ${(props) => props.theme.fontFamily.heading};
+      font-size: 1.5rem;
+      font-weight: ${(props) => props.theme.fontWeight.semibold};
+      color: ${(props) => props.theme.colors.primaryDark};
       text-decoration: none;
       white-space: nowrap;
+      letter-spacing: 1px;
     }
 
     .menu-toggle {
@@ -54,8 +56,7 @@ export const NavContainer = styled.nav<ContainerProps>`
       border-radius: 0.25rem;
       border-style: none;
 
-      color: ${(props) => props.theme.colors.black2};
-      border-color: ${(props) => props.theme.colors.black3};
+      color: ${(props) => props.theme.colors.primaryDark};
       cursor: pointer;
 
       transition: box-shadow 0.15s ease-in-out;
@@ -77,18 +78,20 @@ export const NavContainer = styled.nav<ContainerProps>`
       padding-left: 0;
       margin-top: 0;
       list-style: none;
+      gap: 1rem;
 
       .nav-item {
-        padding: 0.5rem 0;
+        padding: 0.25rem 0;
 
         a {
-          color: ${(props) => props.theme.colors.black2};
+          color: ${(props) => props.theme.colors.textMain};
           text-decoration: none;
-          font-size: ${(props) => props.theme.fontSize.base};
-          transition: color 0.15s ease-in-out;
+          font-size: 0.95rem;
+          font-weight: ${(props) => props.theme.fontWeight.medium};
+          transition: color 0.2s ease-in-out;
 
           &:hover {
-            color: ${(props) => props.theme.colors.orange};
+            color: ${(props) => props.theme.colors.accentWarm};
           }
         }
       }
@@ -96,34 +99,34 @@ export const NavContainer = styled.nav<ContainerProps>`
       .mobile-home-button {
         .nav-home-link {
           background-color: ${(props) => props.theme.colors.gray200};
-          border: 1px solid ${(props) => props.theme.colors.gray300};
-          color: ${(props) => props.theme.colors.black1};
+          border: 1px solid ${(props) => props.theme.colors.borderColor};
+          color: ${(props) => props.theme.colors.primaryDark};
           width: 100%;
           display: inline-block;
           text-align: center;
           padding: 0.375rem 0.75rem;
 
           &:hover {
-            background-color: ${(props) => props.theme.colors.gray300};
-            color: ${(props) => props.theme.colors.black1};
+            background-color: ${(props) => props.theme.colors.borderColor};
+            color: ${(props) => props.theme.colors.primaryDark};
           }
         }
       }
 
       .login-button-item {
-        padding: 0.5rem 0;
+        padding: 0.25rem 0;
       }
 
       .btn-orange {
         color: ${(props) => props.theme.colors.white} !important;
-        background-color: ${(props) => props.theme.colors.orange};
-        font-size: ${(props) => props.theme.fontSize.base};
-        font-weight: ${(props) => props.theme.fontWeight.normal} !important;
+        background-color: ${(props) => props.theme.colors.primaryDark};
+        font-size: 0.95rem;
+        font-weight: ${(props) => props.theme.fontWeight.semibold} !important;
 
         cursor: pointer;
         outline: none;
         box-shadow: none;
-        border-radius: 0.375rem !important;
+        border-radius: 6px !important;
         width: 100% !important;
         display: inline-block;
         text-align: center;
@@ -131,16 +134,12 @@ export const NavContainer = styled.nav<ContainerProps>`
         vertical-align: middle;
         user-select: none;
         border: 1px solid transparent;
-        padding: 0.375rem 0.75rem;
+        padding: 0.6rem 1.6rem;
 
-        transition:
-          color 0.15s ease-in-out,
-          background-color 0.15s ease-in-out,
-          border-color 0.15s ease-in-out,
-          box-shadow 0.15s ease-in-out;
+        transition: all 0.3s ease;
 
         &:hover {
-          background-color: ${(props) => props.theme.colors.orange2};
+          background-color: ${(props) => props.theme.colors.accentWarm};
         }
       }
     }
@@ -163,7 +162,7 @@ export const NavContainer = styled.nav<ContainerProps>`
     justify-content: flex-start;
 
     .container {
-      max-width: 960px;
+      max-width: 1320px;
 
       .menu-toggle {
         display: none;
@@ -184,12 +183,13 @@ export const NavContainer = styled.nav<ContainerProps>`
         ul {
           flex-direction: row;
           align-items: center;
+          gap: 2rem;
 
           .nav-item {
             display: flex;
             align-items: center;
             padding: 0;
-            margin-right: 2rem;
+            margin-right: 0;
           }
 
           .login-button-item {
@@ -197,8 +197,8 @@ export const NavContainer = styled.nav<ContainerProps>`
 
             a,
             button {
-              padding-left: 3rem;
-              padding-right: 3rem;
+              padding-left: 1.6rem;
+              padding-right: 1.6rem;
             }
           }
 
@@ -209,11 +209,11 @@ export const NavContainer = styled.nav<ContainerProps>`
               padding: 0;
               background-color: transparent;
               border: 0;
-              color: ${(props) => props.theme.colors.black2};
+              color: ${(props) => props.theme.colors.textMain};
 
               &:hover {
                 background-color: transparent;
-                color: ${(props) => props.theme.colors.orange};
+                color: ${(props) => props.theme.colors.accentWarm};
               }
             }
           }
@@ -224,7 +224,7 @@ export const NavContainer = styled.nav<ContainerProps>`
 
   @media (min-width: ${(props) => props.theme.screenMedias.xl}) {
     .container {
-      max-width: 1140px;
+      max-width: 1320px;
     }
   }
 

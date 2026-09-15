@@ -2,25 +2,42 @@ import styled from 'styled-components'
 
 export const Main = styled.main`
   width: 100% !important;
+  padding-top: 3.5rem !important;
+  padding-bottom: 3.5rem !important;
 
   .container {
+    max-width: 1320px;
     width: 100%;
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
     margin-right: auto;
     margin-left: auto;
 
     .title {
-      margin-bottom: 3rem !important;
+      margin-bottom: 2.5rem !important;
       width: 100% !important;
 
       h1 {
         text-align: center !important;
-        font-weight: 700 !important;
-        font-size: calc(1.275rem + 0.3vw) !important;
+        font-family: ${(props) => props.theme.fontFamily.heading};
+        font-weight: ${(props) => props.theme.fontWeight.semibold} !important;
+        font-size: 1.75rem !important;
+        color: ${(props) => props.theme.colors.primaryDark};
         margin-bottom: 0.5rem !important;
         margin-top: 0;
-        line-height: 1.2;
+        line-height: 1.3;
+        position: relative;
+        display: block;
+
+        &::after {
+          content: '';
+          display: block;
+          width: 50px;
+          height: 3px;
+          background-color: ${(props) => props.theme.colors.accentWarm};
+          margin: 0.6rem auto 0;
+          border-radius: 2px;
+        }
       }
     }
 
@@ -61,23 +78,22 @@ export const Main = styled.main`
             height: 100%;
             min-width: 0;
             word-wrap: break-word;
-            background-color: ${(props) => props.theme.colors.white};
+            background-color: ${(props) => props.theme.colors.bgCard};
             background-clip: border-box;
-            border: 1px solid rgba(0, 0, 0, 0.125);
-            border-radius: 0.6rem;
-            overflow: hidden; /* Garante cantos arredondados sem sobras */
+            border: 1px solid ${(props) => props.theme.colors.borderColor};
+            border-radius: 12px;
+            box-shadow: ${(props) => props.theme.shadows.soft};
+            overflow: hidden;
 
             .imgWrapper {
               position: relative;
               width: 100%;
               aspect-ratio: 16 / 9;
-              overflow: hidden; /* Container isolado para o Parallax */
-              border-top-left-radius: calc(0.6rem - 1px);
-              border-top-right-radius: calc(0.6rem - 1px);
+              overflow: hidden;
 
               img.parallax-img {
                 width: 100%;
-                height: 120%; /* Sobra de altura para a imagem correr sem criar espaço branco */
+                height: 120%;
                 object-fit: cover;
                 display: block;
                 will-change: transform;
@@ -88,17 +104,21 @@ export const Main = styled.main`
               display: flex;
               flex-direction: column;
               flex: 1 1 auto;
-              padding: 1rem 1rem;
+              padding: 1.2rem 1.5rem 1.5rem;
 
               div {
                 margin-bottom: 0.5rem;
+                font-family: ${(props) => props.theme.fontFamily.heading};
+                font-size: 1.1rem;
                 font-weight: 600;
+                color: ${(props) => props.theme.colors.primaryDark};
               }
 
               p {
-                color: ${(props) => props.theme.colors.phColor} !important;
+                color: ${(props) => props.theme.colors.textMuted} !important;
+                font-size: 0.88rem;
                 margin-top: 0;
-                margin-bottom: 1rem;
+                margin-bottom: 0.5rem;
               }
 
               p:last-child {
@@ -120,14 +140,6 @@ export const Main = styled.main`
   @media (min-width: ${(props) => props.theme.screenMedias.md}) {
     .container {
       max-width: 720px;
-
-      .title {
-        margin-bottom: 3rem !important;
-
-        h1 {
-          text-align: left !important;
-        }
-      }
     }
 
     .beforeCard {
@@ -139,16 +151,6 @@ export const Main = styled.main`
   @media (min-width: ${(props) => props.theme.screenMedias.lg}) {
     .container {
       max-width: 960px;
-
-      .title {
-        padding-bottom: 0 !important;
-        padding-top: 1.5rem !important;
-        margin-bottom: 3rem !important;
-
-        h1 {
-          text-align: left !important;
-        }
-      }
     }
 
     .beforeCard {
@@ -159,13 +161,7 @@ export const Main = styled.main`
 
   @media (min-width: ${(props) => props.theme.screenMedias.xl}) {
     .container {
-      max-width: 1140px;
-
-      .title {
-        h1 {
-          font-size: 1.5rem !important;
-        }
-      }
+      max-width: 1320px;
     }
   }
 

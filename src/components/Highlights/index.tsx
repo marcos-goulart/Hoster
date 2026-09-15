@@ -8,7 +8,7 @@ interface HighlightsProps {
 
 export function Highlights({ hotels }: HighlightsProps) {
   return (
-    <Main>
+    <Main id="destaques">
       <div className="container">
         <h1 className="text-reveal">Hoteis e pousadas em destaque</h1>
         <HotelsContainer>

@@ -2,37 +2,48 @@ import styled from 'styled-components'
 
 export const Main = styled.main`
   width: 100% !important;
-  padding-bottom: 1.5rem !important;
+  padding-top: 4.5rem !important;
+  padding-bottom: 4.5rem !important;
 
   .container {
+    max-width: 1200px;
     width: 100%;
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
     margin-right: auto;
     margin-left: auto;
-    padding-top: 3rem !important;
-    padding-bottom: 0.5rem !important;
   }
 
   .title {
-    margin-bottom: 3rem !important;
+    margin-bottom: 2.5rem !important;
     width: 100% !important;
 
     h1 {
       text-align: center !important;
-      font-weight: 700 !important;
-      font-size: calc(1.275rem + 0.3vw) !important;
+      font-family: ${(props) => props.theme.fontFamily.heading};
+      font-weight: ${(props) => props.theme.fontWeight.semibold} !important;
+      font-size: 1.75rem !important;
+      color: ${(props) => props.theme.colors.primaryDark};
       margin-bottom: 0.5rem !important;
       margin-top: 0;
-      line-height: 1.2;
+      line-height: 1.3;
+      position: relative;
+      display: block;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 50px;
+        height: 3px;
+        background-color: ${(props) => props.theme.colors.accentWarm};
+        margin: 0.6rem auto 0;
+        border-radius: 2px;
+      }
     }
   }
 
   .lineOrange {
-    width: 70px;
-    height: 3px;
-    background-color: ${(props) => props.theme.colors.orange};
-    margin: 0.5rem auto 0;
+    display: none;
   }
 
   .row {
@@ -59,58 +70,60 @@ export const Main = styled.main`
   }
 
   .card {
-    border-width: 0 !important;
-    border: 0 !important;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid ${(props) => props.theme.colors.borderColor} !important;
+    box-shadow: ${(props) => props.theme.shadows.soft} !important;
     position: relative;
     display: flex;
     flex-direction: column;
     min-width: 0;
     word-wrap: break-word;
-    background-color: ${(props) => props.theme.colors.white};
+    background-color: ${(props) => props.theme.colors.bgCard};
     background-clip: border-box;
-    border-radius: 0.25rem;
-    padding: 0.5rem !important;
+    border-radius: 12px;
+    padding: 1.5rem !important;
     width: 100%;
     height: 100%;
   }
 
   .cardBody {
     flex: 1 1 auto;
-    padding: 1rem;
+    padding: 0;
     text-align: left;
     display: flex;
     flex-direction: column;
 
     h4 {
       margin: 0;
-      font-size: 1.25rem;
-      font-weight: 600;
-      line-height: 1.2;
+      font-size: 1rem;
+      font-weight: 700;
+      color: ${(props) => props.theme.colors.primaryDark};
+      line-height: 1.3;
     }
 
     p {
-      margin-top: 0.5rem;
+      margin-top: 0.8rem;
       margin-bottom: 0;
-      color: ${(props) => props.theme.colors.phColor};
+      color: ${(props) => props.theme.colors.textMuted};
+      font-size: 0.88rem;
+      font-style: italic;
     }
   }
 
   .header {
-    margin-bottom: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
   }
 
   .stars {
     display: flex;
     gap: 0.2rem;
-    margin-top: 0.5rem;
+    margin-top: 0.3rem;
   }
 
   .star {
     display: inline-flex;
     width: 18px;
     height: 18px;
-    color: ${(props) => props.theme.colors.yellow};
+    color: ${(props) => props.theme.colors.accentGold};
   }
 
   .star svg {
@@ -133,13 +146,8 @@ export const Main = styled.main`
   }
 
   @media (min-width: ${(props) => props.theme.screenMedias.lg}) {
-    padding-top: 1.5rem !important;
-    padding-bottom: 1.5rem !important;
-
     .container {
       max-width: 960px;
-      padding-top: 3rem !important;
-      padding-bottom: 3rem !important;
     }
 
     .col {
@@ -150,10 +158,6 @@ export const Main = styled.main`
   @media (min-width: ${(props) => props.theme.screenMedias.xl}) {
     .container {
       max-width: 1140px;
-    }
-
-    .title h1 {
-      font-size: 1.5rem !important;
     }
   }
 

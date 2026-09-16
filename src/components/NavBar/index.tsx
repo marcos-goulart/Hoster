@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { BrandLink, Button, NavContainer, NavLinkItem, UserMenu } from './styles'
+import { BrandLink, Button, NavContainer, NavLinkItem } from './styles'
 import { useAuth } from '../../hooks/useAuth'
 import { AuthModal } from '../AuthModal/index'
-
+import { UserDropdownMenu } from './UserDropdownMenu/index'
 import { lenisInstance } from '../../hooks/useSmoothScroll'
 
 export function Navbar() {
@@ -35,7 +35,7 @@ export function Navbar() {
       const el = document.getElementById(sectionId)
       if (el) {
         if (lenisInstance) {
-          lenisInstance.scrollTo(el, { duration: 1.2 })
+          lenisInstance.scrollTo(el, { duration: 1.2, offset: -80 })
         } else {
           el.scrollIntoView({ behavior: 'smooth' })
         }
@@ -110,12 +110,11 @@ export function Navbar() {
                     Login
                   </Button>
                 ) : (
-                  <UserMenu>
-                    <span>{user?.displayName || 'Minha Conta'}</span>
-                    <button type="button" onClick={logout} className="btn-logout">
-                      Sair
-                    </button>
-                  </UserMenu>
+                  <UserDropdownMenu
+                    user={user}
+                    onLogout={logout}
+                    onCloseMobileMenu={handleCloseMenu}
+                  />
                 )}
               </li>
             </ul>

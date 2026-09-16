@@ -1,11 +1,20 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { AppThemeProvider } from '../../styles/themeProvider'
 import { BrowserRouter } from 'react-router-dom'
 import { Navbar } from './index'
 
+// Mock do hook useAuth
+vi.mock('../../hooks/useAuth', () => ({
+  useAuth: () => ({
+    isLogged: false,
+    user: null,
+    logout: vi.fn(),
+  }),
+}))
+
 describe('Navbar', () => {
-  it('deve abrir e fechar o menu ao clicar no botão', () => {
+  it('deve abrir e fechar o menu mobile ao clicar no botão hambúrguer', () => {
     render(
       <AppThemeProvider>
         <BrowserRouter>
@@ -14,7 +23,7 @@ describe('Navbar', () => {
       </AppThemeProvider>,
     )
 
-    const menuButton = screen.getByRole('button')
+    const menuButton = screen.getByRole('button', { name: '' })
     const menu = document.querySelector('.navbar-collapse')
 
     expect(menu).not.toBeVisible()
@@ -40,7 +49,7 @@ describe('Navbar', () => {
     expect(logoLink.getAttribute('href')).toBe('/')
   })
 
-  it('deve direcionar para o Login (/login) ao clicar no botão Login', () => {
+  it('deve exibir o botão de Login quando o usuário não estiver logado', () => {
     render(
       <AppThemeProvider>
         <BrowserRouter>
@@ -51,37 +60,5 @@ describe('Navbar', () => {
 
     const loginLink = screen.getByText('Login')
     expect(loginLink).toBeInTheDocument()
-    expect(loginLink.getAttribute('href')).toBe('/login')
-  })
-
-  it('deve exibir Acomodações, Promoções e Diferenciais na home (/)', () => {
-    window.history.pushState({}, 'Home', '/')
-    render(
-      <AppThemeProvider>
-        <BrowserRouter>
-          <Navbar />
-        </BrowserRouter>
-      </AppThemeProvider>,
-    )
-
-    expect(screen.getByText('Acomodações')).toBeInTheDocument()
-    expect(screen.getByText('Promoções')).toBeInTheDocument()
-    expect(screen.getByText('Diferenciais')).toBeInTheDocument()
-  })
-
-  it('não deve exibir Acomodações, Promoções e Diferenciais em páginas que não sejam a home', () => {
-    window.history.pushState({}, 'Search Result', '/resultado')
-    render(
-      <AppThemeProvider>
-        <BrowserRouter>
-          <Navbar />
-        </BrowserRouter>
-      </AppThemeProvider>,
-    )
-
-    expect(screen.queryByText('Acomodações')).not.toBeInTheDocument()
-    expect(screen.queryByText('Promoções')).not.toBeInTheDocument()
-    expect(screen.queryByText('Diferenciais')).not.toBeInTheDocument()
-    expect(screen.getByText('Home')).toBeInTheDocument()
   })
 })

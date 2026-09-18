@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { Banner } from '../../components/Banner'
 import { Carousel } from '../../components/Carousel'
@@ -9,6 +9,7 @@ import { Highlights } from '../../components/Highlights'
 import { Promotions } from '../../components/Promotions'
 import { Reviews } from '../../components/Reviews'
 import { Navbar } from '../../components/NavBar'
+import { AuthModal } from '../../components/AuthModal'
 import { useHomeAnimations } from '../../hooks/useHomeAnimations'
 import type { Hotel } from '../../interfaces/Hotel'
 import { fallbackHotels } from '../../mocks/hotelRecords'
@@ -22,9 +23,23 @@ export default function Main() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [hotels, setHotels] = useState<Hotel[]>(fallbackHotels)
   const location = useLocation()
+  const navigate = useNavigate()
+
+  // Inicializa o modal checando o state de navegação sem depender de setState síncrono dentro do useEffect
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(() => {
+    return Boolean((location.state as { openAuthModal?: boolean } | null)?.openAuthModal)
+  })
 
   useHomeAnimations(containerRef)
 
+  // Limpa o state de navegação após ler a flag openAuthModal
+  useEffect(() => {
+    if ((location.state as { openAuthModal?: boolean } | null)?.openAuthModal) {
+      navigate(location.pathname, { replace: true, state: {} })
+    }
+  }, [location, navigate])
+
+  // Scroll para seções da página inicial
   useEffect(() => {
     const scrollTo = (location.state as { scrollTo?: string } | null)?.scrollTo
     if (scrollTo) {
@@ -72,6 +87,8 @@ export default function Main() {
       <Carousel />
       <Reviews />
       <Footer />
+
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </Container>
   )
 }

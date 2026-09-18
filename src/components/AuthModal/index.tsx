@@ -1,20 +1,24 @@
 import { useState } from 'react'
 import { IoClose } from 'react-icons/io5'
+import { useLocation } from 'react-router-dom'
 import { LoginForm } from '../LoginForm'
 import { RegisterForm } from '../RegisterForm'
-import { CloseButton, ModalContent, Overlay, TabHeader } from './styles'
+import { AuthNotice, CloseButton, ModalContent, Overlay, TabHeader } from './styles'
 
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
+  customMessage?: string
 }
 
-export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, customMessage }: AuthModalProps) {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
+  const location = useLocation()
+  const messageToShow =
+    customMessage || (location.state as { authMessage?: string } | null)?.authMessage || null
 
   if (!isOpen) return null
 
-  // Fecha o modal ao clicar no overlay escuro
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose()
@@ -27,6 +31,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <CloseButton type="button" onClick={onClose} aria-label="Fechar">
           <IoClose />
         </CloseButton>
+
+        {messageToShow && (
+          <AuthNotice>
+            <p>{messageToShow}</p>
+          </AuthNotice>
+        )}
 
         <TabHeader>
           <button

@@ -63,6 +63,20 @@ export const CloseButton = styled.button`
   }
 `
 
+export const AuthNotice = styled.div`
+  background-color: #fffbeb;
+  border-bottom: 1px solid #fde68a;
+  padding: 0.85rem 2.5rem 0.85rem 1rem;
+
+  p {
+    color: #b45309;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+  }
+`
+
 export const TabHeader = styled.div`
   display: flex;
   border-bottom: 1px solid ${(props) => props.theme.colors.borderColor};

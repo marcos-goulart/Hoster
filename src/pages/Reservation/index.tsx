@@ -1,213 +1,159 @@
-import { useEffect, useState } from 'react'
-import { FaStar } from 'react-icons/fa'
-import { useLocation, useParams } from 'react-router-dom'
-
-import { Footer } from '../../components/Footer'
+import { Link } from 'react-router-dom'
 import { Navbar } from '../../components/NavBar'
-import type { Hotel } from '../../interfaces/Hotel'
-import { getHotelById } from '../../services/hotels'
+import { Footer } from '../../components/Footer'
 
+import { HotelGallery } from '../../components/HotelGallery'
+import { ImageLightboxModal } from '../../components/ImageLightboxModal'
+import { AmenitiesList } from '../../components/AmenitiesList'
+import { RoomSelector } from '../../components/RoomSelector'
+import { LocationMap } from '../../components/LocationMap'
+import { HotelReviews } from '../../components/HotelReviews'
+import { CheckoutStickyCard } from '../../components/CheckoutStickyCard'
+
+import { useReservation } from '../../hooks/useReservation'
 import {
-  ActionButton,
+  Card,
   Container,
+  Divider,
   EmptyState,
-  FormCard,
-  FormGrid,
+  HotelHeader,
+  LeftContent,
   MainContent,
-  Notice,
-  ReservationSkeletonForm,
-  ReservationSkeletonSummary,
-  StatusBadge,
-  SummaryCard,
-  TitleBlock,
+  MainGrid,
+  RightContent,
+  SkeletonGrid,
+  SuccessNotice,
 } from './styles'
 
-const reservationFields = [
-  { id: 'nome', label: 'Nome completo', type: 'text', className: 'half' },
-  { id: 'email', label: 'E-mail', type: 'email', className: 'half' },
-  { id: 'documento', label: 'CPF/Passaporte', type: 'text', className: 'half' },
-  { id: 'nascimento', label: 'Data de nascimento', type: 'date', className: 'half' },
-  { id: 'telefone', label: 'Telefone', type: 'tel', className: 'full' },
-  { id: 'pais', label: 'Pais', type: 'text', className: 'third' },
-  { id: 'estado', label: 'Estado', type: 'text', className: 'third' },
-  { id: 'cidade', label: 'Cidade', type: 'text', className: 'third' },
-  { id: 'rua', label: 'Rua', type: 'text', className: 'full' },
-  { id: 'bairro', label: 'Bairro', type: 'text', className: 'half' },
-  { id: 'cep', label: 'CEP', type: 'text', className: 'half' },
-] as const
-
-interface ReservationLocationState {
-  hotel?: Hotel
-}
-
 export default function ReservationPage() {
-  const { hotelId } = useParams()
-  const location = useLocation()
-  const { hotel: hotelFromState } = (location.state as ReservationLocationState | null) ?? {}
-  const initialHotel = hotelId && hotelFromState?.id === hotelId ? hotelFromState : null
-
-  const [hotel, setHotel] = useState<Hotel | null>(initialHotel)
-  const [isLoading, setIsLoading] = useState(initialHotel === null)
-
-  useEffect(() => {
-    let isMounted = true
-
-    async function loadHotel() {
-      if (!hotelId) {
-        if (isMounted) {
-          setHotel(null)
-          setIsLoading(false)
-        }
-
-        return
-      }
-
-      if (initialHotel === null) {
-        setIsLoading(true)
-      }
-
-      const hotelData = await getHotelById(hotelId)
-
-      if (isMounted) {
-        setHotel(hotelData)
-        setIsLoading(false)
-      }
-    }
-
-    void loadHotel()
-
-    return () => {
-      isMounted = false
-    }
-  }, [hotelId, initialHotel])
-
-  const isAvailable = hotel?.availability === true
-  const isDisabled = !isAvailable
+  const {
+    hotelDetail,
+    selectedRoom,
+    isLoading,
+    isLightboxOpen,
+    lightboxIndex,
+    isSubmitting,
+    confirmedBookingId,
+    checkInDisplay,
+    checkOutDisplay,
+    nightsCount,
+    guestsCount,
+    setLightboxIndex,
+    handleOpenLightbox,
+    handleCloseLightbox,
+    handleSelectRoom,
+    handleUpdateStayDetails,
+    handleSubmitBooking,
+  } = useReservation()
 
   return (
     <Container>
       <Navbar />
+
       <MainContent>
         <div className="container">
-          <TitleBlock>
-            <h1>Pre-reserva</h1>
-            <div className="line" />
-          </TitleBlock>
-
           {isLoading ? (
-            <div className="contentGrid" aria-hidden="true">
-              <ReservationSkeletonSummary>
-                <div className="image" />
-                <div className="summaryContent">
-                  <div className="line title" />
-                  <div className="line location" />
-                  <div className="stars">
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <div key={`reservation-skeleton-star-${index}`} className="star" />
-                    ))}
-                  </div>
-                  <div className="line price" />
-                  <div className="badge" />
-                  <div className="line description" />
-                  <div className="line description short" />
-                </div>
-              </ReservationSkeletonSummary>
-
-              <ReservationSkeletonForm>
-                <div className="fieldGrid">
-                  {reservationFields.map((field) => (
-                    <div
-                      key={`reservation-skeleton-field-${field.id}`}
-                      className={`field ${field.className}`}
-                    >
-                      <div className="label" />
-                      <div className="input" />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="actions">
-                  <div className="button" />
-                </div>
-              </ReservationSkeletonForm>
-            </div>
-          ) : !hotel ? (
-            <EmptyState>
-              Hotel nao encontrado. Volte para a Home e escolha outra hospedagem.
+            <SkeletonGrid data-testid="reservation-skeleton">
+              <div>
+                <div className="gallery-skeleton" />
+                <div className="card-skeleton" />
+              </div>
+              <div>
+                <div className="card-skeleton" />
+              </div>
+            </SkeletonGrid>
+          ) : !hotelDetail ? (
+            <EmptyState data-testid="reservation-empty-state">
+              <h2>Acomodação não encontrada</h2>
+              <p>Não foi possível carregar os dados desta acomodação para a pré-reserva.</p>
+              <Link to="/">Voltar para a página inicial</Link>
             </EmptyState>
           ) : (
-            <div className="contentGrid">
-              <SummaryCard $isAvailable={isAvailable}>
-                <img src={hotel.image} alt={hotel.name} />
-                <div className="summaryContent">
-                  <h2>{hotel.name}</h2>
-                  <p className="location">{hotel.location}</p>
-                  <div className="stars" aria-label="Hotel com cinco estrelas">
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <FaStar key={`${hotel.id}-star-${index}`} />
-                    ))}
-                  </div>
-                  <p className="price">
-                    {hotel.discountPrice !== undefined ? (
-                      <>
-                        <span className="oldPrice">
-                          {hotel.price.toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                          })}
-                        </span>
-                        <span>
-                          {hotel.discountPrice.toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                          })}
-                        </span>
-                      </>
-                    ) : (
-                      <span>
-                        {hotel.price.toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        })}
-                      </span>
-                    )}
-                  </p>
-                  <StatusBadge $isAvailable={isAvailable}>
-                    {isAvailable ? 'Disponivel!' : 'Indisponivel!'}
-                  </StatusBadge>
-                  {hotel.description ? <p className="description">{hotel.description}</p> : null}
+            <>
+              {confirmedBookingId ? (
+                <SuccessNotice data-testid="booking-success-alert">
+                  <strong>✓ Pré-reserva confirmada com sucesso!</strong>
+                  Código da sua reserva: <strong>{confirmedBookingId}</strong>. Enviamos os detalhes
+                  e as instruções de pagamento para o seu e-mail.
+                </SuccessNotice>
+              ) : null}
+
+              {/* Cabeçalho do Hotel */}
+              <HotelHeader data-testid="hotel-header">
+                <div className="header-left">
+                  <h1 data-testid="hotel-title">{hotelDetail.name}</h1>
+                  <p data-testid="hotel-address">📍 {hotelDetail.address}</p>
                 </div>
-              </SummaryCard>
 
-              <FormCard>
-                {!isAvailable ? (
-                  <Notice>
-                    No momento esta hospedagem nao possui disponibilidade para seguir com a
-                    pre-reserva.
-                  </Notice>
-                ) : null}
+                <div className="rating-badge" data-testid="hotel-rating-badge">
+                  ★ {hotelDetail.ratingScore} ({hotelDetail.reviewCount} avaliações)
+                </div>
+              </HotelHeader>
 
-                <form>
-                  <FormGrid>
-                    {reservationFields.map((field) => (
-                      <div key={field.id} className={`field ${field.className}`}>
-                        <label htmlFor={field.id}>{field.label}</label>
-                        <input id={field.id} type={field.type} disabled={isDisabled} />
-                      </div>
-                    ))}
-                  </FormGrid>
+              {/* Grid Principal Desktop */}
+              <MainGrid>
+                {/* Coluna da Esquerda */}
+                <LeftContent>
+                  <HotelGallery
+                    photos={hotelDetail.photos}
+                    hotelName={hotelDetail.name}
+                    onOpenLightbox={handleOpenLightbox}
+                  />
 
-                  <div className="actions">
-                    <ActionButton type="button" disabled={isDisabled}>
-                      Proximo
-                    </ActionButton>
-                  </div>
-                </form>
-              </FormCard>
-            </div>
+                  <Card>
+                    <AmenitiesList amenities={hotelDetail.amenitiesList} />
+
+                    <Divider />
+
+                    <RoomSelector
+                      rooms={hotelDetail.rooms}
+                      selectedRoomId={selectedRoom?.id || ''}
+                      onSelectRoom={handleSelectRoom}
+                    />
+
+                    <Divider />
+
+                    <LocationMap
+                      address={hotelDetail.address}
+                      mapEmbedUrl={hotelDetail.mapEmbedUrl}
+                    />
+
+                    <Divider />
+
+                    <HotelReviews reviews={hotelDetail.reviews} />
+                  </Card>
+                </LeftContent>
+
+                {/* Coluna da Direita (Sticky Checkout) */}
+                <RightContent className="sticky-checkout">
+                  {selectedRoom ? (
+                    <CheckoutStickyCard
+                      selectedRoom={selectedRoom}
+                      nights={nightsCount}
+                      checkIn={checkInDisplay}
+                      checkOut={checkOutDisplay}
+                      guestsCount={guestsCount}
+                      isSubmitting={isSubmitting}
+                      onUpdateStayDetails={handleUpdateStayDetails}
+                      onSubmitBooking={handleSubmitBooking}
+                    />
+                  ) : null}
+                </RightContent>
+              </MainGrid>
+
+              {/* Modal Lightbox */}
+              <ImageLightboxModal
+                isOpen={isLightboxOpen}
+                photos={hotelDetail.photos}
+                currentIndex={lightboxIndex}
+                onClose={handleCloseLightbox}
+                onSelectIndex={setLightboxIndex}
+              />
+            </>
           )}
         </div>
       </MainContent>
+
       <Footer />
     </Container>
   )

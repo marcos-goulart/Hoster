@@ -21,7 +21,7 @@ export function PriceFilterBlock({
     <div className="filterBlock">
       <button type="button" className={`filterToggle ${isOpen ? 'open' : ''}`} onClick={onToggle}>
         <span>
-          <strong>Preço</strong>
+          <strong>Preço por noite</strong>
           R$ {minPrice},00 a R$ {maxPrice},00
         </span>
         <FaChevronDown aria-hidden="true" />

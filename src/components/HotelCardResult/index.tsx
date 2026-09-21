@@ -1,3 +1,4 @@
+import { useSearchParams } from 'react-router-dom'
 import { FaShieldAlt, FaStar, FaTags } from 'react-icons/fa'
 import type { Hotel } from '../../interfaces/Hotel'
 import { serviceIcons, serviceLabels } from '../../constants/services'
@@ -10,14 +11,34 @@ interface HotelCardResultProps {
 }
 
 export function HotelCardResult({ hotel, nights }: HotelCardResultProps) {
+  const [searchParams] = useSearchParams()
   const rating = 10
   const dailyPrice = getDisplayPrice(hotel)
   const totalPrice = dailyPrice * nights
 
+  // Extrai parâmetros da busca na URL
+  const entrada = searchParams.get('entrada') ?? ''
+  const saida = searchParams.get('saida') ?? ''
+  const adultos = Number(searchParams.get('adultos') ?? 0)
+  const criancas = Number(searchParams.get('criancas') ?? 0)
+  const totalGuests = adultos + criancas > 0 ? adultos + criancas : 2
+
   return (
     <ResultCard
-      to={`/pre-reserva/${hotel.id}`}
-      state={{ hotel }}
+      to={`/pre-reserva/${hotel.id}${window.location.search}`}
+      state={{
+        hotel,
+        entrada,
+        saida,
+        checkIn: entrada,
+        checkOut: saida,
+        nights,
+        diarias: nights,
+        adultos,
+        criancas,
+        hospedes: totalGuests,
+        guestsCount: totalGuests,
+      }}
       $isPromotion={hotel.promoted === true}
       $ratingColor={getRatingColor(rating)}
       aria-label={`Ver disponibilidade de ${hotel.name}`}

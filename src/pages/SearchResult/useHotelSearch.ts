@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { DEFAULT_FILTER_STATE, type FilterState } from '../../interfaces/FilterState'
 import type { Hotel } from '../../interfaces/Hotel'
 import { searchHotels } from '../../services/hotels'
-import { getCriteriaFromParams } from './searchUtils'
+import { getCriteriaFromParams } from '../../components/HotelCardResult/searchUtils'
 
 const RESULTS_PER_PAGE = 10
 

@@ -5,10 +5,10 @@ import { SearchForm } from '../../components/Banner/SearchForm'
 import { FilterComponent } from '../../components/FilterComponent'
 import { Footer } from '../../components/Footer'
 import { Navbar } from '../../components/NavBar'
-import { getNights } from './searchUtils'
+import { getNights } from '../../components/HotelCardResult/searchUtils'
 import { useHotelSearch } from './useHotelSearch'
-import { HotelCardResult } from './HotelCardResult'
-import { SearchSkeleton } from './SearchSkeleton'
+import { HotelCardResult } from '../../components/HotelCardResult/index.tsx'
+import { SearchSkeleton } from '../../components/SearchSkeleton/index.tsx'
 
 import {
   Container,

@@ -24,3 +24,40 @@ export function getDaysInMonth(year: number, month: number): number {
 export function getFirstDayOfWeek(year: number, month: number): number {
   return new Date(year, month, 1).getDay()
 }
+
+// ---> NOVAS FUNÇÕES ADICIONADAS ABAIXO <---
+
+export function formatShortDate(dateStr?: string): string | null {
+  if (!dateStr) return null
+  const [year, month, day] = dateStr.split('-').map(Number)
+  if (!year || !month || !day) return dateStr
+
+  const months = [
+    'Jan',
+    'Fev',
+    'Mar',
+    'Abr',
+    'Mai',
+    'Jun',
+    'Jul',
+    'Ago',
+    'Set',
+    'Out',
+    'Nov',
+    'Dez',
+  ]
+  return `${day} ${months[month - 1]}`
+}
+
+export function calculateNights(startStr?: string, endStr?: string): number | null {
+  if (!startStr || !endStr) return null
+
+  const start = parseDate(startStr)
+  const end = parseDate(endStr)
+
+  if (!start || !end) return null
+
+  const diffTime = end.getTime() - start.getTime()
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  return diffDays > 0 ? diffDays : null
+}

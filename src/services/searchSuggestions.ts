@@ -11,24 +11,17 @@ function normalizeValue(value: string) {
 
 export async function getSearchSuggestions(query = ''): Promise<SearchSuggestion[]> {
   try {
-    const { data } = await api.get<SearchSuggestion[]>('/searchSuggestions')
+    const { data } = await api.get<SearchSuggestion[]>('/searchSuggestions', {
+      params: { q: query },
+    })
 
     if (!Array.isArray(data)) {
       return fallbackSearchSuggestions
     }
 
-    const normalizedQuery = normalizeValue(query.trim())
-
-    if (!normalizedQuery) {
-      return data.slice(0, 7)
-    }
-
     return data
-      .filter((suggestion) =>
-        normalizeValue(`${suggestion.title} ${suggestion.subtitle}`).includes(normalizedQuery),
-      )
-      .slice(0, 7)
   } catch {
+    // Caso haja instabilidade na rede, utiliza o fallback local sem quebrar a UI
     const normalizedQuery = normalizeValue(query.trim())
 
     if (!normalizedQuery) {

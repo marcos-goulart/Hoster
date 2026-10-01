@@ -1,4 +1,5 @@
 import { BrowserRouter as Router } from 'react-router-dom'
+import { Toaster } from 'sonner'
 
 import { AppRoutes } from './routes'
 
@@ -20,6 +21,7 @@ export default function App() {
         <AuthProvider>
           <AppThemeProvider>
             <CustomScrollbar />
+            <Toaster position="top-right" richColors closeButton />
             <AppRoutes />
             <PageLoadingOverlay />
             <GlobalStyle />

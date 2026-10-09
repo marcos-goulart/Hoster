@@ -1,15 +1,11 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { AuthModal } from '../AuthModal'
 
 interface ProtectedRouteProps {
   children: ReactNode
-  /**
-   * Se true, o usuário permanece na página atual e o modal de login abre.
-   * Se false (padrão), o usuário é redirecionado para a Home e o modal abre.
-   */
   keepOnPage?: boolean
   message?: string
 }
@@ -21,14 +17,20 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { user, loading } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(true)
 
   if (loading) {
     return null
   }
 
-  // Caso 1: Usuário não logado em rotas com redirecionamento (ex: /perfil, /minhas-viagens)
-  if (!user && !keepOnPage) {
+  // Se o usuário está autenticado, renderiza a página normalmente
+  if (user) {
+    return <>{children}</>
+  }
+
+  // Caso 1: Redireciona imediatamente para a Home
+  if (!keepOnPage) {
     return (
       <Navigate
         to="/"
@@ -36,25 +38,21 @@ export function ProtectedRoute({
         state={{
           openAuthModal: true,
           authMessage: message,
-          redirectTo: location.pathname,
+          redirectTo: location.pathname + location.search,
         }}
       />
     )
   }
 
-  // Caso 2: Usuário não logado em rota com permanência na página (ex: /pre-reserva/:hotelId)
-  if (!user && keepOnPage) {
-    return (
-      <>
-        {children}
-        <AuthModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          customMessage={message}
-        />
-      </>
-    )
+  // Caso 2: Se fechar o modal no "X", redireciona para a Home em vez de deixar na tela privada
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    navigate('/', { replace: true })
   }
 
-  return <>{children}</>
+  return (
+    <>
+      <AuthModal isOpen={isModalOpen} onClose={handleCloseModal} customMessage={message} />
+    </>
+  )
 }

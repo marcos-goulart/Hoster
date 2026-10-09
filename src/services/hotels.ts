@@ -1,5 +1,5 @@
-import type { Hotel, HotelRecord } from '../interfaces/Hotel'
-import { fallbackHotels, resolveHotelRecord } from '../mocks/hotelRecords'
+import type { Hotel } from '../interfaces/Hotel'
+import { fallbackHotels } from '../mocks/hotelRecords'
 import api from './api'
 
 export type HotelCategory = 'destaques' | 'promocoes'
@@ -16,40 +16,164 @@ export interface HotelSearchCriteria {
   mesesFlexiveis?: string[]
 }
 
-function isHotelRecord(record: unknown): record is HotelRecord {
-  if (typeof record !== 'object' || record === null) {
-    return false
+interface ApiHotelResponse {
+  id: string
+  name: string
+  city: string
+  state: string
+  address: string
+  description: string
+  ratingScore: number
+  reviewCount?: number
+  reviewsCount?: number
+  images?: string[]
+  photos?: string[]
+  amenities: string[]
+  rooms: Array<{
+    id: string
+    name: string
+    capacity: number
+    pricePerNight: number
+    isAvailable: boolean
+  }>
+}
+
+function mapAmenityToServiceKey(amenity: string): string {
+  const norm = amenity
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+  if (norm.includes('piscina')) return 'piscina'
+  if (norm.includes('wifi') || norm.includes('wi-fi') || norm.includes('internet')) return 'wifi'
+  if (norm.includes('restaurante') || norm.includes('almoco') || norm.includes('jantar'))
+    return 'restaurante'
+  if (norm.includes('cafe') || norm.includes('pequeno-almoco') || norm.includes('desjejum'))
+    return 'cafe-manha'
+  if (norm.includes('estacionamento') || norm.includes('garagem')) return 'estacionamento'
+  if (norm.includes('futebol') || norm.includes('campo')) return 'campo-futebol'
+  if (norm.includes('praia')) return 'praias'
+  return norm
+}
+
+function resolveImageUrl(imagePath?: string): string {
+  if (!imagePath) {
+    return 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'
+  }
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath
+  }
+  const mockImageMap: Record<string, string> = {
+    'hotel-1.jpg':
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+    'hotel-2.jpg':
+      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
+    'hotel-3.jpg':
+      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
+  }
+  return (
+    mockImageMap[imagePath] ||
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'
+  )
+}
+
+function mapApiHotelToFrontend(apiHotel: ApiHotelResponse): Hotel {
+  const lowestRoomPrice =
+    apiHotel.rooms && apiHotel.rooms.length > 0
+      ? Math.min(...apiHotel.rooms.map((r) => r.pricePerNight))
+      : 350.0
+
+  const rawImages =
+    apiHotel.photos && apiHotel.photos.length > 0 ? apiHotel.photos : apiHotel.images
+
+  const resolvedImages =
+    rawImages && rawImages.length > 0 ? rawImages.map(resolveImageUrl) : [resolveImageUrl()]
+
+  const normalizedAmenities = (apiHotel.amenities || []).map(mapAmenityToServiceKey)
+
+  const isFeatured =
+    (apiHotel.ratingScore ?? 8.5) >= 8.5 || apiHotel.name.toLowerCase().includes('resort')
+
+  const isPromoted =
+    !isFeatured && (lowestRoomPrice <= 400 || apiHotel.name.toLowerCase().includes('pousada'))
+
+  return {
+    id: apiHotel.id,
+    name: apiHotel.name,
+    location: `${apiHotel.city}/${apiHotel.state}`,
+    description: apiHotel.description,
+    price: lowestRoomPrice,
+    image: resolvedImages[0],
+    images: resolvedImages,
+    featured: isFeatured,
+    promoted: isPromoted,
+    accommodationType: apiHotel.name.toLowerCase().includes('pousada') ? 'pousada' : 'hotel',
+    services: normalizedAmenities,
+    rating: apiHotel.ratingScore ?? 8.5,
+    reviewsCount: apiHotel.reviewCount ?? apiHotel.reviewsCount ?? 0,
+    freeCancellation: true,
+    immediateBooking: true,
+  }
+}
+
+interface ApiResponseEnvelope {
+  data?: ApiHotelResponse[] | { hotels?: ApiHotelResponse[] }
+}
+
+function extractHotelsFromResponse(data: unknown): ApiHotelResponse[] {
+  const response = data as ApiResponseEnvelope
+
+  if (Array.isArray(response?.data)) {
+    return response.data
   }
 
-  const hotel = record as Partial<HotelRecord>
+  if (
+    typeof response?.data === 'object' &&
+    response.data !== null &&
+    'hotels' in response.data &&
+    Array.isArray(response.data.hotels)
+  ) {
+    return response.data.hotels
+  }
 
-  return (
-    typeof hotel.id === 'string' &&
-    typeof hotel.imageKey === 'string' &&
-    typeof hotel.name === 'string' &&
-    typeof hotel.location === 'string' &&
-    typeof hotel.price === 'number'
-  )
+  if (Array.isArray(data)) {
+    return data as ApiHotelResponse[]
+  }
+
+  return []
 }
 
 export async function getHotels(): Promise<Hotel[]> {
   try {
-    const { data } = await api.get<HotelRecord[]>('/hotels')
+    const { data } = await api.get('/hotels')
+    const hotelList = extractHotelsFromResponse(data)
 
-    if (!Array.isArray(data)) {
-      return fallbackHotels
+    if (hotelList.length > 0) {
+      return hotelList.map(mapApiHotelToFrontend)
     }
 
-    return data.filter(isHotelRecord).map(resolveHotelRecord)
-  } catch {
+    return fallbackHotels
+  } catch (error) {
+    console.warn('⚠️ Falha ao conectar com a API de hotéis. Utilizando dados fallback.', error)
     return fallbackHotels
   }
 }
 
 export async function getHotelById(hotelId: string): Promise<Hotel | null> {
-  const hotels = await getHotels()
+  try {
+    const { data } = await api.get(`/hotels/${hotelId}`)
+    const apiHotel =
+      (data as { data?: { hotel?: ApiHotelResponse } & ApiHotelResponse })?.data?.hotel ||
+      (data as { data?: ApiHotelResponse })?.data
 
-  return hotels.find((hotel) => hotel.id === hotelId) ?? null
+    if (apiHotel && apiHotel.id) {
+      return mapApiHotelToFrontend(apiHotel)
+    }
+    return null
+  } catch (error) {
+    console.warn(`⚠️ Falha ao buscar detalhes do hotel ${hotelId}.`, error)
+    const hotels = await getHotels()
+    return hotels.find((hotel) => hotel.id === hotelId) ?? null
+  }
 }
 
 export async function getHotelsByCategory(category: HotelCategory): Promise<Hotel[]> {
@@ -66,177 +190,24 @@ export function isHotelCategory(category: string | undefined): category is Hotel
   return category === 'destaques' || category === 'promocoes'
 }
 
-const stateMapping: Record<string, string> = {
-  ba: 'BA',
-  bahia: 'BA',
-  ilheus: 'BA',
-  'porto seguro': 'BA',
-  rj: 'RJ',
-  'rio de janeiro': 'RJ',
-  copacabana: 'RJ',
-  'centro do rio de janeiro': 'RJ',
-  'barra da tijuca': 'RJ',
-  galeao: 'RJ',
-  sp: 'SP',
-  'sao paulo': 'SP',
-  'campos do jordao': 'SP',
-  es: 'ES',
-  'espirito santo': 'ES',
-  vitoria: 'ES',
-  aracruz: 'ES',
-}
-
-function normalizeSearchValue(value: string | undefined) {
-  return (value ?? '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim()
-    .toLowerCase()
-}
-
-function getHotelState(hotel: Hotel): string | null {
-  if (hotel.location && hotel.location.includes('/')) {
-    const parts = hotel.location.split('/')
-    const stateStr = parts[parts.length - 1].trim().toUpperCase()
-    if (stateStr.length === 2) {
-      return stateStr
-    }
-  }
-
-  for (const tag of hotel.searchTags ?? []) {
-    const norm = normalizeSearchValue(tag)
-    if (stateMapping[norm]) {
-      return stateMapping[norm]
-    }
-  }
-
-  return null
-}
-
-function getTargetStateFromQuery(locationTerm: string): string | null {
-  if (!locationTerm) return null
-
-  for (const [key, uf] of Object.entries(stateMapping)) {
-    if (locationTerm.includes(key) || key.includes(locationTerm)) {
-      return uf
-    }
-  }
-
-  return null
-}
-
-function getSearchableText(hotel: Hotel) {
-  return normalizeSearchValue(
-    [hotel.name, hotel.location, hotel.description, ...(hotel.searchTags ?? [])]
-      .filter(Boolean)
-      .join(' '),
-  )
-}
-
-function getDisplayPrice(hotel: Hotel) {
-  return hotel.discountPrice ?? hotel.price
-}
-
-function getHotelSearchScore(hotel: Hotel, criteria: HotelSearchCriteria) {
-  const locationTerm = normalizeSearchValue(criteria.localizacao)
-  const nameTerm = normalizeSearchValue(criteria.nome)
-  const periodTerm = normalizeSearchValue(criteria.periodo)
-  const normalizedName = normalizeSearchValue(hotel.name)
-  const normalizedLocation = normalizeSearchValue(hotel.location)
-  const searchableText = getSearchableText(hotel)
-
-  let locationMatchLevel = 0
-  let relevanceScore = 0
-  let rankingScore = 0
-
-  if (locationTerm) {
-    const targetState = getTargetStateFromQuery(locationTerm)
-    const hotelState = getHotelState(hotel)
-
-    const isCityMatch =
-      normalizedLocation.includes(locationTerm) ||
-      (hotel.searchTags ?? []).some((tag) => normalizeSearchValue(tag) === locationTerm)
-
-    if (isCityMatch) {
-      locationMatchLevel = 2
-      relevanceScore += 80
-    } else if (targetState && hotelState === targetState) {
-      locationMatchLevel = 1
-      relevanceScore += 30
-    } else if (searchableText.includes(locationTerm)) {
-      locationMatchLevel = 1
-      relevanceScore += 20
-    }
-  }
-
-  if (nameTerm) {
-    if (normalizedName.includes(nameTerm)) {
-      relevanceScore += 70
-    } else if (searchableText.includes(nameTerm)) {
-      relevanceScore += 25
-    }
-  }
-
-  if (periodTerm && hotel.availablePeriods?.includes(periodTerm)) {
-    relevanceScore += 12
-  }
-
-  rankingScore += relevanceScore
-  rankingScore += hotel.availability === true ? 12 : 0
-  rankingScore += hotel.promoted ? 8 : 0
-  rankingScore += hotel.immediateBooking ? 4 : 0
-  rankingScore += hotel.freeCancellation ? 3 : 0
-  rankingScore -= getDisplayPrice(hotel) / 1000
-
-  return { locationMatchLevel, relevanceScore, rankingScore }
-}
-
 export async function searchHotels(criteria: HotelSearchCriteria): Promise<Hotel[]> {
-  const hotels = await getHotels()
-  const locationTerm = normalizeSearchValue(criteria.localizacao)
-  const targetState = getTargetStateFromQuery(locationTerm)
-  const hasTextCriteria = Boolean(locationTerm || normalizeSearchValue(criteria.nome))
-  const hasPeriodCriteria = Boolean(normalizeSearchValue(criteria.periodo))
+  try {
+    const params: Record<string, string | number | undefined> = {}
 
-  return hotels
-    .map((hotel) => {
-      const score = getHotelSearchScore(hotel, criteria)
-      return { hotel, ...score }
-    })
-    .filter(({ hotel, locationMatchLevel, relevanceScore }) => {
-      if (locationTerm && targetState) {
-        const hotelState = getHotelState(hotel)
-        if (hotelState && hotelState !== targetState) {
-          return false
-        }
-      }
+    if (criteria.localizacao) {
+      params.city = criteria.localizacao
+    }
 
-      if (
-        hasPeriodCriteria &&
-        !hotel.availablePeriods?.includes(normalizeSearchValue(criteria.periodo))
-      ) {
-        return false
-      }
+    const { data } = await api.get('/hotels', { params })
+    const hotelList = extractHotelsFromResponse(data)
 
-      if (hasTextCriteria) {
-        if (locationTerm && locationMatchLevel === 0 && relevanceScore === 0) {
-          return false
-        }
-        return relevanceScore > 0
-      }
+    if (hotelList.length > 0) {
+      return hotelList.map(mapApiHotelToFrontend)
+    }
 
-      return true
-    })
-    .sort((a, b) => {
-      if (a.locationMatchLevel !== b.locationMatchLevel) {
-        return b.locationMatchLevel - a.locationMatchLevel
-      }
-
-      if (b.rankingScore !== a.rankingScore) {
-        return b.rankingScore - a.rankingScore
-      }
-
-      return getDisplayPrice(a.hotel) - getDisplayPrice(b.hotel)
-    })
-    .map(({ hotel }) => hotel)
+    return []
+  } catch (error) {
+    console.warn('⚠️ Falha na busca de hotéis na API.', error)
+    return []
+  }
 }

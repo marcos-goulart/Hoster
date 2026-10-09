@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 import { Banner } from '../../components/Banner'
 import { Carousel } from '../../components/Carousel'
@@ -12,34 +14,33 @@ import { Navbar } from '../../components/NavBar'
 import { AuthModal } from '../../components/AuthModal'
 import { useHomeAnimations } from '../../hooks/useHomeAnimations'
 import type { Hotel } from '../../interfaces/Hotel'
-import { fallbackHotels } from '../../mocks/hotelRecords'
 import { getHotels } from '../../services/hotels'
 
 import { Container } from './styles'
-
 import { lenisInstance } from '../../hooks/useSmoothScroll'
 
 export default function Main() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [hotels, setHotels] = useState<Hotel[]>(fallbackHotels)
+  // 1. Inicializa como array vazio para não disparar animação em dados desatualizados
+  const [hotels, setHotels] = useState<Hotel[]>([])
+  const [, setIsLoading] = useState(true)
+
   const location = useLocation()
   const navigate = useNavigate()
 
-  // Inicializa o modal checando o state de navegação sem depender de setState síncrono dentro do useEffect
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(() => {
     return Boolean((location.state as { openAuthModal?: boolean } | null)?.openAuthModal)
   })
 
+  // Hook de animação do GSAP
   useHomeAnimations(containerRef)
 
-  // Limpa o state de navegação após ler a flag openAuthModal
   useEffect(() => {
     if ((location.state as { openAuthModal?: boolean } | null)?.openAuthModal) {
       navigate(location.pathname, { replace: true, state: {} })
     }
   }, [location, navigate])
 
-  // Scroll para seções da página inicial
   useEffect(() => {
     const scrollTo = (location.state as { scrollTo?: string } | null)?.scrollTo
     if (scrollTo) {
@@ -56,14 +57,30 @@ export default function Main() {
     }
   }, [location])
 
+  // 2. Busca os hotéis e recalcula os seletores GSAP/ScrollTrigger
   useEffect(() => {
     let isMounted = true
 
     async function loadHotels() {
+      setIsLoading(true)
       const hotelData = await getHotels()
 
       if (isMounted) {
         setHotels(hotelData)
+        setIsLoading(false)
+
+        // Força a atualização do GSAP após o React renderizar os novos elementos no DOM
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            ScrollTrigger.refresh()
+            // Zera qualquer estagnação visual dos novos elementos injetados
+            gsap.fromTo(
+              '.card-reveal',
+              { opacity: 0, y: 30 },
+              { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, overwrite: 'auto' },
+            )
+          }, 100)
+        })
       }
     }
 

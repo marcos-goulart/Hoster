@@ -161,7 +161,7 @@ describe('SearchResultPage Filters', () => {
     expect(await screen.findByText('Hotel Alfa')).toBeInTheDocument()
 
     // Abrir painel de preços
-    const precoToggle = screen.getByText('Preço')
+    const precoToggle = screen.getByText(/Preço por noite/i)
     fireEvent.click(precoToggle)
 
     // Definir mínimo = 350, máximo = 500

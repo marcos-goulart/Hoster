@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -40,32 +40,50 @@ export function PageLoadingProvider({ children }: { children: ReactNode }) {
   const routeKey = `${location.pathname}${location.search}`
   const [isLoading, setIsloading] = useState(true)
 
+  const stopLoading = useCallback(() => {
+    setIsloading(false)
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        ScrollTrigger.refresh()
+      }, 100)
+    })
+  }, [])
+
   useEffect(() => {
     let isMounted = true
+
+    // Timeout de segurança de 800ms para destravar caso a URL seja a mesma ou a promise demore
+    const safetyTimeout = setTimeout(() => {
+      if (isMounted) {
+        stopLoading()
+      }
+    }, 800)
 
     const bannerUrl = getBannerForPath(location.pathname)
     preloadBannerImage(bannerUrl).then(() => {
       if (isMounted) {
-        setIsloading(false)
-
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            ScrollTrigger.refresh()
-          }, 100)
-        })
+        clearTimeout(safetyTimeout)
+        stopLoading()
       }
     })
 
     return () => {
       isMounted = false
+      clearTimeout(safetyTimeout)
     }
-  }, [routeKey, location.pathname])
+  }, [routeKey, location.pathname, stopLoading])
 
   const triggerLoading = (callback?: () => void) => {
     setIsloading(true)
     const targetBanner = bannerResultado
+
     preloadBannerImage(targetBanner).then(() => {
       callback?.()
+
+      // Se a URL de destino for idêntica à URL atual, força o fechamento do loader após a execução do callback
+      setTimeout(() => {
+        stopLoading()
+      }, 300)
     })
   }
 

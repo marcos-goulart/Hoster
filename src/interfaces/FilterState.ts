@@ -8,8 +8,8 @@ export interface FilterState {
 
 export const DEFAULT_FILTER_STATE: FilterState = {
   promotions: [],
-  minPrice: '100',
-  maxPrice: '1000',
+  minPrice: '',
+  maxPrice: '', // Deixar vazio por padrão para não restringir a busca vinda da URL
   accommodations: [],
   services: [],
 }

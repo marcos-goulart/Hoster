@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-
 import { DEFAULT_FILTER_STATE, type FilterState } from '../../interfaces/FilterState'
 import type { Hotel } from '../../interfaces/Hotel'
 import { searchHotels } from '../../services/hotels'
@@ -19,14 +18,22 @@ export function useHotelSearch(searchParams: URLSearchParams) {
 
     async function loadResults() {
       setIsLoading(true)
-      const criteria = getCriteriaFromParams(searchParams)
-      const hotelResults = await searchHotels(criteria)
+      try {
+        const criteria = getCriteriaFromParams(searchParams)
+        const hotelResults = await searchHotels(criteria)
 
-      if (isMounted) {
-        setHotels(hotelResults)
-        setCurrentPage(1)
-        setIsPromotionAlertVisible(true)
-        setIsLoading(false)
+        if (isMounted) {
+          setHotels(hotelResults)
+          setCurrentPage(1)
+          setIsPromotionAlertVisible(true)
+        }
+      } catch (error) {
+        console.error('Erro ao buscar resultados da pesquisa:', error)
+      } finally {
+        // Garantia de que o indicador de carregamento sempre será fechado
+        if (isMounted) {
+          setIsLoading(false)
+        }
       }
     }
 
@@ -54,8 +61,12 @@ export function useHotelSearch(searchParams: URLSearchParams) {
     }
 
     const displayPrice = hotel.discountPrice ?? hotel.price
-    const min = parseFloat(appliedFilters.minPrice) || 0
-    const max = parseFloat(appliedFilters.maxPrice) || Infinity
+    const parsedMin = parseFloat(appliedFilters.minPrice)
+    const parsedMax = parseFloat(appliedFilters.maxPrice)
+
+    const min = !isNaN(parsedMin) && parsedMin > 0 ? parsedMin : 0
+    const max = !isNaN(parsedMax) && parsedMax > 0 ? parsedMax : Infinity
+
     if (displayPrice < min || displayPrice > max) {
       return false
     }

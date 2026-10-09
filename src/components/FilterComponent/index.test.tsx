@@ -23,7 +23,7 @@ describe('FilterComponent', () => {
 
     expect(screen.getByRole('button', { name: /alternar painel de filtros/i })).toBeInTheDocument()
     expect(screen.getByText('Promoções')).toBeInTheDocument()
-    expect(screen.getByText('Preço')).toBeInTheDocument()
+    expect(screen.getByText(/Preço por noite/i)).toBeInTheDocument()
     expect(screen.getByText('Tipo de Acomodação')).toBeInTheDocument()
     expect(screen.getByText('Serviços')).toBeInTheDocument()
   })

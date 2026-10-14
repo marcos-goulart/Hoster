@@ -1,27 +1,31 @@
-export interface Hotel {
+// interfaces/hotel.ts
+
+export interface Room {
   id: string
-  image: string
-  images?: string[]
-  name: string
-  location: string
-  description?: string
-  price: number
-  discountPrice?: number
-  rating?: number
-  reviewsCount?: number
-  availability?: boolean
-  featured?: boolean
-  promoted?: boolean
-  accommodationType?: 'hotel' | 'pousada'
-  availablePeriods?: string[]
-  services?: string[]
-  searchTags?: string[]
-  safetyMeasures?: boolean
-  freeCancellation?: boolean
-  immediateBooking?: boolean
-  specialOffer?: boolean
+  hotelId?: string
+  title: string
+  subtitle?: string | null
+  pricePerNight: number
+  capacity: number
+  isAvailable: boolean
+  tags: string[]
 }
 
-export interface HotelRecord extends Omit<Hotel, 'image'> {
-  imageKey: string
+export interface Hotel {
+  id: string
+  name: string
+  description?: string | null
+  address: string
+  city: string
+  state: string
+  ratingScore: number
+  reviewCount: number
+  mapEmbedUrl?: string | null
+  photos: string[]
+  amenities: string[]
+  rooms?: Room[]
+
+  // Propriedades calculadas/diretas vindas do backend sem adapter
+  price?: number
+  discountPrice?: number
 }

@@ -69,3 +69,67 @@ export const EmptyState = styled.div`
     }
   }
 `
+
+export const BookingsList = styled.div`
+  display: grid;
+  gap: 1.5rem;
+`
+
+export const BookingCard = styled.div`
+  border: 1px solid ${(props) => props.theme.colors.borderColor || '#e5e7eb'};
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+`
+
+export const BookingInfo = styled.div`
+  h3 {
+    font-family: ${(props) => props.theme.fontFamily.heading};
+    font-size: 1.2rem;
+    color: ${(props) => props.theme.colors.primaryDark};
+    margin-bottom: 0.4rem;
+  }
+
+  .location {
+    color: ${(props) => props.theme.colors.textMuted || '#6b7280'};
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .dates {
+    color: ${(props) => props.theme.colors.textMain || '#4b5563'};
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+`
+
+export const BookingStatusGroup = styled.div`
+  text-align: right;
+
+  .price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: ${(props) => props.theme.colors.primaryDark};
+  }
+`
+
+export const StatusBadge = styled.span<{ $status: string }>`
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background-color: ${(props) => (props.$status === 'CONFIRMED' ? '#dcfce7' : '#f3f4f6')};
+  color: ${(props) => (props.$status === 'CONFIRMED' ? '#15803d' : '#374151')};
+`

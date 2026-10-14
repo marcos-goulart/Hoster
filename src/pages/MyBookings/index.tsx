@@ -1,11 +1,49 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FaSuitcase } from 'react-icons/fa'
+import { FaSuitcase, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa'
 import { BackNavigation } from '../../components/BackNavigation'
-import { Container, EmptyState, PageHeader } from './styles'
+import type { BookingRecord } from '../../services/userService'
+import { userService } from '../../services/userService'
+import {
+  BookingCard,
+  BookingInfo,
+  BookingsList,
+  BookingStatusGroup,
+  Container,
+  EmptyState,
+  PageHeader,
+  StatusBadge,
+} from './styles'
 
 export function MyBookingsPage() {
-  // Mock inicial para visualização do layout de estado vazio
-  const bookings = []
+  const [bookings, setBookings] = useState<BookingRecord[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadBookings() {
+      try {
+        setLoading(true)
+        const data = await userService.getMyBookings()
+        if (isMounted) {
+          setBookings(data)
+        }
+      } catch (error) {
+        console.error('Erro ao buscar viagens:', error)
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    void loadBookings()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   return (
     <Container>
@@ -16,7 +54,9 @@ export function MyBookingsPage() {
         <p>Acompanhe e gerencie todas as suas reservas efetuadas na Hoster.</p>
       </PageHeader>
 
-      {bookings.length === 0 ? (
+      {loading ? (
+        <p style={{ textAlign: 'center', padding: '2rem' }}>Carregando suas reservas...</p>
+      ) : bookings.length === 0 ? (
         <EmptyState>
           <FaSuitcase className="icon" />
           <h2>Nenhuma viagem encontrada</h2>
@@ -26,7 +66,36 @@ export function MyBookingsPage() {
           </Link>
         </EmptyState>
       ) : (
-        <div>{/* Lista de reservas será renderizada aqui na integração do backend */}</div>
+        <BookingsList>
+          {bookings.map((booking) => (
+            <BookingCard key={booking.id}>
+              <BookingInfo>
+                <h3>{booking.hotel?.name || 'Acomodação'}</h3>
+                <p className="location">
+                  <FaMapMarkerAlt />
+                  {booking.hotel?.city}, {booking.hotel?.state}
+                </p>
+                <p className="dates">
+                  <FaCalendarAlt />
+                  {new Date(booking.checkIn).toLocaleDateString('pt-BR')} até{' '}
+                  {new Date(booking.checkOut).toLocaleDateString('pt-BR')}
+                </p>
+              </BookingInfo>
+
+              <BookingStatusGroup>
+                <StatusBadge $status={booking.status}>
+                  {booking.status === 'CONFIRMED' ? 'Confirmada' : booking.status}
+                </StatusBadge>
+                <p className="price">
+                  {booking.totalPrice.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })}
+                </p>
+              </BookingStatusGroup>
+            </BookingCard>
+          ))}
+        </BookingsList>
       )}
     </Container>
   )

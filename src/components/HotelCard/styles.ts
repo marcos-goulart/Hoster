@@ -27,7 +27,9 @@ export const Div = styled.div<{ $isPromotion?: boolean }>`
     cursor: pointer;
     text-decoration: none;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
 
     &:hover {
       transform: translateY(-5px);
@@ -77,6 +79,40 @@ export const Div = styled.div<{ $isPromotion?: boolean }>`
           color: ${(props) => props.theme.colors.white};
           font-weight: 700;
           font-size: 0.9rem;
+        }
+      }
+
+      .favorite-btn {
+        position: absolute !important;
+        top: 0.75rem !important;
+        right: 0.75rem !important;
+        z-index: 3 !important;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        border: none;
+        border-radius: 50%;
+        width: 2.25rem;
+        height: 2.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+        &:hover {
+          transform: scale(1.1);
+          background: #ffffff;
+        }
+
+        svg {
+          font-size: 1.1rem;
+          color: #4b5563;
+          transition: color 0.2s ease;
+
+          &.active {
+            color: #ef4444;
+          }
         }
       }
     }

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { FaHeart, FaRegHeart } from 'react-icons/fa'
 import { Navbar } from '../../components/NavBar'
 import { Footer } from '../../components/Footer'
 
@@ -11,6 +12,7 @@ import { HotelReviews } from '../../components/HotelReviews'
 import { CheckoutStickyCard } from '../../components/CheckoutStickyCard'
 
 import { useReservation } from '../../hooks/useReservation'
+import { useFavorites } from '../../hooks/useFavorites'
 import {
   Card,
   Container,
@@ -46,6 +48,15 @@ export default function ReservationPage() {
     handleSubmitBooking,
   } = useReservation()
 
+  const { favorites, toggleFavorite } = useFavorites()
+  const isFavorite = hotelDetail ? favorites.some((fav) => fav.id === hotelDetail.id) : false
+
+  const handleFavoriteClick = () => {
+    if (hotelDetail) {
+      void toggleFavorite(hotelDetail)
+    }
+  }
+
   return (
     <Container>
       <Navbar />
@@ -78,10 +89,36 @@ export default function ReservationPage() {
                 </SuccessNotice>
               ) : null}
 
-              {/* Cabeçalho do Hotel */}
+              {/* Cabeçalho do Hotel com Botão de Favorito */}
               <HotelHeader data-testid="hotel-header">
                 <div className="header-left">
-                  <h1 data-testid="hotel-title">{hotelDetail.name}</h1>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <h1 data-testid="hotel-title">{hotelDetail.name}</h1>
+                    <button
+                      type="button"
+                      onClick={handleFavoriteClick}
+                      aria-label={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+                      style={{
+                        background: '#ffffff',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '50%',
+                        width: '2.5rem',
+                        height: '2.5rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                        transition: 'transform 0.2s ease',
+                      }}
+                    >
+                      {isFavorite ? (
+                        <FaHeart style={{ color: '#ef4444', fontSize: '1.25rem' }} />
+                      ) : (
+                        <FaRegHeart style={{ color: '#6b7280', fontSize: '1.25rem' }} />
+                      )}
+                    </button>
+                  </div>
                   <p data-testid="hotel-address">📍 {hotelDetail.address}</p>
                 </div>
 

@@ -29,6 +29,40 @@ export const ResultCard = styled(Link)<{ $isPromotion: boolean; $ratingColor: st
       display: block;
       object-fit: cover;
     }
+
+    .favorite-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 3;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      border: none;
+      border-radius: 50%;
+      width: 2.25rem;
+      height: 2.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+      &:hover {
+        transform: scale(1.1);
+        background: #ffffff;
+      }
+
+      svg {
+        font-size: 1.1rem;
+        color: #4b5563;
+        transition: color 0.2s ease;
+
+        &.active {
+          color: #ef4444;
+        }
+      }
+    }
   }
 
   .contentArea {

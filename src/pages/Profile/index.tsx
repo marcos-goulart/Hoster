@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useFavorites } from '../../hooks/useFavorites'
+import { userService } from '../../services/userService'
 import { getUserInitials } from '../../utils/userUtils'
 import { BackNavigation } from '../../components/BackNavigation'
 import {
@@ -26,8 +29,37 @@ import {
 
 export function ProfilePage() {
   const { user, logout } = useAuth()
+  const { favorites } = useFavorites()
   const navigate = useNavigate()
   const initials = getUserInitials(user?.displayName)
+
+  const [bookingsCount, setBookingsCount] = useState<number>(0)
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadStats() {
+      try {
+        const bookings = await userService.getMyBookings()
+        if (isMounted && Array.isArray(bookings)) {
+          setBookingsCount(bookings.length)
+        }
+      } catch (error) {
+        console.warn('Não foi possível carregar viagens para o contador do perfil:', error)
+        if (isMounted) {
+          setBookingsCount(0)
+        }
+      }
+    }
+
+    if (user) {
+      void loadStats()
+    }
+
+    return () => {
+      isMounted = false
+    }
+  }, [user])
 
   const handleLogout = async () => {
     await logout()
@@ -71,7 +103,7 @@ export function ProfilePage() {
           <StatCard onClick={() => navigate('/minhas-viagens')}>
             <FaSuitcase className="stat-icon" />
             <div>
-              <strong>0</strong>
+              <strong>{bookingsCount}</strong>
               <span>Viagens Realizadas</span>
             </div>
           </StatCard>
@@ -79,7 +111,7 @@ export function ProfilePage() {
           <StatCard onClick={() => navigate('/favoritos')}>
             <FaHeart className="stat-icon" />
             <div>
-              <strong>0</strong>
+              <strong>{favorites.length}</strong>
               <span>Acomodações Salvas</span>
             </div>
           </StatCard>

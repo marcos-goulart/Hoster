@@ -6,8 +6,10 @@ export function useCustomScrollbar() {
   const thumbRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(true)
+  const [hasScrollableContent, setHasScrollableContent] = useState(false)
 
   const isVisibleRef = useRef(true)
+  const hasScrollableContentRef = useRef(false)
   const isDragging = useRef(false)
   const startY = useRef(0)
   const startScrollY = useRef(0)
@@ -20,22 +22,52 @@ export function useCustomScrollbar() {
 
     const updateDimensions = () => {
       if (!thumbRef.current || !trackRef.current) return
-      cachedScrollableHeight = Math.max(
-        document.documentElement.scrollHeight - window.innerHeight,
-        0,
-      )
+      const scrollHeight = document.documentElement.scrollHeight
+      const clientHeight = window.innerHeight
+      cachedScrollableHeight = Math.max(scrollHeight - clientHeight, 0)
+
       const trackHeight = trackRef.current.clientHeight
       const thumbHeight = thumbRef.current.clientHeight
       cachedMaxMove = Math.max(trackHeight - thumbHeight, 0)
+
+      const canScroll = cachedScrollableHeight > 0
+      if (hasScrollableContentRef.current !== canScroll) {
+        hasScrollableContentRef.current = canScroll
+        setHasScrollableContent(canScroll)
+      }
     }
 
     const updateThumbPosition = () => {
-      if (!thumbRef.current || cachedScrollableHeight <= 0) return
-      const progress = Math.min(Math.max(window.scrollY / cachedScrollableHeight, 0), 1)
+      if (!thumbRef.current) return
+
+      const currentScrollable = Math.max(
+        document.documentElement.scrollHeight - window.innerHeight,
+        0,
+      )
+
+      if (Math.abs(currentScrollable - cachedScrollableHeight) > 1) {
+        updateDimensions()
+      }
+
+      if (cachedScrollableHeight <= 0 || cachedMaxMove <= 0) {
+        gsap.set(thumbRef.current, { y: 0 })
+        return
+      }
+
+      const currentScroll = window.scrollY
+      const progress = Math.min(Math.max(currentScroll / cachedScrollableHeight, 0), 1)
       gsap.set(thumbRef.current, { y: progress * cachedMaxMove })
     }
 
     const handleScroll = () => {
+      if (!hasScrollableContentRef.current) {
+        updateDimensions()
+      }
+
+      if (cachedScrollableHeight <= 0) {
+        return
+      }
+
       if (!isVisibleRef.current) {
         isVisibleRef.current = true
         setIsVisible(true)
@@ -86,7 +118,7 @@ export function useCustomScrollbar() {
       e.preventDefault()
 
       const deltaY = e.clientY - startY.current
-      if (cachedMaxMove <= 0) return
+      if (cachedMaxMove <= 0 || cachedScrollableHeight <= 0) return
 
       const scrollDelta = (deltaY / cachedMaxMove) * cachedScrollableHeight
       const targetScroll = Math.min(
@@ -132,15 +164,16 @@ export function useCustomScrollbar() {
       if (!trackRef.current || !thumbRef.current) return
       e.preventDefault()
 
+      updateDimensions()
+
+      if (cachedMaxMove <= 0 || cachedScrollableHeight <= 0) return
+
       const rect = trackRef.current.getBoundingClientRect()
       const clickY = e.clientY - rect.top
-      const trackHeight = trackRef.current.clientHeight
       const thumbHeight = thumbRef.current.clientHeight
-      const maxMove = trackHeight - thumbHeight
 
-      const targetProgress = Math.min(Math.max((clickY - thumbHeight / 2) / maxMove, 0), 1)
-      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
-      const targetScroll = targetProgress * scrollableHeight
+      const targetProgress = Math.min(Math.max((clickY - thumbHeight / 2) / cachedMaxMove, 0), 1)
+      const targetScroll = targetProgress * cachedScrollableHeight
 
       if (lenisInstance) {
         lenisInstance.scrollTo(targetScroll, { duration: 0.8, force: true })
@@ -158,15 +191,62 @@ export function useCustomScrollbar() {
     updateDimensions()
     updateThumbPosition()
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('resize', () => {
+    hideTimeout.current = window.setTimeout(() => {
+      isVisibleRef.current = false
+      setIsVisible(false)
+    }, 1200)
+
+    let resizeObserver: ResizeObserver | null = null
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        updateDimensions()
+        updateThumbPosition()
+        if (lenisInstance) {
+          lenisInstance.resize()
+        }
+      })
+      resizeObserver.observe(document.documentElement)
+      if (document.body) {
+        resizeObserver.observe(document.body)
+      }
+    }
+
+    const refreshIntervals = [100, 300, 600, 1000, 2000]
+    const timeoutIds = refreshIntervals.map((ms) =>
+      window.setTimeout(() => {
+        updateDimensions()
+        updateThumbPosition()
+      }, ms),
+    )
+
+    const handleResize = () => {
       updateDimensions()
       handleScroll()
-    })
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleResize)
+    window.addEventListener('load', handleResize)
+
+    if (lenisInstance) {
+      lenisInstance.on('scroll', handleScroll)
+    }
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', updateDimensions)
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('load', handleResize)
+
+      if (lenisInstance) {
+        lenisInstance.off('scroll', handleScroll)
+      }
+
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
+
+      timeoutIds.forEach(clearTimeout)
+
       if (thumb) thumb.removeEventListener('pointerdown', onPointerDown)
       if (track) track.removeEventListener('click', onTrackClick)
       if (hideTimeout.current) clearTimeout(hideTimeout.current)
@@ -174,5 +254,5 @@ export function useCustomScrollbar() {
     }
   }, [])
 
-  return { thumbRef, trackRef, isVisible }
+  return { thumbRef, trackRef, isVisible, hasScrollableContent }
 }

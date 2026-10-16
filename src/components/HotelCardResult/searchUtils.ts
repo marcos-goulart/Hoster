@@ -20,7 +20,7 @@ export function getCriteriaFromParams(searchParams: URLSearchParams): HotelSearc
 }
 
 export function getDisplayPrice(hotel: Hotel): number {
-  return hotel.discountPrice ?? hotel.price
+  return hotel.discountPrice ?? hotel.price ?? 0
 }
 
 export function getNights(

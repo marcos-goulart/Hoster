@@ -19,7 +19,7 @@ export function Reviews() {
               <div className="card">
                 <div className="cardBody text-reveal">
                   <div className="header">
-                    <h4 className="text-reveal">{review.name}</h4>
+                    <h4 className="text-reveal">{review.userName}</h4>
                     <div className="stars stars-reveal" aria-label={`${review.rating} estrelas`}>
                       {Array.from({ length: review.rating }).map((_, index) => (
                         <span key={index} className="star text-reveal" aria-hidden="true">
@@ -30,7 +30,7 @@ export function Reviews() {
                       ))}
                     </div>
                   </div>
-                  <p className="text-reveal">{review.message}</p>
+                  <p className="text-reveal">{review.comment}</p>
                 </div>
               </div>
             </div>

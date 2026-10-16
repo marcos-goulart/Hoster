@@ -2,6 +2,19 @@
 import api from './api'
 import type { Hotel } from '../interfaces/Hotel'
 
+export interface BookingRecord {
+  id: string
+  checkIn: string
+  checkOut: string
+  totalPrice: number
+  status: string
+  hotel?: {
+    name: string
+    city?: string
+    state?: string
+  }
+}
+
 export const userService = {
   async getFavorites(): Promise<Hotel[]> {
     const { data } = await api.get<{ success: boolean; data: Hotel[] }>('/user/favorites')

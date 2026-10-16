@@ -34,6 +34,7 @@ export function ProfilePage() {
   const initials = getUserInitials(user?.displayName)
 
   const [bookingsCount, setBookingsCount] = useState<number>(0)
+  const [imgError, setImgError] = useState<boolean>(false)
 
   useEffect(() => {
     let isMounted = true
@@ -76,11 +77,19 @@ export function ProfilePage() {
 
       <ProfileCard>
         <UserHeader>
-          {user?.photoURL ? (
-            <img src={user.photoURL} alt={user.displayName || 'Avatar'} className="avatar-img" />
+          {user?.photoURL && !imgError ? (
+            <img
+              key={user.photoURL}
+              src={user.photoURL}
+              alt={user.displayName || 'Avatar'}
+              className="avatar-img"
+              referrerPolicy="no-referrer"
+              onError={() => setImgError(true)}
+            />
           ) : (
             <div className="avatar-fallback">{initials}</div>
           )}
+
           <div className="user-details">
             <h2>{user?.displayName || 'Usuário Hoster'}</h2>
             <p>{user?.email}</p>

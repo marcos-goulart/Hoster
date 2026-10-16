@@ -60,7 +60,7 @@ export function useHotelSearch(searchParams: URLSearchParams) {
       return false
     }
 
-    const displayPrice = hotel.discountPrice ?? hotel.price
+    const displayPrice = hotel.discountPrice ?? hotel.price ?? 0
     const parsedMin = parseFloat(appliedFilters.minPrice)
     const parsedMax = parseFloat(appliedFilters.maxPrice)
 

@@ -1,4 +1,5 @@
-import type { Hotel } from '../interfaces/Hotel'
+import type { Hotel, HotelQuestion } from '../interfaces/Hotel'
+import type { Review } from '../interfaces/Review'
 import { fallbackHotels } from '../mocks/hotelRecords'
 import api from './api'
 
@@ -16,26 +17,33 @@ export interface HotelSearchCriteria {
   mesesFlexiveis?: string[]
 }
 
-interface ApiHotelResponse {
+export interface ApiHotelResponse {
   id: string
   name: string
   city: string
   state: string
   address: string
-  description: string
-  ratingScore: number
+  description?: string | null
+  about?: string | null
+  ratingScore?: number
   reviewCount?: number
   reviewsCount?: number
   images?: string[]
   photos?: string[]
-  amenities: string[]
-  rooms: Array<{
+  amenities?: string[]
+  mapEmbedUrl?: string | null
+  price?: number
+  discountPrice?: number
+  rooms?: Array<{
     id: string
-    name: string
+    name?: string
+    title?: string
     capacity: number
     pricePerNight: number
     isAvailable: boolean
   }>
+  reviews?: Review[]
+  questions?: HotelQuestion[]
 }
 
 function mapAmenityToServiceKey(amenity: string): string {
@@ -76,11 +84,11 @@ function resolveImageUrl(imagePath?: string): string {
   )
 }
 
-function mapApiHotelToFrontend(apiHotel: ApiHotelResponse): Hotel {
+export function mapApiHotelToFrontend(apiHotel: ApiHotelResponse): Hotel {
   const lowestRoomPrice =
     apiHotel.rooms && apiHotel.rooms.length > 0
       ? Math.min(...apiHotel.rooms.map((r) => r.pricePerNight))
-      : 350.0
+      : (apiHotel.price ?? 350.0)
 
   const rawImages =
     apiHotel.photos && apiHotel.photos.length > 0 ? apiHotel.photos : apiHotel.images
@@ -88,28 +96,57 @@ function mapApiHotelToFrontend(apiHotel: ApiHotelResponse): Hotel {
   const resolvedImages =
     rawImages && rawImages.length > 0 ? rawImages.map(resolveImageUrl) : [resolveImageUrl()]
 
-  const normalizedAmenities = (apiHotel.amenities || []).map(mapAmenityToServiceKey)
+  const rawAmenities = apiHotel.amenities || []
+  const normalizedServices = rawAmenities.map(mapAmenityToServiceKey)
 
-  const isFeatured =
-    (apiHotel.ratingScore ?? 8.5) >= 8.5 || apiHotel.name.toLowerCase().includes('resort')
-
+  const ratingScore = apiHotel.ratingScore ?? 8.5
+  const isFeatured = ratingScore >= 8.5 || apiHotel.name.toLowerCase().includes('resort')
   const isPromoted =
     !isFeatured && (lowestRoomPrice <= 400 || apiHotel.name.toLowerCase().includes('pousada'))
+
+  const mappedRooms = (apiHotel.rooms || []).map((r) => ({
+    id: r.id,
+    hotelId: apiHotel.id,
+    title: r.title || r.name || 'Quarto Standard',
+    subtitle: `${r.capacity} Hóspedes • Ar-condicionado • Wi-Fi`,
+    pricePerNight: r.pricePerNight,
+    capacity: r.capacity,
+    isAvailable: r.isAvailable,
+    tags: ['Wi-Fi incluso', 'Cancelamento grátis'],
+  }))
+
+  const location = `${apiHotel.city}/${apiHotel.state}`
 
   return {
     id: apiHotel.id,
     name: apiHotel.name,
-    location: `${apiHotel.city}/${apiHotel.state}`,
-    description: apiHotel.description,
+    description: apiHotel.description ?? null,
+    about: apiHotel.about ?? apiHotel.description ?? null,
+    address: apiHotel.address || `Av. Central, 100 - ${apiHotel.city}`,
+    city: apiHotel.city,
+    state: apiHotel.state,
+    ratingScore,
+    reviewCount: apiHotel.reviewCount ?? apiHotel.reviewsCount ?? 0,
+    mapEmbedUrl: apiHotel.mapEmbedUrl ?? null,
+    photos: resolvedImages,
+    amenities: rawAmenities,
+    rooms: mappedRooms,
+    reviews: apiHotel.reviews,
+    questions: apiHotel.questions,
     price: lowestRoomPrice,
+    discountPrice:
+      apiHotel.discountPrice ?? (isPromoted ? Math.round(lowestRoomPrice * 0.85) : undefined),
+
+    // Compatibilidade de componentes de listagem e busca
     image: resolvedImages[0],
     images: resolvedImages,
+    location,
+    rating: ratingScore,
+    reviewsCount: apiHotel.reviewCount ?? apiHotel.reviewsCount ?? 0,
     featured: isFeatured,
     promoted: isPromoted,
     accommodationType: apiHotel.name.toLowerCase().includes('pousada') ? 'pousada' : 'hotel',
-    services: normalizedAmenities,
-    rating: apiHotel.ratingScore ?? 8.5,
-    reviewsCount: apiHotel.reviewCount ?? apiHotel.reviewsCount ?? 0,
+    services: normalizedServices,
     freeCancellation: true,
     immediateBooking: true,
   }
@@ -140,6 +177,66 @@ function extractHotelsFromResponse(data: unknown): ApiHotelResponse[] {
   }
 
   return []
+}
+
+function normalizeSearchValue(value: string | undefined): string {
+  return (value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+}
+
+function getSearchableText(hotel: Hotel): string {
+  return normalizeSearchValue(
+    [
+      hotel.name,
+      hotel.location,
+      hotel.city,
+      hotel.state,
+      hotel.description,
+      ...(hotel.searchTags ?? []),
+    ]
+      .filter(Boolean)
+      .join(' '),
+  )
+}
+
+function filterHotelsLocally(hotels: Hotel[], criteria: HotelSearchCriteria): Hotel[] {
+  const locationTerm = normalizeSearchValue(criteria.localizacao)
+  const nameTerm = normalizeSearchValue(criteria.nome)
+  const periodTerm = normalizeSearchValue(criteria.periodo)
+
+  if (!locationTerm && !nameTerm && !periodTerm) {
+    return hotels
+  }
+
+  return hotels.filter((hotel) => {
+    const searchableText = getSearchableText(hotel)
+    const normalizedName = normalizeSearchValue(hotel.name)
+    const normalizedLocation = normalizeSearchValue(hotel.location)
+    const normalizedCity = normalizeSearchValue(hotel.city)
+
+    if (locationTerm) {
+      const matchesLocation =
+        normalizedLocation.includes(locationTerm) ||
+        normalizedCity.includes(locationTerm) ||
+        searchableText.includes(locationTerm) ||
+        (hotel.searchTags ?? []).some((tag) => normalizeSearchValue(tag).includes(locationTerm))
+
+      if (!matchesLocation) return false
+    }
+
+    if (nameTerm && !normalizedName.includes(nameTerm) && !searchableText.includes(nameTerm)) {
+      return false
+    }
+
+    if (periodTerm && !hotel.availablePeriods?.includes(periodTerm)) {
+      return false
+    }
+
+    return true
+  })
 }
 
 export async function getHotels(): Promise<Hotel[]> {
@@ -204,10 +301,9 @@ export async function searchHotels(criteria: HotelSearchCriteria): Promise<Hotel
     if (hotelList.length > 0) {
       return hotelList.map(mapApiHotelToFrontend)
     }
-
-    return []
   } catch (error) {
-    console.warn('⚠️ Falha na busca de hotéis na API.', error)
-    return []
+    console.warn('⚠️ Falha na busca de hotéis na API. Utilizando busca local.', error)
   }
+
+  return filterHotelsLocally(fallbackHotels, criteria)
 }

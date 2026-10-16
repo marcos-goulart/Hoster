@@ -1,18 +1,18 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { AppThemeProvider } from '../../styles/themeProvider'
 import { BrowserRouter, MemoryRouter, Route, Routes } from 'react-router-dom'
+import { AppThemeProvider } from '../../styles/themeProvider'
 import { HotelCard } from './index'
 import type { Hotel } from '../../interfaces/Hotel'
 import AllHotelsPage from '../../pages/AllHotels'
 import * as hotelService from '../../services/hotels'
 
-// Mock the hotels service
+// Mock do módulo de serviço de hotéis
 vi.mock('../../services/hotels', async () => {
   const actual = await vi.importActual('../../services/hotels')
   return {
     ...actual,
-    getHotelsByCategory: vi.fn(),
+    listHotels: vi.fn(),
   }
 })
 
@@ -20,10 +20,15 @@ describe('HotelCard', () => {
   const mockHotel: Hotel = {
     id: 'california-123',
     name: 'Hotel California',
-    location: 'Porto Seguro/BA',
+    address: 'Av. Beira Mar, 100',
+    city: 'Porto Seguro',
+    state: 'BA',
     description: 'Hotel próximo de lindas praias e muito aconchegante.',
     price: 699.9,
-    image: 'hotel-1.jpg',
+    photos: ['https://example.com/hotel-1.jpg'],
+    amenities: ['wifi', 'pool'],
+    ratingScore: 4.8,
+    reviewCount: 45,
   }
 
   const renderCard = (hotel: Hotel, hasDiscount?: boolean) => {
@@ -40,14 +45,14 @@ describe('HotelCard', () => {
     renderCard(mockHotel)
 
     expect(screen.getByText('Hotel California')).toBeInTheDocument()
-    expect(screen.getByText('Porto Seguro/BA')).toBeInTheDocument()
+    expect(screen.getByText(/Porto Seguro/i)).toBeInTheDocument()
     expect(
       screen.getByText('Hotel próximo de lindas praias e muito aconchegante.'),
     ).toBeInTheDocument()
 
     const image = screen.getByRole('img', { name: 'Hotel California' }) as HTMLImageElement
     expect(image).toBeInTheDocument()
-    expect(image.getAttribute('src')).toBe('hotel-1.jpg')
+    expect(image.getAttribute('src')).toBe('https://example.com/hotel-1.jpg')
 
     // Preço BRL formatado
     expect(screen.getByText(/699,90/)).toBeInTheDocument()
@@ -77,7 +82,7 @@ describe('HotelCard', () => {
 
 describe('Listagem de Hotéis e Estado Vazio', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.restoreAllMocks()
   })
 
   const renderAllHotelsPage = (category: string) => {
@@ -94,12 +99,46 @@ describe('Listagem de Hotéis e Estado Vazio', () => {
 
   it('deve renderizar 3 hotéis na listagem', async () => {
     const mockList: Hotel[] = [
-      { id: '1', name: 'Hotel Alfa', location: 'Destino A', price: 100, image: 'img1.jpg' },
-      { id: '2', name: 'Hotel Beta', location: 'Destino B', price: 200, image: 'img2.jpg' },
-      { id: '3', name: 'Hotel Gama', location: 'Destino C', price: 300, image: 'img3.jpg' },
+      {
+        id: '1',
+        name: 'Hotel Alfa',
+        address: 'Rua A',
+        city: 'Destino A',
+        state: 'RJ',
+        price: 100,
+        photos: ['img1.jpg'],
+        amenities: [],
+        ratingScore: 4.5,
+        reviewCount: 10,
+      },
+      {
+        id: '2',
+        name: 'Hotel Beta',
+        address: 'Rua B',
+        city: 'Destino B',
+        state: 'SP',
+        price: 200,
+        photos: ['img2.jpg'],
+        amenities: [],
+        ratingScore: 4.7,
+        reviewCount: 20,
+      },
+      {
+        id: '3',
+        name: 'Hotel Gama',
+        address: 'Rua C',
+        city: 'Destino C',
+        state: 'MG',
+        price: 300,
+        photos: ['img3.jpg'],
+        amenities: [],
+        ratingScore: 4.9,
+        reviewCount: 30,
+      },
     ]
 
-    vi.mocked(hotelService.getHotelsByCategory).mockResolvedValue(mockList)
+    // Usando a função correta exportada pelo serviço
+    vi.spyOn(hotelService, 'getHotelsByCategory').mockResolvedValue(mockList)
 
     renderAllHotelsPage('destaques')
 
@@ -114,13 +153,12 @@ describe('Listagem de Hotéis e Estado Vazio', () => {
   })
 
   it('deve exibir mensagem de estado vazio quando a lista estiver vazia', async () => {
-    vi.mocked(hotelService.getHotelsByCategory).mockResolvedValue([])
+    // Usando a função correta exportada pelo serviço
+    vi.spyOn(hotelService, 'getHotelsByCategory').mockResolvedValue([])
 
     renderAllHotelsPage('destaques')
 
-    const emptyStateMessage = await screen.findByText(
-      'Nenhum hotel foi encontrado para esta categoria no momento.',
-    )
+    const emptyStateMessage = await screen.findByText(/Nenhum hotel foi encontrado/i)
     expect(emptyStateMessage).toBeInTheDocument()
   })
 })

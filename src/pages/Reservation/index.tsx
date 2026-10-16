@@ -9,10 +9,13 @@ import { AmenitiesList } from '../../components/AmenitiesList'
 import { RoomSelector } from '../../components/RoomSelector'
 import { LocationMap } from '../../components/LocationMap'
 import { HotelReviews } from '../../components/HotelReviews'
+import { HotelAboutSection } from '../../components/HotelAboutSection'
+import { HotelQASection } from '../../components/HotelQASection'
 import { CheckoutStickyCard } from '../../components/CheckoutStickyCard'
 
 import { useReservation } from '../../hooks/useReservation'
 import { useFavorites } from '../../hooks/useFavorites'
+import type { Hotel } from '../../interfaces/Hotel'
 import {
   Card,
   Container,
@@ -53,7 +56,7 @@ export default function ReservationPage() {
 
   const handleFavoriteClick = () => {
     if (hotelDetail) {
-      void toggleFavorite(hotelDetail)
+      void toggleFavorite(hotelDetail as unknown as Hotel)
     }
   }
 
@@ -89,7 +92,7 @@ export default function ReservationPage() {
                 </SuccessNotice>
               ) : null}
 
-              {/* Cabeçalho do Hotel com Botão de Favorito */}
+              {/* Cabeçalho do Hotel */}
               <HotelHeader data-testid="hotel-header">
                 <div className="header-left">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -127,9 +130,8 @@ export default function ReservationPage() {
                 </div>
               </HotelHeader>
 
-              {/* Grid Principal Desktop */}
+              {/* Grid Principal */}
               <MainGrid>
-                {/* Coluna da Esquerda */}
                 <LeftContent>
                   <HotelGallery
                     photos={hotelDetail.photos}
@@ -138,30 +140,48 @@ export default function ReservationPage() {
                   />
 
                   <Card>
-                    <AmenitiesList amenities={hotelDetail.amenitiesList} />
+                    {/* Comodidades */}
+                    {hotelDetail.amenities?.length || hotelDetail.amenitiesList?.length ? (
+                      <>
+                        <AmenitiesList
+                          amenities={hotelDetail.amenities || hotelDetail.amenitiesList || []}
+                        />
+                        <Divider />
+                      </>
+                    ) : null}
 
-                    <Divider />
-
+                    {/* Seletor de Quartos */}
                     <RoomSelector
                       rooms={hotelDetail.rooms}
                       selectedRoomId={selectedRoom?.id || ''}
                       onSelectRoom={handleSelectRoom}
                     />
 
-                    <Divider />
+                    {/* Mais informações (Opcional) */}
+                    {hotelDetail.about && (
+                      <>
+                        <Divider />
+                        <HotelAboutSection about={hotelDetail.about} />
+                      </>
+                    )}
 
+                    {/* Localização */}
+                    <Divider />
                     <LocationMap
                       address={hotelDetail.address}
                       mapEmbedUrl={hotelDetail.mapEmbedUrl}
                     />
 
+                    {/* Avaliações (Renderizado sempre: exibe a lista ou a mensagem vazia) */}
                     <Divider />
-
                     <HotelReviews reviews={hotelDetail.reviews} />
+
+                    {/* Perguntas e Respostas */}
+                    <Divider />
+                    <HotelQASection hotelId={hotelDetail.id} questions={hotelDetail.questions} />
                   </Card>
                 </LeftContent>
 
-                {/* Coluna da Direita (Sticky Checkout) */}
                 <RightContent className="sticky-checkout">
                   {selectedRoom ? (
                     <CheckoutStickyCard
@@ -178,7 +198,6 @@ export default function ReservationPage() {
                 </RightContent>
               </MainGrid>
 
-              {/* Modal Lightbox */}
               <ImageLightboxModal
                 isOpen={isLightboxOpen}
                 photos={hotelDetail.photos}

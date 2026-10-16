@@ -12,7 +12,7 @@ export const Track = styled.div<{ $visible: boolean }>`
   justify-content: center;
   opacity: ${(props) => (props.$visible ? 1 : 0)};
   transition: opacity 0.4s ease;
-  pointer-events: auto;
+  pointer-events: ${(props) => (props.$visible ? 'auto' : 'none')};
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -23,7 +23,7 @@ export const Track = styled.div<{ $visible: boolean }>`
   }
 
   &:hover {
-    opacity: 1 !important;
+    opacity: ${(props) => (props.$visible ? 1 : 0)};
   }
 `
 

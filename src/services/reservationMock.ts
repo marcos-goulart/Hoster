@@ -21,7 +21,6 @@ interface ApiErrorResponse {
   message?: string
 }
 
-// Fotos e Avaliações genéricas de fallback para manter a UI rica
 const DEFAULT_PHOTOS = [
   'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80',
   'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
@@ -69,7 +68,6 @@ export async function getHotelDetailById(hotelId: string): Promise<HotelDetail |
       isAvailable: room.isAvailable,
     }))
 
-    // Lê o array de fotos reais 'photos' do Neon
     const rawPhotos =
       apiHotel.photos && apiHotel.photos.length > 0 ? apiHotel.photos : apiHotel.images
 
@@ -85,15 +83,12 @@ export async function getHotelDetailById(hotelId: string): Promise<HotelDetail |
     return {
       id: apiHotel.id,
       name: apiHotel.name,
-      location: `${apiHotel.city}/${apiHotel.state}`,
       description: apiHotel.description,
       price: mappedRooms[0]?.pricePerNight || 300,
-      image: hotelPhotos[0],
       photos: hotelPhotos,
       amenitiesList: apiHotel.amenities || [],
       rooms: mappedRooms,
       reviews: DEFAULT_REVIEWS,
-      // Puxa o mapEmbedUrl do Neon se existir, senão gera a busca dinâmica no Google Maps
       mapEmbedUrl:
         apiHotel.mapEmbedUrl ||
         'https://maps.google.com/maps?q=' +
@@ -101,10 +96,15 @@ export async function getHotelDetailById(hotelId: string): Promise<HotelDetail |
           '&t=&z=13&ie=UTF8&iwloc=&output=embed',
       address: `${apiHotel.address}, ${apiHotel.city} - ${apiHotel.state}`,
       ratingScore: apiHotel.ratingScore ?? 4.7,
-      reviewCount: apiHotel.reviewCount ?? 0, // <--- Lê a coluna exata do banco (84, 128...)
+      reviewCount: apiHotel.reviewCount ?? 0,
+
+      // Adicionado para satisfazer os requisitos da interface HotelDetail/Hotel
+      city: apiHotel.city || '',
+      state: apiHotel.state || '',
+      amenities: apiHotel.amenities || [],
     }
   } catch (error: unknown) {
-    console.warn('⚠️ Não foi possível carregar os detalhes da API.')
+    console.warn('⚠️ Não foi possível carregar os detalhes da API.', error)
     return null
   }
 }

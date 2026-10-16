@@ -1,32 +1,36 @@
-import type { Hotel } from './Hotel'
+import type { Hotel, HotelQuestion } from './Hotel'
 
 export interface RoomOption {
   id: string
   title: string
-  subtitle: string
+  subtitle?: string | null
   pricePerNight: number
-  size: string
-  bedType: string
+  size?: string
+  bedType?: string
+  capacity?: number
   tags: string[]
   isAvailable: boolean
 }
 
 export interface GuestReview {
-  id: string
+  id?: string
+  hotelId?: string
   userName: string
-  avatarInitials: string
+  avatarInitials?: string
   avatarBgColor?: string
+  avatarUrl?: string | null
   stayDate: string
   rating: number
   comment: string
 }
-
-export interface HotelDetail extends Hotel {
+export interface HotelDetail extends Omit<Hotel, 'rooms' | 'reviews' | 'questions'> {
+  about?: string | null
   photos: string[]
-  amenitiesList: string[]
+  amenitiesList?: string[]
   rooms: RoomOption[]
   reviews: GuestReview[]
-  mapEmbedUrl: string
+  questions?: HotelQuestion[]
+  mapEmbedUrl?: string | null
   address: string
   ratingScore: number
   reviewCount: number

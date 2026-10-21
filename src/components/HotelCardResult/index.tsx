@@ -15,8 +15,7 @@ const DEFAULT_FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'
 
 function resolvePhotoUrl(hotel: Hotel): string {
-  const imagesObj = hotel as unknown as { images?: string[] }
-  const rawPhoto = hotel.photos?.[0] || imagesObj.images?.[0]
+  const rawPhoto = hotel.photos?.[0] || hotel.images?.[0]
 
   if (!rawPhoto) return DEFAULT_FALLBACK_IMAGE
 
@@ -58,9 +57,7 @@ export function HotelCardResult({ hotel, nights }: HotelCardResultProps) {
   const { favorites, toggleFavorite } = useFavorites()
   const isFavorite = favorites.some((fav) => fav.id === hotel.id)
 
-  // Obtém o valor real vindo da API do backend e faz a conversão
-  const hotelObj = hotel as unknown as { ratingScore?: number; rating?: number }
-  const rawRating = hotel.ratingScore ?? hotelObj.rating ?? 4.9
+  const rawRating = hotel.ratingScore ?? hotel.rating ?? 4.9
   const rating10 = rawRating <= 5 ? rawRating * 2 : rawRating
 
   // Preço base e diárias
@@ -81,6 +78,15 @@ export function HotelCardResult({ hotel, nights }: HotelCardResultProps) {
   const criancas = Number(searchParams.get('criancas') ?? 0)
   const totalGuests = adultos + criancas > 0 ? adultos + criancas : 2
 
+  // Repassa a query string inteira da busca para a rota de pré-reserva
+  const queryParams = new URLSearchParams()
+  if (entrada) queryParams.set('entrada', entrada)
+  if (saida) queryParams.set('saida', saida)
+  if (totalGuests) queryParams.set('adultos', String(totalGuests))
+
+  const queryString = queryParams.toString()
+  const destinationUrl = `/pre-reserva/${hotel.id}${queryString ? `?${queryString}` : ''}`
+
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -89,7 +95,7 @@ export function HotelCardResult({ hotel, nights }: HotelCardResultProps) {
 
   return (
     <ResultCard
-      to={`/pre-reserva/${hotel.id}${window.location.search}`}
+      to={destinationUrl}
       state={{
         hotel,
         entrada,

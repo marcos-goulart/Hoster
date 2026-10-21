@@ -2,10 +2,20 @@ import type { Hotel } from '../../interfaces/Hotel'
 import type { HotelSearchCriteria } from '../../services/hotels'
 
 export function getCriteriaFromParams(searchParams: URLSearchParams): HotelSearchCriteria {
+  let entrada = searchParams.get('entrada') ?? undefined
+  let saida = searchParams.get('saida') ?? undefined
+
+  // Trata caso a data chegue concatenada na query 'entrada'
+  if (entrada && entrada.includes(' - ')) {
+    const parts = entrada.split(' - ')
+    entrada = parts[0]?.trim()
+    saida = parts[1]?.trim()
+  }
+
   return {
     localizacao: searchParams.get('localizacao') ?? undefined,
-    entrada: searchParams.get('entrada') ?? undefined,
-    saida: searchParams.get('saida') ?? undefined,
+    entrada,
+    saida,
     periodo: searchParams.get('periodo') ?? undefined,
     nome: searchParams.get('nome') ?? undefined,
     flexibilidade: searchParams.get('flexibilidade')
@@ -24,19 +34,35 @@ export function getDisplayPrice(hotel: Hotel): number {
 }
 
 export function getNights(
-  entrada: string | null,
-  saida: string | null,
+  entrada: string | null | undefined,
+  saida: string | null | undefined,
   duracaoFlexivel?: string | null,
 ): number {
-  if (entrada && saida) {
-    const startDate = new Date(`${entrada}T00:00:00`)
-    const endDate = new Date(`${saida}T00:00:00`)
-    const differenceInMs = endDate.getTime() - startDate.getTime()
-    const diffDays = Math.round(differenceInMs / 86_400_000)
-    const nights = diffDays + 1
+  let startStr = entrada
+  let endStr = saida
 
-    if (Number.isFinite(nights) && nights > 0) {
-      return nights
+  // Se 'entrada' contiver o período completo ("2026-11-02 - 2026-11-30")
+  if (startStr && startStr.includes(' - ')) {
+    const parts = startStr.split(' - ')
+    startStr = parts[0]?.trim()
+    endStr = parts[1]?.trim()
+  }
+
+  if (startStr && endStr) {
+    // Parse limpo YYYY-MM-DD
+    const [y1, m1, d1] = startStr.split('-').map(Number)
+    const [y2, m2, d2] = endStr.split('-').map(Number)
+
+    if (y1 && m1 && d1 && y2 && m2 && d2) {
+      const startDate = new Date(y1, m1 - 1, d1)
+      const endDate = new Date(y2, m2 - 1, d2)
+
+      const differenceInMs = endDate.getTime() - startDate.getTime()
+      const diffDays = Math.round(differenceInMs / (1000 * 60 * 60 * 24))
+
+      if (diffDays > 0) {
+        return diffDays // Retorna a quantidade exata de diárias (noites)
+      }
     }
   }
 

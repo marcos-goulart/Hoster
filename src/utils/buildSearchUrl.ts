@@ -11,10 +11,30 @@ interface SearchFormValues {
   criancas: number
   quartos: number
 }
+
 export function buildSearchUrl(values: SearchFormValues) {
   const params = new URLSearchParams()
 
+  let finalEntrada = values.entrada
+  let finalSaida = values.saida
+
+  // Se entrada contiver intervalo concatenado
+  if (finalEntrada.includes(' - ')) {
+    const parts = finalEntrada.split(' - ')
+    finalEntrada = parts[0].trim()
+    finalSaida = parts[1].trim()
+  }
+
   Object.entries(values).forEach(([key, value]) => {
+    if (key === 'entrada') {
+      if (finalEntrada.trim()) params.set('entrada', finalEntrada.trim())
+      return
+    }
+    if (key === 'saida') {
+      if (finalSaida.trim()) params.set('saida', finalSaida.trim())
+      return
+    }
+
     if (typeof value === 'boolean') {
       if (value) params.set(key, 'true')
       return

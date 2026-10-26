@@ -8,6 +8,7 @@ import {
 } from './styles'
 import { FLEXIBILITY_OPTIONS } from './constants'
 import { useDateRangeSelection } from '../../../../hooks/useDateRangeSelection.ts'
+import { formatDateISO } from '../../../../utils/dateUtils'
 import { MonthGrid } from './MonthGrid'
 import { FlexibleSearchTab } from './FlexibleSearchTab.tsx'
 
@@ -21,7 +22,7 @@ export interface CalendarPickerProps {
   onChangeDates: (entrada: string, saida: string) => void
   onChangeFlexibility?: (days: number) => void
   onChangeFlexibleSearch?: (duracao: string, incluirFimDeSemana: boolean, meses: string[]) => void
-  onApply?: () => void
+  onApply?: (entrada?: string, saida?: string) => void
 }
 
 export function CalendarPicker({
@@ -105,7 +106,15 @@ export function CalendarPicker({
             ))}
           </QuickActionsToolbar>
 
-          <ApplyButton type="button" onClick={onApply}>
+          <ApplyButton
+            type="button"
+            onClick={() => {
+              const entStr = startDate ? formatDateISO(startDate) : entrada
+              const saiStr = endDate ? formatDateISO(endDate) : saida
+              onChangeDates(entStr, saiStr)
+              onApply?.(entStr, saiStr)
+            }}
+          >
             Aplicar
           </ApplyButton>
         </>

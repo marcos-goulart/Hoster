@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { FaCalendarAlt } from 'react-icons/fa'
 
-import { usePageLoading } from '../../../hooks/usePageLoading'
 import type { SearchSuggestion } from '../../../interfaces/SearchSuggestion'
 import { getSearchSuggestions } from '../../../services/searchSuggestions'
 import { CalendarPicker } from './CalendarPicker'
@@ -19,7 +18,8 @@ type ActivePanel = 'destination' | 'dates' | 'travelers' | null
 
 export function SearchForm() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const [localizacao, setLocalizacao] = useState(searchParams.get('localizacao') ?? '')
   const [entrada, setEntrada] = useState(searchParams.get('entrada') ?? '')
@@ -67,33 +67,41 @@ export function SearchForm() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const { triggerLoading } = usePageLoading()
+  const executeSearch = (overrideDates?: { entrada?: string; saida?: string }) => {
+    const finalEntrada = overrideDates?.entrada !== undefined ? overrideDates.entrada : entrada
+    const finalSaida = overrideDates?.saida !== undefined ? overrideDates.saida : saida
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!localizacao.trim()) {
+    if (!localizacao.trim() && location.pathname !== '/resultado') {
       setError(true)
       return
     }
     setError(false)
     setActivePanel(null)
-    triggerLoading(() => {
-      navigate(
-        buildSearchUrl({
-          localizacao,
-          entrada,
-          saida,
-          periodo,
-          flexibilidade,
-          duracaoFlexivel,
-          incluirFimDeSemana,
-          mesesFlexiveis,
-          adultos,
-          criancas,
-          quartos,
-        }),
-      )
+
+    const searchUrl = buildSearchUrl({
+      localizacao,
+      entrada: finalEntrada,
+      saida: finalSaida,
+      periodo,
+      flexibilidade,
+      duracaoFlexivel,
+      incluirFimDeSemana,
+      mesesFlexiveis,
+      adultos,
+      criancas,
+      quartos,
     })
+
+    const queryString = searchUrl.includes('?') ? searchUrl.split('?')[1] : ''
+    const queryParams = new URLSearchParams(queryString)
+
+    setSearchParams(queryParams)
+    navigate(searchUrl)
+  }
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    executeSearch()
   }
 
   return (
@@ -154,16 +162,16 @@ export function SearchForm() {
                   setIncluirFimDeSemana(inc)
                   setMesesFlexiveis(mes)
                 }}
-                onApply={() => {
+                onApply={(ent, sai) => {
+                  const entStr = ent !== undefined ? ent : entrada
+                  const saiStr = sai !== undefined ? sai : saida
+                  setEntrada(entStr)
+                  setSaida(saiStr)
                   setActivePanel(null)
-                  setTimeout(() => {
-                    const periodElem = document.getElementById(
-                      'periodo',
-                    ) as HTMLSelectElement | null
-                    if (periodElem) {
-                      periodElem.focus()
-                    }
-                  }, 50)
+
+                  if (localizacao.trim() || location.pathname === '/resultado') {
+                    executeSearch({ entrada: entStr, saida: saiStr })
+                  }
                 }}
               />
             </div>

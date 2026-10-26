@@ -13,13 +13,15 @@ export function useHotelSearch(searchParams: URLSearchParams) {
   const [isPromotionAlertVisible, setIsPromotionAlertVisible] = useState(true)
   const [appliedFilters, setAppliedFilters] = useState<FilterState>(DEFAULT_FILTER_STATE)
 
+  const searchParamsString = searchParams.toString()
+
   useEffect(() => {
     let isMounted = true
 
     async function loadResults() {
       setIsLoading(true)
       try {
-        const criteria = getCriteriaFromParams(searchParams)
+        const criteria = getCriteriaFromParams(new URLSearchParams(searchParamsString))
         const hotelResults = await searchHotels(criteria)
 
         if (isMounted) {
@@ -42,7 +44,7 @@ export function useHotelSearch(searchParams: URLSearchParams) {
     return () => {
       isMounted = false
     }
-  }, [searchParams])
+  }, [searchParamsString])
 
   const handleApplyFilters = (newFilters: FilterState) => {
     setAppliedFilters(newFilters)

@@ -20,6 +20,7 @@ describe('SearchForm', () => {
 
   beforeEach(() => {
     mockNavigate.mockClear()
+    window.history.pushState({}, '', '/')
 
     // Define um Mock Object que respeita a tipagem global de Image sem quebrar o JSDOM
     const MockImage = function (this: HTMLImageElement) {

@@ -27,7 +27,6 @@ import {
   MainGrid,
   RightContent,
   SkeletonGrid,
-  SuccessNotice,
 } from './styles'
 
 export default function ReservationPage() {
@@ -38,9 +37,11 @@ export default function ReservationPage() {
     isLightboxOpen,
     lightboxIndex,
     isSubmitting,
-    confirmedBookingId,
     checkInDisplay,
     checkOutDisplay,
+    checkInISO,
+    checkOutISO,
+    periodo,
     nightsCount,
     guestsCount,
     setLightboxIndex,
@@ -84,14 +85,6 @@ export default function ReservationPage() {
             </EmptyState>
           ) : (
             <>
-              {confirmedBookingId ? (
-                <SuccessNotice data-testid="booking-success-alert">
-                  <strong>✓ Pré-reserva confirmada com sucesso!</strong>
-                  Código da sua reserva: <strong>{confirmedBookingId}</strong>. Enviamos os detalhes
-                  e as instruções de pagamento para o seu e-mail.
-                </SuccessNotice>
-              ) : null}
-
               {/* Cabeçalho do Hotel */}
               <HotelHeader data-testid="hotel-header">
                 <div className="header-left">
@@ -189,6 +182,9 @@ export default function ReservationPage() {
                       nights={nightsCount}
                       checkIn={checkInDisplay}
                       checkOut={checkOutDisplay}
+                      checkInISO={checkInISO}
+                      checkOutISO={checkOutISO}
+                      periodo={periodo}
                       guestsCount={guestsCount}
                       isSubmitting={isSubmitting}
                       onUpdateStayDetails={handleUpdateStayDetails}

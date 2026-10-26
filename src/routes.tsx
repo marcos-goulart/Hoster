@@ -5,6 +5,7 @@ import LoginPage from './pages/Login'
 import ReservationPage from './pages/Reservation'
 import AllHotelsPage from './pages/AllHotels'
 import SearchResultPage from './pages/SearchResult'
+import PaymentPage from './pages/PaymentPage'
 
 import { ProfilePage } from './pages/Profile'
 import { TermsPage } from './pages/Terms'
@@ -34,6 +35,19 @@ export function AppRoutes() {
             message="Faça login para continuar com a reserva da acomodação."
           >
             <ReservationPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Rota de Confirmação & Pagamento */}
+      <Route
+        path="/pagamento/:bookingId"
+        element={
+          <ProtectedRoute
+            keepOnPage={true}
+            message="Faça login para concluir o pagamento da sua reserva."
+          >
+            <PaymentPage />
           </ProtectedRoute>
         }
       />

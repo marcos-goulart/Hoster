@@ -15,6 +15,40 @@ export const Container = styled.div`
   flex-direction: column;
   gap: 0.85rem;
 
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: ${(props) => props.theme.colors.primaryDark || '#1f2937'};
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    input[type='date'],
+    select {
+      width: 100%;
+      padding: 0.45rem 0.6rem;
+      border: 1px solid ${(props) => props.theme.colors.borderColor || '#d1d5db'};
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #1f2937;
+      background-color: #f9fafb;
+      outline: none;
+      transition:
+        border-color 0.15s,
+        background-color 0.15s;
+
+      &:focus {
+        border-color: ${(props) => props.theme.colors.accentWarm || '#c07a46'};
+        background-color: #ffffff;
+      }
+    }
+  }
+
   .popover-row {
     display: flex;
     align-items: center;

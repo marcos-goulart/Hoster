@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { FaTag, FaTimes } from 'react-icons/fa'
 import { useSearchParams } from 'react-router-dom'
 
@@ -39,8 +40,12 @@ export default function SearchResultPage() {
 
   const rawEntrada = searchParams.get('entrada')
   const rawSaida = searchParams.get('saida')
+  const duracaoFlexivel = searchParams.get('duracaoFlexivel')
 
-  const nights = getNights(rawEntrada, rawSaida, searchParams.get('duracaoFlexivel'))
+  const nights = useMemo(
+    () => getNights(rawEntrada, rawSaida, duracaoFlexivel),
+    [rawEntrada, rawSaida, duracaoFlexivel],
+  )
 
   return (
     <Container>
@@ -48,7 +53,7 @@ export default function SearchResultPage() {
       <SearchHero>
         <div className="container">
           <div className="searchCard">
-            <SearchForm />
+            <SearchForm key={searchParams.toString()} />
           </div>
         </div>
       </SearchHero>
@@ -84,7 +89,11 @@ export default function SearchResultPage() {
               ) : filteredHotels.length > 0 ? (
                 <>
                   {displayedHotels.map((hotel) => (
-                    <HotelCardResult key={hotel.id} hotel={hotel} nights={nights} />
+                    <HotelCardResult
+                      key={`${hotel.id}-${searchParams.toString()}`}
+                      hotel={hotel}
+                      nights={nights}
+                    />
                   ))}
 
                   {totalPages > 1 ? (

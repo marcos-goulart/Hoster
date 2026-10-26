@@ -19,9 +19,16 @@ export interface CheckoutStickyCardProps {
   nights: number
   checkIn: string
   checkOut: string
+  checkInISO?: string
+  checkOutISO?: string
+  periodo?: string
   guestsCount: number
   isSubmitting: boolean
-  onUpdateStayDetails?: (nights: number, guests: number) => void
+  onUpdateStayDetails?: (
+    nights: number,
+    guests: number,
+    details?: { checkIn?: string; checkOut?: string; period?: string },
+  ) => void
   onSubmitBooking: (guestData: BookingGuestData) => void
 }
 
@@ -30,6 +37,9 @@ export function CheckoutStickyCard({
   nights,
   checkIn,
   checkOut,
+  checkInISO,
+  checkOutISO,
+  periodo,
   guestsCount,
   isSubmitting,
   onUpdateStayDetails,
@@ -40,13 +50,26 @@ export function CheckoutStickyCard({
     showEditStay,
     tempNights,
     tempGuests,
+    tempCheckIn,
+    tempCheckOut,
+    tempPeriodo,
     setTempNights,
     setTempGuests,
+    setTempPeriodo,
+    handleDatesChange,
     handleToggleEditStay,
     handleApplyStayUpdate,
     handleInputChange,
     handleSubmit,
-  } = useCheckoutForm({ nights, guestsCount, onUpdateStayDetails, onSubmitBooking })
+  } = useCheckoutForm({
+    nights,
+    guestsCount,
+    checkInISO,
+    checkOutISO,
+    periodo,
+    onUpdateStayDetails,
+    onSubmitBooking,
+  })
 
   const dailyTotal = selectedRoom.pricePerNight * nights
   const serviceFee = 120
@@ -67,7 +90,7 @@ export function CheckoutStickyCard({
       </CheckoutHeader>
 
       <StayDetailsBox>
-        <div className="stay-item">
+        <div className="stay-item" style={{ gridColumn: 'span 2' }}>
           <label>CHECK-IN / OUT</label>
           <span data-testid="stay-dates-display">
             {checkIn} - {checkOut}
@@ -79,20 +102,29 @@ export function CheckoutStickyCard({
             {guestsCount} {guestsCount === 1 ? 'Hóspede' : 'Hóspedes'}
           </span>
         </div>
+        <div className="stay-item">
+          <label>PERÍODO</label>
+          <span data-testid="stay-period-display">{periodo || 'Manhã'}</span>
+        </div>
 
         <button
           type="button"
           className="btn-edit-stay"
           onClick={handleToggleEditStay}
-          title="Alterar diárias ou hóspedes"
+          title="Alterar datas, período ou hóspedes"
         >
           <FaEdit aria-hidden="true" /> Alterar
         </button>
 
         {showEditStay && (
           <EditStayPopover
+            tempCheckIn={tempCheckIn}
+            tempCheckOut={tempCheckOut}
+            tempPeriodo={tempPeriodo}
             tempNights={tempNights}
             tempGuests={tempGuests}
+            onChangeDates={handleDatesChange}
+            onChangePeriodo={setTempPeriodo}
             onChangeNights={setTempNights}
             onChangeGuests={setTempGuests}
             onApply={handleApplyStayUpdate}

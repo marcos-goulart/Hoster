@@ -3,8 +3,10 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { AppThemeProvider } from '../../styles/themeProvider'
 import ReservationPage from './index'
+import * as hotelService from '../../services/hotels'
+import api from '../../services/api'
+import type { Hotel } from '../../interfaces/Hotel'
 import type { HotelDetail } from '../../interfaces/Reservation'
-import * as reservationService from '../../services/reservationMock'
 
 // Mock de autenticação para testes
 vi.mock('../../hooks/useAuth', () => ({
@@ -109,28 +111,12 @@ describe('ReservationPage - Testes de Integração e UI', () => {
     mockToggleFavorite.mockClear()
     window.scrollTo = vi.fn()
 
-    vi.spyOn(reservationService, 'getHotelDetailById').mockResolvedValue(mockHotelDetail)
-    vi.spyOn(reservationService, 'createBooking').mockResolvedValue({
-      success: true,
-      bookingId: 'HTR-CONFIRMED-999',
-      message: 'Pré-reserva confirmada com sucesso no PostgreSQL!',
-      booking: {
-        hotelId: 'hotel-paris-germany',
-        roomId: 'suite-standard-king',
-        checkIn: '10 Out',
-        checkOut: '13 Out',
-        nights: 3,
-        guestsCount: 2,
-        guestData: {
-          fullName: 'Marcos Goulart',
-          email: 'marcos@email.com',
-          document: '123.456.789-00',
-          phone: '(11) 98888-7777',
+    vi.spyOn(hotelService, 'getHotelById').mockResolvedValue(mockHotelDetail as unknown as Hotel)
+    vi.spyOn(api, 'post').mockResolvedValue({
+      data: {
+        data: {
+          id: 'HTR-CONFIRMED-999',
         },
-        roomPricePerNight: 800,
-        serviceFee: 120,
-        totalPrice: 2520,
-        createdAt: '2026-10-16T12:00:00.000Z',
       },
     })
   })
@@ -141,6 +127,10 @@ describe('ReservationPage - Testes de Integração e UI', () => {
         <MemoryRouter initialEntries={[initialEntry]}>
           <Routes>
             <Route path="/pre-reserva/:hotelId" element={<ReservationPage />} />
+            <Route
+              path="/pagamento/:bookingId"
+              element={<div data-testid="payment-page-screen">Tela de Pagamento</div>}
+            />
           </Routes>
         </MemoryRouter>
       </AppThemeProvider>,
@@ -149,7 +139,7 @@ describe('ReservationPage - Testes de Integração e UI', () => {
 
   it('deve exibir o esqueleto de carregamento (skeleton) antes de carregar os dados', () => {
     // Retorna uma Promise não resolvida imediatamente para capturar o loading
-    vi.spyOn(reservationService, 'getHotelDetailById').mockReturnValue(new Promise(() => {}))
+    vi.spyOn(hotelService, 'getHotelById').mockReturnValue(new Promise(() => {}))
 
     renderReservationPage()
 
@@ -260,7 +250,7 @@ describe('ReservationPage - Testes de Integração e UI', () => {
     expect(screen.queryByRole('dialog', { name: /visualizador de fotos/i })).not.toBeInTheDocument()
   })
 
-  it('deve preencher o formulário do hóspede principal e submeter a pré-reserva com sucesso', async () => {
+  it('deve preencher o formulário do hóspede principal e submeter a pré-reserva com sucesso redirecionando para pagamento', async () => {
     renderReservationPage()
 
     expect(await screen.findByTestId('hotel-title')).toBeInTheDocument()
@@ -276,13 +266,40 @@ describe('ReservationPage - Testes de Integração e UI', () => {
     const submitBtn = screen.getByTestId('btn-confirm-checkout')
     fireEvent.click(submitBtn)
 
-    // Alerta de sucesso com o código da reserva deve ser exibido
-    expect(await screen.findByTestId('booking-success-alert')).toBeInTheDocument()
-    expect(screen.getByText(/HTR-CONFIRMED-999/i)).toBeInTheDocument()
+    // Redireciona imediatamente para a tela de pagamento
+    expect(await screen.findByTestId('payment-page-screen')).toBeInTheDocument()
+  })
+
+  it('deve permitir alterar datas, período e hóspedes via botão Alterar e recalcular valores em tempo real', async () => {
+    renderReservationPage()
+
+    expect(await screen.findByTestId('hotel-title')).toBeInTheDocument()
+
+    const alterBtn = screen.getByRole('button', { name: /alterar/i })
+    fireEvent.click(alterBtn)
+
+    expect(screen.getByTestId('edit-stay-popover')).toBeInTheDocument()
+
+    const checkInInput = screen.getByLabelText(/check-in:/i)
+    const checkOutInput = screen.getByLabelText(/check-out:/i)
+    const periodoSelect = screen.getByLabelText(/período de chegada:/i)
+
+    fireEvent.change(checkInInput, { target: { value: '2026-11-10' } })
+    fireEvent.change(checkOutInput, { target: { value: '2026-11-15' } })
+    fireEvent.change(periodoSelect, { target: { value: 'Tarde' } })
+
+    const applyBtn = screen.getByRole('button', { name: /aplicar alterações/i })
+    fireEvent.click(applyBtn)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('stay-period-display')).toHaveTextContent('Tarde')
+      expect(screen.getByTestId('summary-room-total')).toHaveTextContent(/4\.000/i)
+      expect(screen.getByTestId('summary-grand-total')).toHaveTextContent(/4\.120/i)
+    })
   })
 
   it('deve exibir o estado vazio quando o hotel não for encontrado na API', async () => {
-    vi.spyOn(reservationService, 'getHotelDetailById').mockResolvedValue(null)
+    vi.spyOn(hotelService, 'getHotelById').mockResolvedValue(null)
 
     renderReservationPage('/pre-reserva/hotel-inexistente')
 

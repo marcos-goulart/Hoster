@@ -72,20 +72,24 @@ export function HotelCardResult({ hotel, nights }: HotelCardResultProps) {
   const hotelAmenities = hotel.amenities ?? []
 
   // Parâmetros de busca da URL
-  const entrada = searchParams.get('entrada') ?? ''
-  const saida = searchParams.get('saida') ?? ''
-  const adultos = Number(searchParams.get('adultos') ?? 0)
+  const checkIn = searchParams.get('entrada') ?? ''
+  const checkOut = searchParams.get('saida') ?? ''
+  const periodo = searchParams.get('periodo') ?? ''
+  const adults = Number(searchParams.get('adultos') ?? 0)
   const criancas = Number(searchParams.get('criancas') ?? 0)
-  const totalGuests = adultos + criancas > 0 ? adultos + criancas : 2
+  const totalGuests = adults + criancas > 0 ? adults + criancas : 2
 
-  // Repassa a query string inteira da busca para a rota de pré-reserva
-  const queryParams = new URLSearchParams()
-  if (entrada) queryParams.set('entrada', entrada)
-  if (saida) queryParams.set('saida', saida)
-  if (totalGuests) queryParams.set('adultos', String(totalGuests))
-
-  const queryString = queryParams.toString()
-  const destinationUrl = `/pre-reserva/${hotel.id}${queryString ? `?${queryString}` : ''}`
+  const reservationUrl =
+    '/pre-reserva/' +
+    hotel.id +
+    '?entrada=' +
+    checkIn +
+    '&saida=' +
+    checkOut +
+    '&periodo=' +
+    periodo +
+    '&adultos=' +
+    adults
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -95,16 +99,18 @@ export function HotelCardResult({ hotel, nights }: HotelCardResultProps) {
 
   return (
     <ResultCard
-      to={destinationUrl}
+      to={reservationUrl}
       state={{
+        checkIn,
+        checkOut,
+        periodo,
+        entrada: checkIn,
+        saida: checkOut,
         hotel,
-        entrada,
-        saida,
-        checkIn: entrada,
-        checkOut: saida,
+        period: periodo,
         nights,
         diarias: nights,
-        adultos,
+        adultos: adults,
         criancas,
         hospedes: totalGuests,
         guestsCount: totalGuests,

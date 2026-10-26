@@ -1,24 +1,17 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useParams, useSearchParams, useNavigate, useLocation } from 'react-router-dom'
-import { getHotelById } from '../services/hotels'
 import api from '../services/api'
-import type { BookingGuestData, RoomOption } from '../interfaces/Reservation'
-import type { Hotel } from '../interfaces/Hotel'
+import { getHotelById } from '../services/hotels'
+import type { BookingGuestData, RoomOption, HotelDetail } from '../interfaces/Reservation'
 import { formatDateISO, parseDate, formatShortDate } from '../utils/dateUtils'
-
-interface ApiErrorResponse {
-  response?: {
-    data?: {
-      error?: string
-    }
-  }
-}
 
 interface LocationState {
   entrada?: string
   saida?: string
   checkIn?: string
   checkOut?: string
+  periodo?: string
+  period?: string
   adultos?: number
   hospedes?: number
   guestsCount?: number
@@ -30,84 +23,100 @@ export function useReservation() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const stateData = (location.state as LocationState) || {}
+  // Extração direta de primitivos estáveis para evitar recriação de objetos no render
+  const locationState = (location.state as LocationState | null) ?? null
+  const stateEntrada = locationState?.entrada || locationState?.checkIn || ''
+  const stateSaida = locationState?.saida || locationState?.checkOut || ''
+  const statePeriodo = locationState?.periodo || locationState?.period || ''
+  const stateGuests =
+    locationState?.guestsCount || locationState?.hospedes || locationState?.adultos || 0
 
-  const [hotelDetail, setHotelDetail] = useState<Hotel | null>(null)
+  const paramEntrada = searchParams.get('entrada') || searchParams.get('checkIn') || ''
+  const paramSaida = searchParams.get('saida') || searchParams.get('checkOut') || ''
+  const paramPeriodo = searchParams.get('periodo') || ''
+  const paramGuests = Number(searchParams.get('adultos') || searchParams.get('hospedes') || 0)
+
+  const [hotelDetail, setHotelDetail] = useState<HotelDetail | null>(null)
   const [selectedRoom, setSelectedRoom] = useState<RoomOption | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null)
 
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
 
   const fetchedIdRef = useRef<string | null>(null)
 
-  // Fallback de Datas Dinâmico (Hoje e +3 diárias)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const threeDaysLater = new Date(today)
-  threeDaysLater.setDate(today.getDate() + 3)
+  const today = useMemo(() => {
+    const d = new Date()
+    d.setHours(0, 0, 0, 0)
+    return d
+  }, [])
 
-  const defaultEntradaISO = formatDateISO(today)
-  const defaultSaidaISO = formatDateISO(threeDaysLater)
+  const threeDaysLater = useMemo(() => {
+    const d = new Date(today)
+    d.setDate(today.getDate() + 3)
+    return d
+  }, [today])
 
-  // Extrai datas prioritariamente do location.state ou dos searchParams da URL
-  let rawEntrada =
-    stateData.entrada ||
-    stateData.checkIn ||
-    searchParams.get('entrada') ||
-    searchParams.get('checkIn') ||
-    defaultEntradaISO
+  // Inicialização estável das datas
+  const initialCheckIn = useMemo(() => {
+    let raw = stateEntrada || paramEntrada || formatDateISO(today)
+    if (raw.includes(' - ')) {
+      raw = raw.split(' - ')[0]?.trim() || formatDateISO(today)
+    }
+    return raw
+  }, [stateEntrada, paramEntrada, today])
 
-  let rawSaida =
-    stateData.saida ||
-    stateData.checkOut ||
-    searchParams.get('saida') ||
-    searchParams.get('checkOut') ||
-    defaultSaidaISO
+  const initialCheckOut = useMemo(() => {
+    let raw = stateSaida || paramSaida || formatDateISO(threeDaysLater)
+    const rawEnt = stateEntrada || paramEntrada || ''
+    if (rawEnt.includes(' - ')) {
+      raw = rawEnt.split(' - ')[1]?.trim() || formatDateISO(threeDaysLater)
+    }
+    return raw
+  }, [stateSaida, paramSaida, stateEntrada, paramEntrada, threeDaysLater])
 
-  // Trata separação se a string de entrada vier no formato "2026-10-20 - 2026-10-28"
-  if (rawEntrada.includes(' - ')) {
-    const parts = rawEntrada.split(' - ')
-    rawEntrada = parts[0]?.trim() || defaultEntradaISO
-    rawSaida = parts[1]?.trim() || defaultSaidaISO
-  }
+  const [checkInISO, setCheckInISO] = useState<string>(initialCheckIn)
+  const [checkOutISO, setCheckOutISO] = useState<string>(initialCheckOut)
+  const [periodo, setPeriodo] = useState<string>(statePeriodo || paramPeriodo || 'Manhã')
+  const [guestsCount, setGuestsCount] = useState<number>(stateGuests || paramGuests || 2)
 
-  const [checkInISO, setCheckInISO] = useState<string>(rawEntrada)
-  const [checkOutISO, setCheckOutISO] = useState<string>(rawSaida)
-  const [guestsCount, setGuestsCount] = useState<number>(
-    stateData.guestsCount ||
-      stateData.hospedes ||
-      stateData.adultos ||
-      Number(searchParams.get('adultos') || searchParams.get('hospedes') || 2),
-  )
-
-  // Sincroniza estado caso os parâmetros de busca ou location alterem
+  // Sincronização protegida de datas e parâmetros caso a URL/State mude externamente
   useEffect(() => {
-    let ent =
-      stateData.entrada ||
-      stateData.checkIn ||
-      searchParams.get('entrada') ||
-      searchParams.get('checkIn')
-
-    let sai =
-      stateData.saida ||
-      stateData.checkOut ||
-      searchParams.get('saida') ||
-      searchParams.get('checkOut')
+    let ent = stateEntrada || paramEntrada
+    let sai = stateSaida || paramSaida
+    const p = statePeriodo || paramPeriodo
 
     if (ent && ent.includes(' - ')) {
       const parts = ent.split(' - ')
-      ent = parts[0]?.trim()
-      sai = parts[1]?.trim()
+      ent = parts[0]?.trim() || ''
+      sai = parts[1]?.trim() || ''
     }
 
-    if (ent) setCheckInISO(ent)
-    if (sai) setCheckOutISO(sai)
-  }, [searchParams, location.state])
+    if (ent) {
+      setCheckInISO((prev) => (prev !== ent ? ent : prev))
+    }
+    if (sai) {
+      setCheckOutISO((prev) => (prev !== sai ? sai : prev))
+    }
+    if (p) {
+      setPeriodo((prev) => (prev !== p ? p : prev))
+    }
+    const g = stateGuests || paramGuests
+    if (g > 0) {
+      setGuestsCount((prev) => (prev !== g ? g : prev))
+    }
+  }, [
+    stateEntrada,
+    stateSaida,
+    statePeriodo,
+    stateGuests,
+    paramEntrada,
+    paramSaida,
+    paramPeriodo,
+    paramGuests,
+  ])
 
-  // Cálculo de diárias
   const startDate = parseDate(checkInISO) || today
   const endDate = parseDate(checkOutISO) || threeDaysLater
   const nightsCount = Math.max(
@@ -115,7 +124,6 @@ export function useReservation() {
     Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)),
   )
 
-  // Exibição amigável (ex: "20 Out - 28 Out")
   const checkInDisplay = formatShortDate(checkInISO) || checkInISO
   const checkOutDisplay = formatShortDate(checkOutISO) || checkOutISO
 
@@ -128,10 +136,44 @@ export function useReservation() {
     setIsLoading(true)
     try {
       const data = await getHotelById(hotelId)
-      setHotelDetail(data)
-      if (data && data.rooms && data.rooms.length > 0) {
-        setSelectedRoom(data.rooms[0] as RoomOption)
+      if (data) {
+        const detail: HotelDetail = {
+          ...data,
+          photos: data.photos && data.photos.length > 0 ? data.photos : data.images || [],
+          address: data.address || `${data.city || ''} - ${data.state || ''}`,
+          ratingScore: data.ratingScore ?? data.rating ?? 4.5,
+          reviewCount: data.reviewCount ?? data.reviewsCount ?? 0,
+          rooms: (data.rooms || []).map((r) => ({
+            id: r.id,
+            title: r.title,
+            subtitle: r.subtitle,
+            pricePerNight: r.pricePerNight,
+            capacity: r.capacity,
+            isAvailable: r.isAvailable,
+            tags: r.tags || [],
+          })),
+          reviews: (data.reviews || []).map((rev) => ({
+            id: rev.id,
+            hotelId: rev.hotelId,
+            userName: rev.userName,
+            avatarUrl:
+              (rev as { userAvatar?: string | null }).userAvatar ||
+              (rev as { avatarUrl?: string | null }).avatarUrl ||
+              null,
+            stayDate: rev.stayDate,
+            rating: rev.rating,
+            comment: rev.comment,
+          })),
+          questions: data.questions || [],
+        }
+        setHotelDetail(detail)
+        if (detail.rooms && detail.rooms.length > 0) {
+          setSelectedRoom(detail.rooms[0] as RoomOption)
+        } else {
+          setSelectedRoom(null)
+        }
       } else {
+        setHotelDetail(null)
         setSelectedRoom(null)
       }
     } catch (error) {
@@ -163,12 +205,24 @@ export function useReservation() {
   }, [])
 
   const handleUpdateStayDetails = useCallback(
-    (newNights: number, newGuests: number) => {
+    (
+      newNights: number,
+      newGuests: number,
+      details?: { checkIn?: string; checkOut?: string; period?: string },
+    ) => {
       setGuestsCount(newGuests)
-      const currentStart = parseDate(checkInISO) || new Date()
-      const newEnd = new Date(currentStart)
-      newEnd.setDate(currentStart.getDate() + newNights)
-      setCheckOutISO(formatDateISO(newEnd))
+      if (details?.checkIn && details?.checkOut) {
+        setCheckInISO(details.checkIn)
+        setCheckOutISO(details.checkOut)
+      } else {
+        const currentStart = parseDate(checkInISO) || new Date()
+        const newEnd = new Date(currentStart)
+        newEnd.setDate(currentStart.getDate() + newNights)
+        setCheckOutISO(formatDateISO(newEnd))
+      }
+      if (details?.period) {
+        setPeriodo(details.period)
+      }
     },
     [checkInISO],
   )
@@ -188,6 +242,7 @@ export function useReservation() {
           roomId: selectedRoom.id,
           checkIn: checkInISO,
           checkOut: checkOutISO,
+          period: periodo,
           totalPrice,
           guestName: guestData.fullName,
           guestCpf: guestData.document,
@@ -199,18 +254,51 @@ export function useReservation() {
         const booking = response.data?.data
 
         if (booking?.id) {
-          setConfirmedBookingId(booking.id)
-          navigate(`/pagamento/${booking.id}`, { state: { booking } })
+          navigate(`/pagamento/${booking.id}`, {
+            state: {
+              booking: {
+                id: booking.id,
+                guestFullName: guestData.fullName,
+                checkIn: checkInISO,
+                checkOut: checkOutISO,
+                nights: nightsCount,
+                periodo,
+                period: periodo,
+                totalPrice,
+                room: {
+                  ...selectedRoom,
+                  hotel: hotelDetail,
+                },
+              },
+            },
+          })
         }
       } catch (error: unknown) {
         console.error('Erro ao criar reserva:', error)
-        const err = error as ApiErrorResponse
-        alert(err.response?.data?.error || 'Não foi possível processar a reserva. Tente novamente.')
+        const err = error as {
+          response?: { data?: { error?: string; message?: string } }
+          message?: string
+        }
+        const message =
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          err.message ||
+          'Não foi possível processar a reserva. Tente novamente.'
+        alert(message)
       } finally {
         setIsSubmitting(false)
       }
     },
-    [hotelDetail, selectedRoom, nightsCount, checkInISO, checkOutISO, guestsCount, navigate],
+    [
+      hotelDetail,
+      selectedRoom,
+      nightsCount,
+      checkInISO,
+      checkOutISO,
+      periodo,
+      guestsCount,
+      navigate,
+    ],
   )
 
   return {
@@ -218,13 +306,13 @@ export function useReservation() {
     selectedRoom,
     isLoading,
     isSubmitting,
-    confirmedBookingId,
     isLightboxOpen,
     lightboxIndex,
     checkInDisplay,
     checkOutDisplay,
     checkInISO,
     checkOutISO,
+    periodo,
     nightsCount,
     guestsCount,
     setLightboxIndex,

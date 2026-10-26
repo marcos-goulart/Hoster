@@ -48,6 +48,7 @@ export interface BookingPayload {
   roomId: string
   checkIn: string
   checkOut: string
+  period?: string
   nights: number
   guestsCount: number
   guestData: BookingGuestData

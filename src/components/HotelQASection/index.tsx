@@ -46,17 +46,23 @@ function formatDate(dateString?: string): string {
 
 export const HotelQASection: React.FC<HotelQASectionProps> = ({
   hotelId,
-  questions = [],
+  questions,
   onQuestionSubmitted,
 }) => {
   const { user } = useAuth()
-  const [questionsList, setQuestionsList] = useState<HotelQuestion[]>(questions)
+  const [questionsList, setQuestionsList] = useState<HotelQuestion[]>(questions || [])
   const [questionText, setQuestionText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Sincroniza a lista caso a prop questions mude quando o hotel recarregar
   useEffect(() => {
-    setQuestionsList(questions)
+    if (!questions) return
+    setQuestionsList((prev) => {
+      if (JSON.stringify(prev) !== JSON.stringify(questions)) {
+        return questions
+      }
+      return prev
+    })
   }, [questions])
 
   const handleSubmit = async (e: React.FormEvent) => {

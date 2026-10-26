@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 export const FooterContainer = styled.footer`
   background-color: ${(props) => props.theme.colors.primaryDark};
-  color: #E8E2DB;
+  color: #e8e2db;
   width: 100% !important;
   text-align: left;
   margin-top: 4rem;
@@ -14,7 +14,7 @@ export const FooterContainer = styled.footer`
   }
 
   .copy {
-    color: #8C8078;
+    color: #8c8078;
     background-color: transparent;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     align-items: center !important;

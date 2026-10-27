@@ -52,7 +52,12 @@ export function UserDropdownMenu({ user, onLogout, onCloseMobileMenu }: UserDrop
         aria-expanded={isOpen}
       >
         {user?.photoURL ? (
-          <img src={user.photoURL} alt={user.displayName || 'Avatar'} className="avatar-img" />
+          <img
+            src={user.photoURL}
+            alt={user.displayName || 'Avatar'}
+            className="avatar-img"
+            referrerPolicy="no-referrer"
+          />
         ) : (
           <div className="avatar-fallback">{initials}</div>
         )}
@@ -68,6 +73,7 @@ export function UserDropdownMenu({ user, onLogout, onCloseMobileMenu }: UserDrop
                 src={user.photoURL}
                 alt={user.displayName || 'Avatar'}
                 className="header-avatar"
+                referrerPolicy="no-referrer"
               />
             ) : (
               <div className="header-fallback">{initials}</div>

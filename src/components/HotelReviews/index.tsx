@@ -55,6 +55,7 @@ export function HotelReviews({ reviews }: HotelReviewsProps) {
                         <img
                           src={avatarUrl}
                           alt={review.userName}
+                          referrerPolicy="no-referrer"
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       ) : (

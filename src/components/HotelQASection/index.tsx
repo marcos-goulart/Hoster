@@ -54,7 +54,6 @@ export const HotelQASection: React.FC<HotelQASectionProps> = ({
   const [questionText, setQuestionText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Sincroniza a lista caso a prop questions mude quando o hotel recarregar
   useEffect(() => {
     if (!questions) return
     setQuestionsList((prev) => {
@@ -85,7 +84,6 @@ export const HotelQASection: React.FC<HotelQASectionProps> = ({
       const result = await response.json()
 
       if (response.ok && result.success) {
-        // Insere a nova pergunta vinda do backend no topo da lista local
         setQuestionsList((prev) => [result.data, ...prev])
         setQuestionText('')
 
@@ -135,7 +133,6 @@ export const HotelQASection: React.FC<HotelQASectionProps> = ({
               <QuestionCard key={q.id}>
                 <QuestionHeader>
                   <UserInfo style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    {/* Avatar do Usuário */}
                     <div
                       style={{
                         width: '2.5rem',
@@ -157,6 +154,7 @@ export const HotelQASection: React.FC<HotelQASectionProps> = ({
                         <img
                           src={avatarUrl}
                           alt={userName}
+                          referrerPolicy="no-referrer"
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       ) : (
@@ -164,7 +162,6 @@ export const HotelQASection: React.FC<HotelQASectionProps> = ({
                       )}
                     </div>
 
-                    {/* Nome e Data da Pergunta */}
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <UserName>{userName}</UserName>
                       {dateDisplay && (
@@ -173,7 +170,6 @@ export const HotelQASection: React.FC<HotelQASectionProps> = ({
                     </div>
                   </UserInfo>
 
-                  {/* Badge de Status da Pergunta */}
                   <StatusBadge $isAnswered={isAnswered}>
                     {isAnswered ? '✓ Respondida' : '⏳ Aguardando resposta'}
                   </StatusBadge>

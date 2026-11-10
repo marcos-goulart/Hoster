@@ -12,8 +12,12 @@ export function useSearchForm() {
   const [searchParams] = useSearchParams()
 
   const [localizacao, setLocalizacao] = useState(searchParams.get('localizacao') ?? '')
-  const [entrada, setEntrada] = useState(searchParams.get('entrada') ?? '')
-  const [saida, setSaida] = useState(searchParams.get('saida') ?? '')
+  const [entrada, setEntrada] = useState(
+    searchParams.get('checkIn') ?? searchParams.get('entrada') ?? '',
+  )
+  const [saida, setSaida] = useState(
+    searchParams.get('checkOut') ?? searchParams.get('saida') ?? '',
+  )
   const [flexibilidade, setFlexibilidade] = useState(Number(searchParams.get('flexibilidade') ?? 0))
   const [duracaoFlexivel, setDuracaoFlexivel] = useState(searchParams.get('duracaoFlexivel') ?? '1')
   const [incluirFimDeSemana, setIncluirFimDeSemana] = useState(

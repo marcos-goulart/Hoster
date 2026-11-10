@@ -38,8 +38,8 @@ export default function SearchResultPage() {
     handleApplyFilters,
   } = useHotelSearch(searchParams)
 
-  const rawEntrada = searchParams.get('entrada')
-  const rawSaida = searchParams.get('saida')
+  const rawEntrada = searchParams.get('checkIn') ?? searchParams.get('entrada')
+  const rawSaida = searchParams.get('checkOut') ?? searchParams.get('saida')
   const duracaoFlexivel = searchParams.get('duracaoFlexivel')
 
   const nights = useMemo(

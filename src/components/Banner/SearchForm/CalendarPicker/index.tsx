@@ -108,7 +108,9 @@ export function CalendarPicker({
 
           <ApplyButton
             type="button"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
               const entStr = startDate ? formatDateISO(startDate) : entrada
               const saiStr = endDate ? formatDateISO(endDate) : saida
               onChangeDates(entStr, saiStr)

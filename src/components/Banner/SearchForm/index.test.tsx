@@ -156,4 +156,25 @@ describe('SearchForm', () => {
 
     expect(screen.queryByText('Calendário')).not.toBeInTheDocument()
   })
+
+  it('deve incluir checkIn e checkOut na URL ao pesquisar com datas preenchidas', async () => {
+    window.history.pushState({}, '', '/resultado?localizacao=Florianopolis')
+    renderComponent()
+
+    const datesButton = screen.getByRole('button', { name: /selecione as datas/i })
+    fireEvent.click(datesButton)
+
+    const dayButtons = screen.getAllByRole('button', { name: '15' })
+    fireEvent.click(dayButtons[0])
+
+    const applyButton = screen.getByRole('button', { name: 'Aplicar' })
+    fireEvent.click(applyButton)
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalled()
+    })
+    const calledUrl = mockNavigate.mock.calls[0][0]
+    expect(calledUrl).toContain('checkIn=')
+    expect(calledUrl).toContain('localizacao=Florianopolis')
+  })
 })

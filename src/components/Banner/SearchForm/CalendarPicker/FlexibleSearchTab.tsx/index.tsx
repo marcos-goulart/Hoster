@@ -94,7 +94,14 @@ export function FlexibleSearchTab({
             )
           })}
         </MonthCardsGrid>
-        <ApplyButton type="button" onClick={onApply}>
+        <ApplyButton
+          type="button"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            onApply?.()
+          }}
+        >
           Aplicar
         </ApplyButton>
       </FlexibleSection>

@@ -9,6 +9,8 @@ export interface HotelSearchCriteria {
   localizacao?: string
   entrada?: string
   saida?: string
+  checkIn?: string
+  checkOut?: string
   periodo?: string
   nome?: string
   flexibilidade?: number
@@ -293,6 +295,16 @@ export async function searchHotels(criteria: HotelSearchCriteria): Promise<Hotel
 
     if (criteria.localizacao) {
       params.city = criteria.localizacao
+    }
+
+    const checkIn = criteria.checkIn || criteria.entrada
+    const checkOut = criteria.checkOut || criteria.saida
+
+    if (checkIn) {
+      params.checkIn = checkIn
+    }
+    if (checkOut) {
+      params.checkOut = checkOut
     }
 
     const { data } = await api.get('/hotels', { params })

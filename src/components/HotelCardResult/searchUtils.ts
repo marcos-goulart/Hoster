@@ -2,10 +2,10 @@ import type { Hotel } from '../../interfaces/Hotel'
 import type { HotelSearchCriteria } from '../../services/hotels'
 
 export function getCriteriaFromParams(searchParams: URLSearchParams): HotelSearchCriteria {
-  let entrada = searchParams.get('entrada') ?? undefined
-  let saida = searchParams.get('saida') ?? undefined
+  let entrada = searchParams.get('checkIn') ?? searchParams.get('entrada') ?? undefined
+  let saida = searchParams.get('checkOut') ?? searchParams.get('saida') ?? undefined
 
-  // Trata caso a data chegue concatenada na query 'entrada'
+  // Trata caso a data chegue concatenada na query 'entrada' ou 'checkIn'
   if (entrada && entrada.includes(' - ')) {
     const parts = entrada.split(' - ')
     entrada = parts[0]?.trim()
@@ -16,6 +16,8 @@ export function getCriteriaFromParams(searchParams: URLSearchParams): HotelSearc
     localizacao: searchParams.get('localizacao') ?? undefined,
     entrada,
     saida,
+    checkIn: entrada,
+    checkOut: saida,
     periodo: searchParams.get('periodo') ?? undefined,
     nome: searchParams.get('nome') ?? undefined,
     flexibilidade: searchParams.get('flexibilidade')

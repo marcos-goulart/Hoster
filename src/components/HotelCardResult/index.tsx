@@ -72,8 +72,8 @@ export function HotelCardResult({ hotel, nights }: HotelCardResultProps) {
   const hotelAmenities = hotel.amenities ?? []
 
   // Parâmetros de busca da URL
-  const checkIn = searchParams.get('entrada') ?? ''
-  const checkOut = searchParams.get('saida') ?? ''
+  const checkIn = searchParams.get('checkIn') ?? searchParams.get('entrada') ?? ''
+  const checkOut = searchParams.get('checkOut') ?? searchParams.get('saida') ?? ''
   const periodo = searchParams.get('periodo') ?? ''
   const adults = Number(searchParams.get('adultos') ?? 0)
   const criancas = Number(searchParams.get('criancas') ?? 0)
@@ -82,7 +82,11 @@ export function HotelCardResult({ hotel, nights }: HotelCardResultProps) {
   const reservationUrl =
     '/pre-reserva/' +
     hotel.id +
-    '?entrada=' +
+    '?checkIn=' +
+    checkIn +
+    '&checkOut=' +
+    checkOut +
+    '&entrada=' +
     checkIn +
     '&saida=' +
     checkOut +

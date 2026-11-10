@@ -25,13 +25,18 @@ export function buildSearchUrl(values: SearchFormValues) {
     finalSaida = parts[1].trim()
   }
 
+  if (finalEntrada.trim()) {
+    params.set('checkIn', finalEntrada.trim())
+    params.set('entrada', finalEntrada.trim())
+  }
+
+  if (finalSaida.trim()) {
+    params.set('checkOut', finalSaida.trim())
+    params.set('saida', finalSaida.trim())
+  }
+
   Object.entries(values).forEach(([key, value]) => {
-    if (key === 'entrada') {
-      if (finalEntrada.trim()) params.set('entrada', finalEntrada.trim())
-      return
-    }
-    if (key === 'saida') {
-      if (finalSaida.trim()) params.set('saida', finalSaida.trim())
+    if (key === 'entrada' || key === 'saida') {
       return
     }
 

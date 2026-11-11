@@ -48,7 +48,7 @@ export default function PaymentPage() {
     handleExpiryChange,
     handleCvcChange,
     handleConfirmPayment,
-  } = usePaymentForm()
+  } = usePaymentForm({ bookingId })
 
   const pricePerNight = booking?.room?.pricePerNight || booking?.room?.price || 850.0
   const nightsCount = booking?.nights || 3
@@ -122,12 +122,15 @@ export default function PaymentPage() {
                 type="button"
                 className="btn-submit-payment"
                 onClick={handleConfirmPayment}
-                disabled={isProcessing}
+                disabled={isProcessing || isPaid}
+                style={{ pointerEvents: isProcessing || isPaid ? 'none' : 'auto' }}
               >
                 <FaLock style={{ marginRight: '0.5rem' }} />
                 {isProcessing
                   ? 'Processando Pagamento...'
-                  : `Confirmar Pagamento de ${formatBRL(totalPrice)}`}
+                  : isPaid
+                    ? 'Pagamento Confirmado!'
+                    : `Confirmar Pagamento de ${formatBRL(totalPrice)}`}
               </button>
 
               <LgpdNotice>

@@ -7,6 +7,7 @@ interface UseCheckoutFormOptions {
   checkInISO?: string
   checkOutISO?: string
   periodo?: string
+  isSubmitting?: boolean
   onUpdateStayDetails?: (
     nights: number,
     guests: number,
@@ -21,6 +22,7 @@ export function useCheckoutForm({
   checkInISO,
   checkOutISO,
   periodo,
+  isSubmitting,
   onUpdateStayDetails,
   onSubmitBooking,
 }: UseCheckoutFormOptions) {
@@ -78,6 +80,7 @@ export function useCheckoutForm({
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
+    if (isSubmitting) return
     onSubmitBooking({
       fullName: form.fullName.trim(),
       email: form.email.trim(),

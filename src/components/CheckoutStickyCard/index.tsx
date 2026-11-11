@@ -67,6 +67,7 @@ export function CheckoutStickyCard({
     checkInISO,
     checkOutISO,
     periodo,
+    isSubmitting,
     onUpdateStayDetails,
     onSubmitBooking,
   })

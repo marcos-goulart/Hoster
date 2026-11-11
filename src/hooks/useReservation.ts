@@ -40,6 +40,7 @@ export function useReservation() {
   const [selectedRoom, setSelectedRoom] = useState<RoomOption | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const isSubmittingRef = useRef<boolean>(false)
 
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
@@ -229,8 +230,9 @@ export function useReservation() {
 
   const handleSubmitBooking = useCallback(
     async (guestData: BookingGuestData) => {
-      if (!hotelDetail || !selectedRoom) return
+      if (!hotelDetail || !selectedRoom || isSubmitting || isSubmittingRef.current) return
 
+      isSubmittingRef.current = true
       setIsSubmitting(true)
       try {
         const dailyTotal = selectedRoom.pricePerNight * nightsCount
@@ -286,6 +288,7 @@ export function useReservation() {
           'Não foi possível processar a reserva. Tente novamente.'
         alert(message)
       } finally {
+        isSubmittingRef.current = false
         setIsSubmitting(false)
       }
     },
@@ -297,6 +300,7 @@ export function useReservation() {
       checkOutISO,
       periodo,
       guestsCount,
+      isSubmitting,
       navigate,
     ],
   )

@@ -1,13 +1,19 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { isValidCardNumber } from '../utils/paymentUtils'
 import type { PaymentMethod } from '../pages/PaymentPage/types'
+import { userService } from '../services/userService'
 
-export function usePaymentForm() {
+interface UsePaymentFormOptions {
+  bookingId?: string
+}
+
+export function usePaymentForm(options?: UsePaymentFormOptions) {
   const navigate = useNavigate()
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('pix')
   const [isProcessing, setIsProcessing] = useState(false)
   const [isPaid, setIsPaid] = useState(false)
+  const isProcessingRef = useRef(false)
 
   // PIX State
   const [copiedPix, setCopiedPix] = useState(false)
@@ -68,6 +74,8 @@ export function usePaymentForm() {
   }
 
   const handleConfirmPayment = () => {
+    if (isProcessing || isPaid || isProcessingRef.current) return
+
     if (paymentMethod === 'card') {
       if (!cardNumber || !isValidCardNumber(cardNumber)) {
         setCardError('Número de cartão de crédito inválido.')
@@ -93,15 +101,31 @@ export function usePaymentForm() {
     }
 
     setCardError(null)
+    isProcessingRef.current = true
     setIsProcessing(true)
 
-    setTimeout(() => {
-      setIsProcessing(false)
-      setIsPaid(true)
-      setTimeout(() => {
-        navigate('/minhas-viagens')
-      }, 2500)
-    }, 1500)
+    const processPayment = async () => {
+      try {
+        if (options?.bookingId) {
+          await userService.confirmBooking(options.bookingId).catch((err) => {
+            console.warn(
+              'Falha na chamada de confirmação de pagamento na API, mantendo confirmação local:',
+              err,
+            )
+          })
+        }
+      } finally {
+        setTimeout(() => {
+          setIsProcessing(false)
+          setIsPaid(true)
+          setTimeout(() => {
+            navigate('/minhas-viagens')
+          }, 2500)
+        }, 1500)
+      }
+    }
+
+    void processPayment()
   }
 
   return {

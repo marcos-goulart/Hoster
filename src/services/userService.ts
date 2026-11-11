@@ -33,4 +33,9 @@ export const userService = {
     const { data } = await api.get('/bookings/my-bookings')
     return data.data
   },
+
+  async confirmBooking(bookingId: string) {
+    const { data } = await api.patch(`/bookings/${bookingId}/confirm`)
+    return data.data
+  },
 }

@@ -27,7 +27,24 @@ export function MyBookingsPage() {
         setLoading(true)
         const data = await userService.getMyBookings()
         if (isMounted) {
-          setBookings(data)
+          const rawList = Array.isArray(data) ? data : []
+          const seenIds = new Set<string>()
+          const seenTripKeys = new Set<string>()
+
+          const uniqueBookings = rawList.filter((item) => {
+            if (!item || !item.id) return false
+            if (seenIds.has(item.id)) return false
+            seenIds.add(item.id)
+
+            // Previne duplicação na renderização mesmo que existam reservas redundantes no banco
+            const tripKey = `${item.hotel?.name || ''}_${item.checkIn}_${item.checkOut}`
+            if (seenTripKeys.has(tripKey)) return false
+            seenTripKeys.add(tripKey)
+
+            return true
+          })
+
+          setBookings(uniqueBookings)
         }
       } catch (error) {
         console.error('Erro ao buscar viagens:', error)

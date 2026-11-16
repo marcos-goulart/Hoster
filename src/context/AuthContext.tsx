@@ -22,6 +22,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        // Verifica se é uma conta de e-mail/senha que ainda não foi verificada
+        const isPasswordAccount = currentUser.providerData.some((p) => p.providerId === 'password')
+
+        if (isPasswordAccount && !currentUser.emailVerified) {
+          // Mantém o usuário como deslogado para a aplicação não disparar requisições privadas
+          setUser(null)
+          setLoading(false)
+          return
+        }
+      }
+
       setUser(currentUser)
       setLoading(false)
     })
@@ -40,7 +52,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithEmail = async (email: string, password: string) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password)
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+
+      // Verifica se o e-mail foi validado antes de permitir o acesso
+      if (!userCredential.user.emailVerified) {
+        await signOut(auth)
+        // Lança um erro customizado para o nosso tratador capturar
+        throw { code: 'auth/email-not-verified' }
+      }
     } catch (error) {
       console.error('Erro ao realizar login com o e-mail/senha: ', error)
       throw error
@@ -54,10 +73,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Atualiza o nome de exibição no perfil do Firebase
       await updateProfile(userCredential.user, { displayName: name })
 
-      // Envia o e-mail de verificação para validar a posse da conta
+      // Envia o e-mail de verificação
       await sendEmailVerification(userCredential.user)
 
-      setUser({ ...userCredential.user, displayName: name })
+      // Força o logout imediato para que ele não acesse rotas privadas sem verificar
+      await signOut(auth)
+      setUser(null)
     } catch (error) {
       console.error('Erro ao criar conta: ', error)
       throw error
@@ -69,6 +90,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await signOut(auth)
     } catch (error) {
       console.error('Error ao encerrar sessão: ', error)
+      throw error
+    }
+  }
+
+  // Função para reenviar o e-mail caso o usuário precise
+  const resendVerification = async (email: string, password: string) => {
+    try {
+      // O Firebase exige autenticação temporária para disparar o e-mail novamente
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      await sendEmailVerification(userCredential.user)
+      await signOut(auth)
+    } catch (error) {
+      console.error('Erro ao reenviar verificação: ', error)
       throw error
     }
   }
@@ -85,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginWithEmail,
         registerWithEmail,
         logout,
+        resendVerification,
       }}
     >
       {children}

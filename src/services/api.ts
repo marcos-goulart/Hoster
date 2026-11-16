@@ -46,6 +46,10 @@ api.interceptors.response.use(
         toast.error('Sessão expirada. Faça login novamente.')
         break
       case 403:
+        // Evita piscar o toast de erro 403 na tela de cadastro
+        if (errorMessage.includes('ainda não foi verificada')) {
+          break
+        }
         toast.error('Você não tem permissão para realizar esta ação.')
         break
       case 404:

@@ -58,7 +58,7 @@ export function AuthModal({ isOpen, onClose, customMessage }: AuthModalProps) {
         {activeTab === 'login' ? (
           <LoginForm onSuccess={onClose} />
         ) : (
-          <RegisterForm onSuccess={onClose} />
+          <RegisterForm onSwitchToLogin={() => setActiveTab('login')} />
         )}
       </ModalContent>
     </Overlay>

@@ -20,6 +20,8 @@ export function translateFirebaseError(error: unknown): string {
         return 'Muitas tentativas malsucedidas. Tente novamente mais tarde.'
       case 'auth/network-request-failed':
         return 'Erro de conexão com a rede. Verifique sua internet.'
+      case 'auth/email-not-verified':
+        return 'Seu e-mail ainda não foi verificado. Confira sua caixa de entrada ou spam.'
       default:
         return 'Ocorreu um erro ao processar sua solicitação. Tente novamente.'
     }

@@ -9,4 +9,5 @@ export const AuthContext = createContext<AuthContextType>({
   loginWithEmail: async () => {},
   registerWithEmail: async () => {},
   logout: async () => {},
+  resendVerification: async () => {},
 })

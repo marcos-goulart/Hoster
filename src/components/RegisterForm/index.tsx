@@ -9,9 +9,10 @@ import { FormWrapper, PasswordInputWrapper, SubmitButton } from './styles'
 
 interface RegisterFormProps {
   onSuccess?: () => void
+  onSwitchToLogin?: () => void
 }
 
-export function RegisterForm({ onSuccess }: RegisterFormProps) {
+export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) {
   const { registerWithEmail } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -37,7 +38,11 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       setSuccessMessage('Conta criada com sucesso! Enviamos um e-mail de verificação.')
 
       setTimeout(() => {
-        if (onSuccess) onSuccess()
+        if (onSwitchToLogin) {
+          onSwitchToLogin()
+        } else if (onSuccess) {
+          onSuccess()
+        }
       }, 3000)
     } catch (err) {
       setFirebaseError(translateFirebaseError(err))

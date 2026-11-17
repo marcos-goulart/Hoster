@@ -164,7 +164,7 @@ describe('SearchForm', () => {
     const datesButton = screen.getByRole('button', { name: /selecione as datas/i })
     fireEvent.click(datesButton)
 
-    const dayButtons = screen.getAllByRole('button', { name: '15' })
+    const dayButtons = screen.getAllByRole('button', { name: '28' })
     fireEvent.click(dayButtons[0])
 
     const applyButton = screen.getByRole('button', { name: 'Aplicar' })

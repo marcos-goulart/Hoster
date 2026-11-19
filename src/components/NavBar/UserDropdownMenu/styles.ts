@@ -2,16 +2,25 @@ import styled from 'styled-components'
 
 export const DropdownContainer = styled.div`
   position: relative;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  @media (min-width: ${(props) => props.theme.screenMedias.lg || '992px'}) {
+    display: inline-block;
+    width: auto;
+  }
 
   .user-trigger-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 0.35rem 0.5rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 0.375rem;
     transition: background-color 0.15s ease-in-out;
 
@@ -24,6 +33,7 @@ export const DropdownContainer = styled.div`
       height: 2rem;
       border-radius: 50%;
       object-fit: cover;
+      flex-shrink: 0;
     }
 
     .avatar-fallback {
@@ -37,13 +47,14 @@ export const DropdownContainer = styled.div`
       justify-content: center;
       font-size: 0.75rem;
       font-weight: 700;
+      flex-shrink: 0;
     }
 
     .user-name {
       font-size: 0.9rem;
       font-weight: 600;
       color: ${(props) => props.theme.colors.primaryDark};
-      max-width: 120px;
+      max-width: 160px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -52,15 +63,18 @@ export const DropdownContainer = styled.div`
     .chevron {
       font-size: 0.75rem;
       color: ${(props) => props.theme.colors.gray700 || '#4b5563'};
+      flex-shrink: 0;
     }
   }
 `
 
 export const DropdownMenu = styled.div`
   position: absolute;
-  top: 100%;
-  right: 0;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
   width: 260px;
+  max-width: min(280px, calc(100vw - 2.5rem));
   background-color: #ffffff;
   border-radius: 0.5rem;
   box-shadow:
@@ -69,16 +83,36 @@ export const DropdownMenu = styled.div`
   border: 1px solid ${(props) => props.theme.colors.borderColor || '#e5e7eb'};
   padding: 0.75rem 0;
   z-index: 10000;
-  animation: fadeIn 0.15s ease-out;
+  animation: fadeInMobile 0.15s ease-out;
 
-  @keyframes fadeIn {
+  @keyframes fadeInMobile {
     from {
       opacity: 0;
-      transform: translateY(-8px);
+      transform: translate(-50%, -8px);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translate(-50%, 0);
+    }
+  }
+
+  @media (min-width: ${(props) => props.theme.screenMedias.lg || '992px'}) {
+    left: auto;
+    right: 0;
+    transform: none;
+    max-width: none;
+    width: 260px;
+    animation: fadeInDesktop 0.15s ease-out;
+
+    @keyframes fadeInDesktop {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
 

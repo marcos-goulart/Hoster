@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   FaSuitcase,
@@ -24,6 +24,25 @@ interface UserDropdownMenuProps {
 export function UserDropdownMenu({ user, onLogout, onCloseMobileMenu }: UserDropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [isOpen])
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
@@ -44,7 +63,12 @@ export function UserDropdownMenu({ user, onLogout, onCloseMobileMenu }: UserDrop
   const initials = getUserInitials(user?.displayName)
 
   return (
-    <DropdownContainer onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <DropdownContainer
+      ref={dropdownRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      data-testid="user-dropdown-container"
+    >
       <button
         type="button"
         className="user-trigger-btn"
@@ -66,7 +90,7 @@ export function UserDropdownMenu({ user, onLogout, onCloseMobileMenu }: UserDrop
       </button>
 
       {isOpen && (
-        <DropdownMenu>
+        <DropdownMenu data-testid="user-dropdown-menu">
           <div className="user-header">
             {user?.photoURL ? (
               <img

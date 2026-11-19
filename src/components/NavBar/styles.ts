@@ -82,6 +82,7 @@ export const NavContainer = styled.nav<ContainerProps>`
 
       .nav-item {
         padding: 0.25rem 0;
+        text-align: center;
 
         a {
           color: ${(props) => props.theme.colors.textMain};
@@ -115,6 +116,10 @@ export const NavContainer = styled.nav<ContainerProps>`
 
       .login-button-item {
         padding: 0.25rem 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
       }
 
       .btn-orange {
@@ -190,13 +195,17 @@ export const NavContainer = styled.nav<ContainerProps>`
             align-items: center;
             padding: 0;
             margin-right: 0;
+            text-align: left;
           }
 
           .login-button-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
             margin-right: 0;
+            width: auto;
 
-            a,
-            button {
+            .btn-orange {
               padding-left: 1.6rem;
               padding-right: 1.6rem;
             }

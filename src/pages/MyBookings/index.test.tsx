@@ -252,6 +252,32 @@ describe('MyBookingsPage Component', () => {
     })
   })
 
+  it('não deve disparar toast duplicado quando o cancelamento falhar por erro de conexão', async () => {
+    const { toast } = await import('sonner')
+    vi.mocked(userService.getMyBookings).mockResolvedValue(mockBookings)
+    vi.mocked(userService.cancelBooking).mockRejectedValue(new Error('Network Error'))
+
+    renderComponent()
+
+    await waitFor(() => {
+      expect(screen.getByText('Hotel Vista Linda')).toBeInTheDocument()
+    })
+
+    const cardConfirmed = screen.getByTestId('booking-card-booking-confirmed-1')
+    const cancelBtn = cardConfirmed.querySelector('.btn-cancel')!
+    fireEvent.click(cancelBtn)
+
+    const confirmModalBtn = screen.getByRole('button', { name: /sim, cancelar/i })
+    fireEvent.click(confirmModalBtn)
+
+    await waitFor(() => {
+      expect(userService.cancelBooking).toHaveBeenCalledWith('booking-confirmed-1')
+    })
+
+    // O catch de MyBookings não deve disparar toast redundante de erro genérico
+    expect(toast.error).not.toHaveBeenCalledWith('Network Error')
+  })
+
   it('deve alternar filtros e fechar menu ao selecionar opção pelo dropdown mobile', async () => {
     vi.mocked(userService.getMyBookings).mockResolvedValue(mockBookings)
 

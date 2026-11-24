@@ -12,6 +12,7 @@ import {
   FaChevronUp,
 } from 'react-icons/fa'
 import { toast } from 'sonner'
+import { isConnectionError } from '../../services/api'
 import { BackNavigation } from '../../components/BackNavigation'
 import { BookingDetailsModal } from '../../components/BookingDetailsModal'
 import type { BookingRecord } from '../../services/userService'
@@ -205,6 +206,10 @@ export function MyBookingsPage() {
       toast.success('Reserva cancelada com sucesso.')
       setBookingToCancel(null)
     } catch (err: unknown) {
+      if (isConnectionError(err)) {
+        // Erros de conexão/rede já são tratados e deduplicados centralmente pelo interceptor do cliente HTTP
+        return
+      }
       const errorObj = err as {
         response?: { data?: { error?: string } }
         message?: string

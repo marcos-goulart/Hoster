@@ -119,6 +119,7 @@ export const NavContainer = styled.nav<ContainerProps>`
         display: flex;
         justify-content: center;
         align-items: center;
+        gap: 0.75rem;
         width: 100%;
       }
 
@@ -202,6 +203,7 @@ export const NavContainer = styled.nav<ContainerProps>`
             display: flex;
             align-items: center;
             justify-content: flex-end;
+            gap: 0.75rem;
             margin-right: 0;
             width: auto;
 

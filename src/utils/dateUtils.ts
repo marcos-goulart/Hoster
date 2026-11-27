@@ -61,3 +61,31 @@ export function calculateNights(startStr?: string, endStr?: string): number | nu
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
   return diffDays > 0 ? diffDays : null
 }
+
+export function formatRelativeTime(dateInput: string | Date | number): string {
+  const date =
+    typeof dateInput === 'string' || typeof dateInput === 'number' ? new Date(dateInput) : dateInput
+  const now = new Date()
+  const diffInSeconds = Math.max(0, Math.floor((now.getTime() - date.getTime()) / 1000))
+
+  if (diffInSeconds < 60) {
+    return 'agora'
+  }
+  const diffInMinutes = Math.floor(diffInSeconds / 60)
+  if (diffInMinutes < 60) {
+    return `há ${diffInMinutes} min`
+  }
+  const diffInHours = Math.floor(diffInMinutes / 60)
+  if (diffInHours < 24) {
+    return `há ${diffInHours} ${diffInHours === 1 ? 'hora' : 'horas'}`
+  }
+  const diffInDays = Math.floor(diffInHours / 24)
+  if (diffInDays < 30) {
+    return `há ${diffInDays} ${diffInDays === 1 ? 'dia' : 'dias'}`
+  }
+  const diffInMonths = Math.floor(diffInDays / 30)
+  if (diffInMonths < 12) {
+    return `há ${diffInMonths} ${diffInMonths === 1 ? 'mês' : 'meses'}`
+  }
+  return date.toLocaleDateString('pt-BR')
+}

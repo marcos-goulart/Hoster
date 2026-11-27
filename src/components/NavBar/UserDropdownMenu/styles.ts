@@ -2,10 +2,10 @@ import styled from 'styled-components'
 
 export const DropdownContainer = styled.div`
   position: relative;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: auto;
 
   @media (min-width: ${(props) => props.theme.screenMedias.lg || '992px'}) {
     display: inline-block;

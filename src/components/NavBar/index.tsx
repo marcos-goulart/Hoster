@@ -4,6 +4,7 @@ import { BrandLink, Button, NavContainer, NavLinkItem } from './styles'
 import { useAuth } from '../../hooks/useAuth'
 import { AuthModal } from '../AuthModal/index'
 import { UserDropdownMenu } from './UserDropdownMenu/index'
+import { NotificationBell } from './NotificationBell/index'
 import { lenisInstance } from '../../hooks/useSmoothScroll'
 
 export function Navbar() {
@@ -110,11 +111,14 @@ export function Navbar() {
                     Login
                   </Button>
                 ) : (
-                  <UserDropdownMenu
-                    user={user}
-                    onLogout={logout}
-                    onCloseMobileMenu={handleCloseMenu}
-                  />
+                  <>
+                    <NotificationBell onCloseMobileMenu={handleCloseMenu} />
+                    <UserDropdownMenu
+                      user={user}
+                      onLogout={logout}
+                      onCloseMobileMenu={handleCloseMenu}
+                    />
+                  </>
                 )}
               </li>
             </ul>
